@@ -130,3 +130,35 @@ export const getPages = async () => {
 export const getPageBySlug = async (slug: string) => {
   return await ghostClient.pages.read({ slug }) as unknown as GhostPage;
 };
+
+/**
+ * Determine the primary content track for a post based on its tags
+ * Priority order: aviation → dev-startup → cross-pollination
+ * @param tags - Array of Ghost tags
+ * @returns The primary content track or null if no track tags found
+ */
+export const getPrimaryTrack = (
+  tags: GhostTag[]
+): 'aviation' | 'dev-startup' | 'cross-pollination' | null => {
+  if (!tags || tags.length === 0) {
+    return null;
+  }
+
+  // Check for aviation tag (highest priority)
+  if (tags.some((tag) => tag.slug === 'aviation')) {
+    return 'aviation';
+  }
+
+  // Check for dev-startup tag (second priority)
+  if (tags.some((tag) => tag.slug === 'dev-startup')) {
+    return 'dev-startup';
+  }
+
+  // Check for cross-pollination tag (third priority)
+  if (tags.some((tag) => tag.slug === 'cross-pollination')) {
+    return 'cross-pollination';
+  }
+
+  // No track tags found
+  return null;
+};
