@@ -88,3 +88,65 @@ Research mode: Minimal (infrastructure feature)
 ✅ T012: Validation integrated at startup
 ✅ T015: docker-compose.yml created (development)
 ✅ T016: docker-compose.prod.yml created (production)
+
+## Rollback Procedure
+
+### Overview
+If environment variable changes cause issues, follow this 3-step rollback procedure.
+
+### Rollback Steps
+
+1. **Restore Previous .env.production**
+   ```bash
+   # On VPS
+   cp .env.production.backup .env.production
+   ```
+
+2. **Restart Application**
+   ```bash
+   # Using Docker Compose
+   docker-compose -f docker-compose.prod.yml restart nextjs
+
+   # OR using npm
+   pm2 restart marcusgoll  # or equivalent process manager
+   ```
+
+3. **Verify Restoration**
+   ```bash
+   curl https://marcusgoll.com/api/health
+   # Expected: {"status":"ok","env":"production"}
+   ```
+
+### Feature Flags
+Not applicable - environment variable management has no feature flags.
+This is infrastructure configuration, always active.
+
+### Backup Best Practices
+
+**Before making changes:**
+```bash
+# On VPS, create backup
+cp .env.production .env.production.backup.$(date +%Y%m%d_%H%M%S)
+
+# List backups
+ls -lt .env.production.backup.*
+```
+
+**After successful deployment:**
+```bash
+# Keep last 3 backups, delete older
+ls -t .env.production.backup.* | tail -n +4 | xargs rm -f
+```
+
+### Rollback Time Estimate
+- Docker Compose: ~30 seconds (restart container)
+- npm/pm2: ~10 seconds (restart process)
+
+### Testing After Rollback
+1. Verify application starts without errors
+2. Check health endpoint: `curl /api/health`
+3. Test newsletter service (send test email)
+4. Verify database connectivity
+5. Check Supabase authentication
+
+✅ T021: Rollback procedure documented
