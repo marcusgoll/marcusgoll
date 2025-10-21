@@ -77,7 +77,7 @@ Story completion order:
 
 ## Phase 1: Setup
 
-- [ ] T001 Create project structure for environment management per plan.md
+- [x] T001 Create project structure for environment management per plan.md
   - Files: lib/ directory (already exists), docs/ directory (already exists)
   - Verify: .env.example exists, .gitignore exists
   - Pattern: Existing project structure
@@ -99,7 +99,7 @@ Story completion order:
 
 ### Implementation
 
-- [ ] T005 [US1] Enhance .env.example with inline documentation for all 10 variables
+- [x] T005 [US1] Enhance .env.example with inline documentation for all 10 variables
   - File: .env.example (D:\Coding\marcusgoll\.env.example)
   - REUSE: Existing .env.example structure (lines 1-22)
   - Add: Inline comments for each variable (purpose, where to get value, required/optional)
@@ -112,7 +112,7 @@ Story completion order:
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Enhanced .env.example (line 203-209)
   - From: plan.md [CI/CD IMPACT] Environment Variables section (line 233-266)
 
-- [ ] T006 [P] [US1] Create .env.local from .env.example for local development testing
+- [x] T006 [P] [US1] Create .env.local from .env.example for local development testing
   - File: .env.local (D:\Coding\marcusgoll\.env.local) - gitignored
   - Action: Copy .env.example to .env.local
   - Fill: Development values (localhost URLs, test API keys)
@@ -135,7 +135,7 @@ Story completion order:
 
 ### Implementation
 
-- [ ] T007 [P] [US2] Verify .gitignore patterns and audit git history for leaked secrets
+- [x] T007 [P] [US2] Verify .gitignore patterns and audit git history for leaked secrets
   - File: .gitignore (D:\Coding\marcusgoll\.gitignore:34-36)
   - REUSE: Existing .gitignore patterns (.env, .env*.local, .env.production)
   - Action: Verify patterns are correct (already correct per research.md:56)
@@ -161,7 +161,7 @@ Story completion order:
 
 ### Implementation
 
-- [ ] T008 [US3] Verify Next.js environment variable loading and document behavior
+- [x] T008 [US3] Verify Next.js environment variable loading and document behavior
   - Files: .env.local (already created in T006)
   - REUSE: Next.js 15.5.6 built-in .env support (package.json:16)
   - Action: Start dev server with .env.local, verify variables load
@@ -190,7 +190,7 @@ Story completion order:
 
 ### Setup
 
-- [ ] T010 [P] [US4] Create lib/validate-env.ts with validation function
+- [x] T010 [P] [US4] Create lib/validate-env.ts with validation function
   - File: lib/validate-env.ts (NEW - D:\Coding\marcusgoll\lib\validate-env.ts)
   - Function: validateEnvironmentVariables() - validates required vars at startup
   - Required vars: 8 (PUBLIC_URL, NODE_ENV, DATABASE_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY or MAILGUN_API_KEY, NEWSLETTER_FROM_EMAIL)
@@ -202,7 +202,7 @@ Story completion order:
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Validation Module (line 172-180)
   - From: plan.md [PERFORMANCE TARGETS] Validation Performance (line 97-100)
 
-- [ ] T011 [P] [US4] Create TypeScript interface for environment variables (documentation only)
+- [x] T011 [P] [US4] Create TypeScript interface for environment variables (documentation only)
   - File: lib/env-schema.ts (NEW - D:\Coding\marcusgoll\lib\env-schema.ts)
   - Purpose: Document environment variable types (not enforced in MVP)
   - Interface: EnvironmentVariables with all 10 variables
@@ -214,7 +214,7 @@ Story completion order:
 
 ### Implementation
 
-- [ ] T012 [US4] Integrate validation function into Next.js app startup
+- [x] T012 [US4] Integrate validation function into Next.js app startup
   - File: Create instrumentation.ts or update root layout (depends on Next.js pattern)
   - Action: Call validateEnvironmentVariables() before app initialization
   - Timing: Must run before server accepts requests (fail-fast approach)
@@ -241,7 +241,7 @@ Story completion order:
 
 ### Implementation
 
-- [ ] T015 [P] [US5] Create docker-compose.yml for development environment
+- [x] T015 [P] [US5] Create docker-compose.yml for development environment
   - File: docker-compose.yml (NEW - D:\Coding\marcusgoll\docker-compose.yml)
   - Services: nextjs (Next.js application)
   - env_file: .env (loaded for Next.js service)
@@ -252,7 +252,7 @@ Story completion order:
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Docker Compose Files (line 182-186)
   - From: research.md Decision: Docker Compose Integration (line 33-40)
 
-- [ ] T016 [P] [US5] Create docker-compose.prod.yml for production environment
+- [x] T016 [P] [US5] Create docker-compose.prod.yml for production environment
   - File: docker-compose.prod.yml (NEW - D:\Coding\marcusgoll\docker-compose.prod.yml)
   - Services: Next.js application (production-optimized)
   - env_file: .env.production (not .env)
@@ -280,7 +280,7 @@ Story completion order:
 
 ### Implementation
 
-- [ ] T020 [P] [US6] Create docs/ENV_SETUP.md with environment setup guide
+- [x] T020 [P] [US6] Create docs/ENV_SETUP.md with environment setup guide
   - File: docs/ENV_SETUP.md (NEW - D:\Coding\marcusgoll\docs\ENV_SETUP.md)
   - Sections:
     1. Local development setup (copy .env.example to .env.local)
@@ -293,7 +293,7 @@ Story completion order:
   - Pattern: quickstart.md (all 5 scenarios, line 1-270)
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Documentation (line 194-201)
 
-- [ ] T021 [P] [US6] Document rollback procedure and feature flag in NOTES.md
+- [x] T021 [P] [US6] Document rollback procedure and feature flag in NOTES.md
   - File: specs/001-environment-manageme/NOTES.md (UPDATE existing)
   - Section: Deployment Rollback Procedure
   - Commands: Restore .env.production from backup, restart app
@@ -309,21 +309,21 @@ Story completion order:
 
 ### Documentation & Deployment Preparation
 
-- [ ] T085 Update README.md with environment setup quick start
+- [x] T085 Update README.md with environment setup quick start
   - File: README.md (UPDATE - D:\Coding\marcusgoll\README.md)
   - Section: Environment Setup (link to docs/ENV_SETUP.md)
   - Quick start: 3 steps (copy .env.example, fill values, verify app starts)
   - Link: Detailed guide in docs/ENV_SETUP.md
   - From: spec.md NFR-004 (line 178)
 
-- [ ] T086 [P] Add health check endpoint for environment validation
+- [x] T086 [P] Add health check endpoint for environment validation
   - File: app/api/health/route.ts (NEW - D:\Coding\marcusgoll\app\api\health\route.ts)
   - Endpoint: GET /api/health
   - Response: { status: "ok", env: "development"|"production", timestamp }
   - Check: Environment variables loaded (presence check only, not values)
   - Pattern: plan.md [DEPLOYMENT ACCEPTANCE] Production Deployment Checklist (line 322-331)
 
-- [ ] T087 [P] Document environment variable change process in NOTES.md
+- [x] T087 [P] Document environment variable change process in NOTES.md
   - File: specs/001-environment-manageme/NOTES.md (UPDATE existing)
   - Section: Adding New Environment Variables
   - Process:
