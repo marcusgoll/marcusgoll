@@ -85,3 +85,4 @@ Research mode: Minimal (infrastructure feature)
 ✅ T008: Next.js environment loading verified
 ✅ T010: Validation function created
 ✅ T011: TypeScript schema created
+✅ T012: Validation integrated at startup
