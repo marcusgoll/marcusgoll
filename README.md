@@ -9,14 +9,14 @@ Personal blog and portfolio covering aviation, software development, education, 
 - **Styling**: Tailwind CSS 4
 - **Database**: Self-hosted Supabase (PostgreSQL)
 - **ORM**: Prisma
-- **CMS**: Headless Ghost CMS
+- **Content**: Markdown/MDX for blog posts
+- **Newsletter**: Resend or Mailgun
 - **Hosting**: Hetzner VPS
 
 ## Architecture
 
-- **marcusgoll.com** - Next.js frontend (main site)
-- **ghost.marcusgoll.com** - Ghost CMS admin interface
-- **api.marcusgoll.com** - Self-hosted Supabase instance
+- **marcusgoll.com** - Next.js frontend (main site + blog)
+- **api.marcusgoll.com** - Self-hosted Supabase instance (PostgreSQL + Auth)
 
 ## Getting Started
 
@@ -43,6 +43,7 @@ Personal blog and portfolio covering aviation, software development, education, 
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your credentials
+   # See docs/ENV_SETUP.md for detailed setup guide
    ```
 
 4. Generate Prisma client:
@@ -72,7 +73,8 @@ marcusgoll/
 │   └── globals.css        # Global styles
 ├── lib/                   # Utility functions
 │   ├── prisma.ts          # Prisma client
-│   └── ghost.ts           # Ghost API client
+│   ├── validate-env.ts    # Environment validation
+│   └── env-schema.ts      # TypeScript env schema
 ├── prisma/                # Database schema
 │   └── schema.prisma      # Prisma schema
 ├── .spec-flow/            # Spec-flow workflow
@@ -91,13 +93,32 @@ Deployment is managed through the spec-flow workflow:
 
 ## Environment Variables
 
-See `.env.example` for required environment variables:
+**Quick Start:**
+```bash
+cp .env.example .env.local
+# Edit with your values and see docs/ENV_SETUP.md for details
+```
 
+**Required Variables (8):**
+- `PUBLIC_URL` - Base URL for the application
+- `NODE_ENV` - Environment mode (development/production)
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXT_PUBLIC_SUPABASE_URL` - Supabase API URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase public key
-- `GHOST_API_URL` - Ghost CMS URL
-- `GHOST_CONTENT_API_KEY` - Ghost Content API key
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (server-only)
+- `RESEND_API_KEY` or `MAILGUN_API_KEY` - Newsletter service API key
+- `NEWSLETTER_FROM_EMAIL` - Verified sender email address
+
+**Optional Variables (2):**
+- `DIRECT_DATABASE_URL` - Direct database connection (bypasses pooling)
+- `GA4_MEASUREMENT_ID` - Google Analytics 4 measurement ID
+
+**Comprehensive Setup Guide:** See [docs/ENV_SETUP.md](docs/ENV_SETUP.md) for:
+- Local development setup
+- Docker Compose configuration
+- Production deployment (secure transfer to VPS)
+- Troubleshooting
+- Security best practices
 
 ## VPS Infrastructure Setup
 
@@ -106,11 +127,12 @@ Infrastructure setup is in progress. See todo list for current status:
 - [x] GitHub repository created
 - [x] Next.js project initialized
 - [x] Prisma configured
-- [x] Ghost SDK installed
+- [x] Environment variable management implemented
+- [x] Docker Compose configuration created
+- [x] Validation and health checks added
 - [ ] VPS system updated
 - [ ] Docker and dependencies installed
 - [ ] Supabase deployed
-- [ ] Ghost CMS deployed
 - [ ] Nginx configured
 - [ ] SSL certificates set up
 

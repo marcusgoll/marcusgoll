@@ -1,0 +1,77 @@
+# Docker Compose for Production Deployment
+# Simplified stack: Next.js only (PostgreSQL via Supabase)
+#
+# Usage:
+#   1. Create .env.production file with production values
+#   2. Securely transfer .env.production to VPS (see docs/ENV_SETUP.md)
+#   3. On VPS: docker-compose -f docker-compose.prod.yml up -d
+#   4. Monitor: docker-compose -f docker-compose.prod.yml logs -f
+#   5. Stop: docker-compose -f docker-compose.prod.yml down
+#
+# Services:
+#   - nextjs: Next.js application (port 3000)
+#
+# External Services (configured via environment variables):
+#   - PostgreSQL: Supabase (cloud or self-hosted)
+#   - Newsletter: Resend or Mailgun (API-based)
+
+version: '3.8'
+
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: marcusgoll-nextjs-prod
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.production  # Loads production environment variables
+    environment:
+      - NODE_ENV=production
+    command: npm run start
+    restart: always
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  app-network:
+    driver: bridge
+
+# Production Security Notes:
+# - .env.production must have 600 permissions (chmod 600 .env.production)
+# - .env.production must be owned by correct user (chown www-data:www-data)
+# - Never commit .env.production to git
+# - Use HTTPS in production (configure reverse proxy like Nginx/Caddy)
+# - Rotate secrets regularly (especially after team changes)
+#
+# Deployment Steps:
+# 1. Build: docker-compose -f docker-compose.prod.yml build
+# 2. Start: docker-compose -f docker-compose.prod.yml up -d
+# 3. Verify: curl http://localhost:3000/api/health
+# 4. Monitor: docker-compose -f docker-compose.prod.yml logs -f nextjs
+#
+# Rollback:
+# 1. Stop: docker-compose -f docker-compose.prod.yml down
+# 2. Restore: cp .env.production.backup .env.production
+# 3. Restart: docker-compose -f docker-compose.prod.yml up -d
