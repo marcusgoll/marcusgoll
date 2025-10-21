@@ -71,6 +71,15 @@ artifacts:
 
 phase_summaries: {}
 
+design_workflow:
+  enabled: false
+  skipped: true
+  skip_reason: "CMS migration feature with standard blog UI patterns - design exploration not needed"
+  phases:
+    variations: skipped
+    functional: skipped
+    polish: skipped
+
 token_budget:
   phase: initialization
   limit: 75000
