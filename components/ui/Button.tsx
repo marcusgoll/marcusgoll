@@ -1,10 +1,15 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { trackContentTrackClick } from '@/lib/analytics';
+
+type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
+  track?: ContentTrack;
+  analyticsLocation?: string;
 }
 
 /**
@@ -19,8 +24,23 @@ export default function Button({
   fullWidth = false,
   className = '',
   disabled,
+  track,
+  analyticsLocation,
+  onClick,
   ...props
 }: ButtonProps) {
+  // Handle click with optional analytics tracking
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Track analytics if track and location provided
+    if (track && analyticsLocation) {
+      trackContentTrackClick({ track, location: analyticsLocation });
+    }
+
+    // Call original onClick handler if provided
+    if (onClick) {
+      onClick(e);
+    }
+  };
   // Base styles
   const baseStyles =
     'inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2';
@@ -52,6 +72,7 @@ export default function Button({
     <button
       className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyles} ${disabledStyles} ${className}`}
       disabled={disabled}
+      onClick={handleClick}
       {...props}
     >
       {children}
