@@ -86,3 +86,5 @@ Research mode: Minimal (infrastructure feature)
 ✅ T010: Validation function created
 ✅ T011: TypeScript schema created
 ✅ T012: Validation integrated at startup
+✅ T015: docker-compose.yml created (development)
+✅ T016: docker-compose.prod.yml created (production)
