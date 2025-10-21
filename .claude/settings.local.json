@@ -3,7 +3,10 @@
     "allow": [
       "Read(//d/Coding/Stocks/.spec-flow/templates/**)",
       "Bash(git rev-parse:*)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(test:*)",
+      "Bash(gh milestone:*)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": []
