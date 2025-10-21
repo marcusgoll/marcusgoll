@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Hero from '@/components/home/Hero';
 import DualTrackShowcase from '@/components/home/DualTrackShowcase';
 import Container from '@/components/ui/Container';
+import PageViewTracker from '@/components/analytics/PageViewTracker';
 import { getPostsByTag } from '@/lib/ghost';
 
 // Enable ISR with 60-second revalidation
@@ -25,6 +26,9 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen">
+      {/* Analytics Page View Tracking */}
+      <PageViewTracker track="general" />
+
       {/* Hero Section */}
       <Hero />
 

@@ -28,7 +28,12 @@ export default function DualTrackShowcase({
             </p>
           </div>
           <Link href="/aviation">
-            <Button variant="outline" size="md">
+            <Button
+              variant="outline"
+              size="md"
+              track="aviation"
+              analyticsLocation="homepage"
+            >
               View All Aviation Posts
             </Button>
           </Link>
@@ -54,7 +59,12 @@ export default function DualTrackShowcase({
             </p>
           </div>
           <Link href="/dev-startup">
-            <Button variant="outline" size="md">
+            <Button
+              variant="outline"
+              size="md"
+              track="dev-startup"
+              analyticsLocation="homepage"
+            >
               View All Dev/Startup Posts
             </Button>
           </Link>

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Container from '@/components/ui/Container';
 import PostGrid from '@/components/blog/PostGrid';
+import PageViewTracker from '@/components/analytics/PageViewTracker';
 import { getPostsByTag } from '@/lib/ghost';
 
 // Enable ISR with 60-second revalidation
@@ -39,6 +40,9 @@ export default async function DevStartupPage() {
 
   return (
     <div className="py-12">
+      {/* Analytics Page View Tracking */}
+      <PageViewTracker track="dev-startup" />
+
       <Container>
         {/* Page Header */}
         <header className="mb-12">

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Container from '@/components/ui/Container';
 import TrackBadge from '@/components/blog/TrackBadge';
+import PageViewTracker from '@/components/analytics/PageViewTracker';
 import { getPostBySlug, getPrimaryTrack, getAllPosts } from '@/lib/ghost';
 
 // Enable ISR with 60-second revalidation
@@ -101,6 +102,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <article className="py-12">
+      {/* Analytics Page View Tracking */}
+      <PageViewTracker track={track || undefined} />
+
       <Container>
         {/* Featured Image */}
         {post.feature_image && (

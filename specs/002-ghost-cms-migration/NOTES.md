@@ -366,3 +366,46 @@ This feature involves migrating the personal website/blog (marcusgoll.com) from 
 
 **Remaining Tasks**: 22 tasks (T085-T090 + additional polish)
 
+## Session 4 Summary (2025-10-21 15:00)
+
+**Tasks Completed**: 4 (T085-T086, T090-T091)
+**Progress**: 32/50 tasks (64%)
+**Time Estimate**: Session 4 added ~2-3 hours of work
+
+**Files Created**:
+- components/analytics/PageViewTracker.tsx - Client component for page view tracking
+
+**Files Modified**:
+- components/home/DualTrackShowcase.tsx - Added analytics tracking to CTAs
+- app/page.tsx - Added PageViewTracker
+- app/aviation/page.tsx - Added PageViewTracker with 'aviation' track
+- app/dev-startup/page.tsx - Added PageViewTracker with 'dev-startup' track
+- app/blog/[slug]/page.tsx - Added PageViewTracker with dynamic track detection
+
+**Key Achievements**:
+- Analytics integration complete across all key pages
+- Button CTAs now track content track engagement
+- Page view tracking with content track segmentation
+- Ghost Admin setup documentation already complete (ghost-admin-checklist.md)
+
+**Ghost Admin Setup Documentation** (T090):
+Complete setup guide available at: `specs/002-ghost-cms-migration/ghost-admin-checklist.md`
+
+Key sections:
+1. **Prerequisites**: Ghost Admin access, Content API key generation
+2. **Primary Tags** (3 tags):
+   - `aviation` (Sky Blue #0EA5E9)
+   - `dev-startup` (Emerald #059669)
+   - `cross-pollination` (Purple #8B5CF6)
+3. **Secondary Tags** (6 category tags):
+   - Aviation: flight-training, cfi-resources, career-path
+   - Dev/Startup: software-development, systematic-thinking, startup-insights
+4. **Tag Application Rules**: Every post must have exactly one primary tag + zero or more secondary tags
+5. **Content Migration**: 35 aviation posts need manual tagging
+6. **Ghost Site Settings**: Site title, description, navigation configuration
+7. **Testing Checklist**: Verify all pages, tag archive functionality, ISR revalidation
+8. **Performance Verification**: API response times, page load times, LCP targets
+
+**Implementation Complete**: 32/50 tasks (64%)
+**Remaining**: 18 tasks (primarily additional polish and optimization)
+
