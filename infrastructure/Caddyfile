@@ -1,0 +1,37 @@
+{
+  email marcusgoll@gmail.com
+}
+
+# Force www to apex
+www.marcusgoll.com {
+  redir https://marcusgoll.com{uri} 308
+}
+www.cfipros.com {
+  redir https://cfipros.com{uri} 308
+}
+
+# Main site - Next.js app (marcusgoll.com)
+# TODO: Currently points to Ghost, will change to next:3000 after deployment
+marcusgoll.com {
+  reverse_proxy ghost:2368
+}
+
+# Ghost CMS Admin (ghost.marcusgoll.com)
+ghost.marcusgoll.com {
+  reverse_proxy ghost:2368
+}
+
+# Supabase API (api.marcusgoll.com)
+api.marcusgoll.com {
+  reverse_proxy kong:8002
+}
+
+# CFI Pros - Next.js app (existing)
+cfipros.com {
+  reverse_proxy next:3000
+}
+
+# CFI Pros API - FastAPI (existing)
+api.cfipros.com {
+  reverse_proxy api:8000
+}
