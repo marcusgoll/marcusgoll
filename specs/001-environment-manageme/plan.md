@@ -61,7 +61,7 @@ marcusgoll/
 **Module Organization**:
 - **lib/validate-env.ts**: Runtime validation - checks required vars, validates formats, throws clear errors
 - **.env.example**: Template with inline comments documenting each variable's purpose
-- **docker-compose.yml**: Development stack (Ghost + MySQL + Next.js)
+- **docker-compose.yml**: Development stack (Next.js with PostgreSQL via Supabase)
 - **docker-compose.prod.yml**: Production stack with production-optimized settings
 - **docs/ENV_SETUP.md**: Step-by-step guide for environment setup and secure deployment
 
@@ -82,10 +82,10 @@ See: data-model.md for complete details
 1. **Next.js**: PUBLIC_URL, NODE_ENV (2 variables)
 2. **Database**: DATABASE_URL, DIRECT_DATABASE_URL (2 variables, 1 optional)
 3. **Supabase**: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (3 variables)
-4. **Ghost CMS**: GHOST_API_URL, GHOST_CONTENT_API_KEY, GHOST_ADMIN_API_KEY (3 variables, 1 optional)
-5. **Third-Party**: GA4_MEASUREMENT_ID, EMAIL_SERVICE_API_KEY (2 variables, both optional for MVP)
+4. **Newsletter Service**: RESEND_API_KEY (or MAILGUN_API_KEY), NEWSLETTER_FROM_EMAIL (2 variables, both required for newsletter functionality)
+5. **Third-Party**: GA4_MEASUREMENT_ID (1 variable, optional for MVP)
 
-**Total**: 12 variables (8 required, 4 optional)
+**Total**: 10 variables (8 required, 2 optional)
 
 ---
 
@@ -95,7 +95,7 @@ See: data-model.md for complete details
 - NFR-005: Environment variable validation MUST complete in <100ms (negligible startup impact)
 
 **Validation Performance**:
-- Target: <50ms for validation of 12 variables
+- Target: <50ms for validation of 10 variables
 - Strategy: Simple presence checks and regex validation (no external calls)
 - Impact: Negligible - runs once at startup, not on every request
 
@@ -142,10 +142,10 @@ See: data-model.md for complete details
 ## [EXISTING INFRASTRUCTURE - REUSE] (4 components)
 
 **Configuration Files**:
-- **.env.example**: Existing template with DATABASE_URL, Supabase, Ghost CMS configuration
+- **.env.example**: Existing template with DATABASE_URL, Supabase configuration
   - Location: ./.env.example
   - Lines: 1-22
-  - Enhancement: Add inline documentation comments for each variable
+  - Enhancement: Add inline documentation comments for each variable, add newsletter service variables
 
 **.gitignore Patterns**: Already excludes environment files
   - Location: ./.gitignore
@@ -181,9 +181,10 @@ See: data-model.md for complete details
 
 **Docker Compose Files**:
 - **docker-compose.yml**: Development environment orchestration
-  - Services: Ghost CMS, MySQL 8.0, Next.js
+  - Services: Next.js application
   - env_file directive: Load from .env file
-  - Ports: 3000 (Next.js), 2368 (Ghost), 3306 (MySQL)
+  - Ports: 3000 (Next.js)
+  - Note: PostgreSQL provided by Supabase (cloud or self-hosted), not in docker-compose
 
 - **docker-compose.prod.yml**: Production environment orchestration
   - Similar to dev but with production optimizations
@@ -251,18 +252,16 @@ See: data-model.md for complete details
 6. `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (server-side)
    - Development: Get from local Supabase or cloud dashboard
    - Production: Get from production Supabase dashboard
-7. `GHOST_API_URL` - Ghost CMS API endpoint
-   - Development: http://localhost:2368
-   - Production: https://ghost.marcusgoll.com
-8. `GHOST_CONTENT_API_KEY` - Ghost Content API key
-   - Development: Generate from local Ghost (Settings > Integrations)
-   - Production: Generate from production Ghost (Settings > Integrations)
+7. `RESEND_API_KEY` (or `MAILGUN_API_KEY`) - Newsletter/email service API key
+   - Development: Get from Resend or Mailgun dashboard (test mode)
+   - Production: Production API key from Resend or Mailgun
+8. `NEWSLETTER_FROM_EMAIL` - Verified sender email address
+   - Development: test@marcusgoll.com (must be verified in service)
+   - Production: newsletter@marcusgoll.com (must be verified)
 
-**Optional (4)**:
+**Optional (2)**:
 9. `DIRECT_DATABASE_URL` - Direct database connection (optional, bypasses pooling)
-10. `GHOST_ADMIN_API_KEY` - Ghost Admin API key (optional, for write operations)
-11. `GA4_MEASUREMENT_ID` - Google Analytics 4 measurement ID (optional for MVP)
-12. `EMAIL_SERVICE_API_KEY` - Email service API key (optional for MVP)
+10. `GA4_MEASUREMENT_ID` - Google Analytics 4 measurement ID (optional for MVP)
 
 **Schema Update Required**: Yes - Create env-schema.ts for documentation (not enforced in MVP)
 
@@ -296,7 +295,7 @@ See: quickstart.md for complete integration scenarios
 1. Next.js startup (validation runs before server starts)
 2. Docker Compose (env_file directive loads variables)
 3. VPS deployment (secure file transfer and permissions)
-4. Ghost CMS (API keys configured via env vars)
+4. Newsletter Service (API keys configured via env vars - Resend or Mailgun)
 5. Supabase (connection configured via env vars)
 
 ---

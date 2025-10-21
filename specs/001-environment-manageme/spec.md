@@ -12,7 +12,7 @@ As a developer setting up the Marcus Gollahon personal website, I need a secure 
 
 ### Acceptance Scenarios
 1. **Given** I am setting up the project for the first time, **When** I copy .env.example to .env.local and fill in my values, **Then** the Next.js app loads all environment variables and validates required ones at startup
-2. **Given** I have configured .env.local for development, **When** I run Docker Compose, **Then** all services (Ghost CMS, MySQL, Next.js) have access to their required environment variables
+2. **Given** I have configured .env.local for development, **When** I run Docker Compose, **Then** the Next.js application has access to all required environment variables (database, newsletter service, etc.)
 3. **Given** I am deploying to production, **When** I securely transfer .env.production to the VPS, **Then** the application runs with production configuration without exposing secrets in git history
 4. **Given** a required environment variable is missing, **When** the application starts, **Then** it throws a clear validation error indicating which variable is missing and where to configure it
 
@@ -36,7 +36,7 @@ As a developer setting up the Marcus Gollahon personal website, I need a secure 
     - .env.example exists with all required variables listed
     - Each variable has inline comments explaining its purpose
     - Example values provided where safe (non-sensitive)
-    - Grouped by service (Next.js, Ghost CMS, MySQL, Third-party)
+    - Grouped by service (Next.js, Database, Supabase, Newsletter, Third-party)
   - **Independent test**: Copy .env.example to .env.local, fill values, verify app starts
   - **Effort**: XS (<2 hours)
 
@@ -154,19 +154,16 @@ N/A - Infrastructure feature with no UI components.
   - PUBLIC_URL (base URL for the application)
   - NODE_ENV (development, production)
   - API endpoints (internal and external)
-- **FR-007**: System MUST support the following Ghost CMS environment variables:
-  - GHOST_API_URL (Ghost CMS API endpoint)
-  - GHOST_CONTENT_API_KEY (Content API key for read operations)
-  - GHOST_ADMIN_API_KEY (Admin API key for write operations)
-- **FR-008**: System MUST support the following MySQL database environment variables:
-  - DATABASE_HOST (MySQL host)
-  - DATABASE_NAME (database name)
-  - DATABASE_USER (database username)
-  - DATABASE_PASSWORD (database password)
+- **FR-007**: System MUST support the following newsletter service environment variables:
+  - RESEND_API_KEY or MAILGUN_API_KEY (newsletter/email service API key)
+  - NEWSLETTER_FROM_EMAIL (verified sender email address)
+- **FR-008**: System MUST support the following PostgreSQL database environment variables:
+  - DATABASE_URL (PostgreSQL connection string via Prisma/Supabase)
+  - DIRECT_DATABASE_URL (optional: direct PostgreSQL connection bypassing pooling)
 - **FR-009**: System MUST support the following third-party service environment variables:
   - GA4_MEASUREMENT_ID (Google Analytics 4 measurement ID)
-  - EMAIL_SERVICE_API_KEY (email service API key, e.g., SendGrid/Resend)
-- **FR-010**: Docker Compose MUST load environment variables from .env file for all services (Ghost, MySQL, Next.js)
+  - Other analytics or monitoring service keys as needed
+- **FR-010**: Docker Compose MUST load environment variables from .env file for the Next.js application
 - **FR-011**: System MUST never commit .env.local or .env.production files to git (enforced by .gitignore)
 - **FR-012**: Documentation MUST explain secure methods for transferring .env.production to VPS
 
@@ -177,7 +174,7 @@ N/A - Infrastructure feature with no UI components.
 - **NFR-003**: Developer Experience: Missing environment variable errors MUST include variable name, description, and example value
 - **NFR-004**: Developer Experience: .env.example MUST be kept in sync with actual required variables (documented in README)
 - **NFR-005**: Performance: Environment variable validation MUST complete in <100ms (negligible startup impact)
-- **NFR-006**: Maintainability: Environment variable groups MUST be clearly organized (Next.js, Ghost CMS, Database, Third-party)
+- **NFR-006**: Maintainability: Environment variable groups MUST be clearly organized (Next.js, Database, Supabase, Newsletter, Third-party)
 
 ### Key Entities (if data involved)
 

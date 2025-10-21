@@ -8,16 +8,16 @@ Scanned: D:\Coding\marcusgoll
 - ✅ .env.example (D:\Coding\marcusgoll\.env.example:1-22) - Has basic structure, needs enhancement
 - ✅ .gitignore (D:\Coding\marcusgoll\.gitignore:34-36) - Already excludes .env files correctly
 - ✅ Next.js 15.5.6 (package.json:16) - Built-in .env support, no dotenv needed
-- ✅ lib/ghost.ts (D:\Coding\marcusgoll\lib\ghost.ts:4-8) - Pattern for accessing env vars with fallback
+- ✅ lib/ghost.ts (D:\Coding\marcusgoll\lib\ghost.ts:4-8) - Pattern for accessing env vars with fallback (will be removed in Ghost migration)
 - ✅ lib/prisma.ts (D:\Coding\marcusgoll\lib\prisma.ts:10) - Pattern for accessing NODE_ENV
 - ✅ package.json (D:\Coding\marcusgoll\package.json:3) - Version field for semantic versioning
 
 **[NEW - CREATE]**
 - 🆕 lib/validate-env.ts - Runtime validation function (no existing pattern)
-- 🆕 docker-compose.yml - Development orchestration (no existing Docker setup)
-- 🆕 docker-compose.prod.yml - Production orchestration (no existing Docker setup)
+- 🆕 docker-compose.yml - Development orchestration (simplified: Next.js only, no Ghost/MySQL)
+- 🆕 docker-compose.prod.yml - Production orchestration (simplified stack)
 - 🆕 docs/ENV_SETUP.md - Environment setup guide (docs/ exists but no env guide)
-- 🆕 Enhanced .env.example - Add inline documentation to existing file
+- 🆕 Enhanced .env.example - Add inline documentation + newsletter service variables
 
 ---
 
@@ -99,13 +99,15 @@ Story completion order:
 
 ### Implementation
 
-- [ ] T005 [US1] Enhance .env.example with inline documentation for all 12 variables
+- [ ] T005 [US1] Enhance .env.example with inline documentation for all 10 variables
   - File: .env.example (D:\Coding\marcusgoll\.env.example)
   - REUSE: Existing .env.example structure (lines 1-22)
   - Add: Inline comments for each variable (purpose, where to get value, required/optional)
   - Add: PUBLIC_URL, NODE_ENV, DIRECT_DATABASE_URL variables (not currently in file)
-  - Add: GA4_MEASUREMENT_ID, EMAIL_SERVICE_API_KEY variables (optional, for future)
-  - Group by: Next.js, Database, Supabase, Ghost CMS, Third-Party Services
+  - Add: RESEND_API_KEY (or MAILGUN_API_KEY), NEWSLETTER_FROM_EMAIL (newsletter service)
+  - Add: GA4_MEASUREMENT_ID (optional, for future)
+  - Remove: GHOST_API_URL, GHOST_CONTENT_API_KEY, GHOST_ADMIN_API_KEY (migrating away from Ghost)
+  - Group by: Next.js, Database, Supabase, Newsletter Service, Third-Party Services
   - Pattern: lib/ghost.ts:4-8 (env var access with fallback)
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Enhanced .env.example (line 203-209)
   - From: plan.md [CI/CD IMPACT] Environment Variables section (line 233-266)
@@ -191,11 +193,11 @@ Story completion order:
 - [ ] T010 [P] [US4] Create lib/validate-env.ts with validation function
   - File: lib/validate-env.ts (NEW - D:\Coding\marcusgoll\lib\validate-env.ts)
   - Function: validateEnvironmentVariables() - validates required vars at startup
-  - Required vars: 8 (PUBLIC_URL, NODE_ENV, DATABASE_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, GHOST_API_URL, GHOST_CONTENT_API_KEY)
-  - Optional vars: 4 (DIRECT_DATABASE_URL, GHOST_ADMIN_API_KEY, GA4_MEASUREMENT_ID, EMAIL_SERVICE_API_KEY)
+  - Required vars: 8 (PUBLIC_URL, NODE_ENV, DATABASE_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY or MAILGUN_API_KEY, NEWSLETTER_FROM_EMAIL)
+  - Optional vars: 2 (DIRECT_DATABASE_URL, GA4_MEASUREMENT_ID)
   - Validation: Presence check + URL format validation (regex: ^https?://)
   - Error format: "Missing required environment variable: ${varName}\nPlease check .env.example for required configuration."
-  - Performance: Target <50ms for 12 variables (simple checks, no external calls)
+  - Performance: Target <50ms for 10 variables (simple checks, no external calls)
   - Pattern: data-model.md Validation Function (line 83-118)
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Validation Module (line 172-180)
   - From: plan.md [PERFORMANCE TARGETS] Validation Performance (line 97-100)
@@ -203,7 +205,7 @@ Story completion order:
 - [ ] T011 [P] [US4] Create TypeScript interface for environment variables (documentation only)
   - File: lib/env-schema.ts (NEW - D:\Coding\marcusgoll\lib\env-schema.ts)
   - Purpose: Document environment variable types (not enforced in MVP)
-  - Interface: EnvironmentVariables with all 12 variables
+  - Interface: EnvironmentVariables with all 10 variables
   - JSDoc: Comments explaining each variable's purpose
   - Note: Type-safe access deferred to P3 (US7)
   - Pattern: data-model.md Environment Variable Schema (line 57-81)
@@ -231,10 +233,9 @@ Story completion order:
 
 **Acceptance Criteria** (from spec.md:71-78):
 - docker-compose.yml references .env file via env_file directive
-- Ghost CMS service receives Ghost-specific variables
-- MySQL service receives database configuration
-- Next.js service receives all application variables
+- Next.js service receives all application variables (database, newsletter, analytics)
 - Verify with docker-compose config command
+- Note: PostgreSQL via Supabase (cloud or self-hosted), not in docker-compose
 
 **Depends on**: US1 (.env.example), US3 (Next.js loading), US4 (validation)
 
@@ -242,23 +243,24 @@ Story completion order:
 
 - [ ] T015 [P] [US5] Create docker-compose.yml for development environment
   - File: docker-compose.yml (NEW - D:\Coding\marcusgoll\docker-compose.yml)
-  - Services: ghost (Ghost CMS), mysql (MySQL 8.0), nextjs (Next.js app)
-  - env_file: .env (loaded for all services)
-  - Ports: 3000 (Next.js), 2368 (Ghost), 3306 (MySQL)
-  - Volumes: MySQL data persistence, Ghost content
-  - depends_on: nextjs depends on ghost and mysql
+  - Services: nextjs (Next.js application)
+  - env_file: .env (loaded for Next.js service)
+  - Ports: 3000 (Next.js)
+  - Environment: Connects to Supabase PostgreSQL (cloud or self-hosted, not containerized)
+  - Note: Simplified stack - no Ghost/MySQL containers (migrating to markdown + newsletter service)
   - Pattern: data-model.md Docker Compose Configuration (line 122-156)
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Docker Compose Files (line 182-186)
   - From: research.md Decision: Docker Compose Integration (line 33-40)
 
 - [ ] T016 [P] [US5] Create docker-compose.prod.yml for production environment
   - File: docker-compose.prod.yml (NEW - D:\Coding\marcusgoll\docker-compose.prod.yml)
-  - Services: Same as dev but production-optimized
+  - Services: Next.js application (production-optimized)
   - env_file: .env.production (not .env)
-  - Health checks: All services have health check endpoints
+  - Health checks: Next.js health check endpoint
   - Restart policies: always (auto-restart on failure)
   - Resource limits: CPU and memory constraints
   - Security: Non-root users, read-only file systems where possible
+  - Note: PostgreSQL via Supabase (external), newsletter via Resend/Mailgun (API)
   - Pattern: docker-compose.yml (T015) with production hardening
   - From: plan.md [NEW INFRASTRUCTURE - CREATE] Docker Compose Files (line 188-192)
 

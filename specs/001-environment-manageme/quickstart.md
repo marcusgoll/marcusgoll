@@ -13,12 +13,12 @@ cp .env.example .env.local
 code .env.local  # or nano .env.local
 
 # Required changes for local development:
-# - DATABASE_URL: Update with your local PostgreSQL credentials
-# - NEXT_PUBLIC_SUPABASE_URL: Your local Supabase instance URL (or use cloud)
+# - DATABASE_URL: Update with your PostgreSQL credentials (Supabase cloud or self-hosted)
+# - NEXT_PUBLIC_SUPABASE_URL: Your Supabase instance URL
 # - NEXT_PUBLIC_SUPABASE_ANON_KEY: Get from Supabase dashboard
 # - SUPABASE_SERVICE_ROLE_KEY: Get from Supabase dashboard
-# - GHOST_API_URL: Your local Ghost instance (http://localhost:2368) or cloud
-# - GHOST_CONTENT_API_KEY: Generate from Ghost admin (Settings > Integrations)
+# - RESEND_API_KEY (or MAILGUN_API_KEY): Get from Resend or Mailgun dashboard
+# - NEWSLETTER_FROM_EMAIL: Your verified sender email
 
 # 3. Verify environment variables are loaded
 npm run dev
@@ -29,7 +29,7 @@ npm run dev
 # ✓ Ready on http://localhost:3000
 
 # If you see error:
-# ❌ Missing required environment variable: GHOST_API_URL
+# ❌ Missing required environment variable: RESEND_API_KEY or MAILGUN_API_KEY
 # → Check .env.local and ensure all required variables are set
 ```
 
@@ -43,7 +43,7 @@ npm run dev
 
 ## Scenario 2: Docker Compose Setup
 
-**Goal**: Run the entire stack (Next.js + Ghost + MySQL) with Docker Compose
+**Goal**: Run the Next.js application with Docker Compose (connects to external Supabase/newsletter services)
 
 ```bash
 # 1. Ensure .env file exists (for Docker Compose)
@@ -54,19 +54,17 @@ cp .env.example .env
 code .env
 
 # Docker-specific configuration:
-# - DATABASE_URL: Use service name as host (postgresql://postgres:password@mysql:5432/marcusgoll)
-# - GHOST_API_URL: Use service name (http://ghost:2368)
-# - NEXT_PUBLIC_SUPABASE_URL: Keep as external URL or use Docker service name
+# - DATABASE_URL: Use Supabase connection string (external service)
+# - NEXT_PUBLIC_SUPABASE_URL: Supabase API URL (external service)
+# - RESEND_API_KEY or MAILGUN_API_KEY: Newsletter service API key
 
 # 3. Build and start all services
 docker-compose up --build
 
 # Expected output:
-# ✓ mysql: Container started
-# ✓ ghost: Container started, waiting for MySQL...
-# ✓ ghost: Database initialized
 # ✓ nextjs: Container started
 # ✓ nextjs: Environment variables loaded from .env
+# ✓ nextjs: Connecting to Supabase PostgreSQL...
 # ✓ nextjs: Application ready on http://localhost:3000
 
 # 4. Verify services are healthy
@@ -74,8 +72,6 @@ docker-compose ps
 
 # Expected:
 # NAME          COMMAND           STATE    PORTS
-# mysql         docker-entry...   Up       3306/tcp
-# ghost         docker-entry...   Up       2368/tcp
 # nextjs        npm run dev       Up       0.0.0.0:3000->3000/tcp
 
 # 5. Stop services
@@ -83,11 +79,11 @@ docker-compose down
 ```
 
 **Validation Checklist**:
-- [ ] All three services start successfully
+- [ ] Next.js service starts successfully
 - [ ] No environment variable validation errors in logs
 - [ ] Can access Next.js app at http://localhost:3000
-- [ ] Can access Ghost admin at http://localhost:2368/ghost
-- [ ] Next.js can successfully fetch from Ghost API
+- [ ] Next.js can successfully connect to Supabase PostgreSQL
+- [ ] Newsletter service API key is valid (test with Resend/Mailgun)
 
 ---
 
@@ -104,9 +100,9 @@ code .env.production
 
 # Production-specific values:
 # - PUBLIC_URL: https://marcusgoll.com
-# - DATABASE_URL: Production PostgreSQL connection string
-# - GHOST_API_URL: https://ghost.marcusgoll.com
-# - GHOST_CONTENT_API_KEY: Production Ghost API key
+# - DATABASE_URL: Production PostgreSQL connection string (Supabase)
+# - RESEND_API_KEY or MAILGUN_API_KEY: Production newsletter service API key
+# - NEWSLETTER_FROM_EMAIL: newsletter@marcusgoll.com (verified)
 # - GA4_MEASUREMENT_ID: Production Google Analytics ID
 
 # 3. Securely transfer to VPS (DO NOT commit to git!)
@@ -160,7 +156,8 @@ npm run validate-env
 # Add temporary debug in your validation file:
 console.log('Loaded environment variables:', {
   DATABASE_URL: process.env.DATABASE_URL ? '✓ Set' : '✗ Missing',
-  GHOST_API_URL: process.env.GHOST_API_URL ? '✓ Set' : '✗ Missing',
+  RESEND_API_KEY: process.env.RESEND_API_KEY ? '✓ Set' : '✗ Missing',
+  MAILGUN_API_KEY: process.env.MAILGUN_API_KEY ? '✓ Set' : '✗ Missing',
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? '✓ Set' : '✗ Missing',
   // ... check all required variables
 })
@@ -180,7 +177,7 @@ npm run dev
 
 # Issue: "Missing required environment variable"
 # Solution: Check .env.local exists and has all required variables
-cat .env.local | grep GHOST_API_URL
+cat .env.local | grep RESEND_API_KEY
 
 # Issue: Docker Compose not loading variables
 # Solution: Ensure .env exists (not .env.local, Docker uses .env)

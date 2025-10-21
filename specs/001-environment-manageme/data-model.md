@@ -25,9 +25,9 @@ NEXT_PUBLIC_SUPABASE_URL="https://api.marcusgoll.com"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
 SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 
-# Category: Ghost CMS
-GHOST_API_URL="https://ghost.marcusgoll.com"
-GHOST_CONTENT_API_KEY="your-content-api-key"
+# Category: Newsletter Service
+RESEND_API_KEY="your-resend-api-key"  # Or MAILGUN_API_KEY
+NEWSLETTER_FROM_EMAIL="newsletter@marcusgoll.com"
 
 # Category: Third-Party Services
 GA4_MEASUREMENT_ID="G-XXXXXXXXXX"  # Optional for MVP
@@ -45,8 +45,8 @@ EMAIL_SERVICE_API_KEY="your-api-key"  # Optional for MVP
 1. **Next.js Configuration**: PUBLIC_URL, NODE_ENV
 2. **Database**: DATABASE_URL, DIRECT_DATABASE_URL (optional)
 3. **Supabase**: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
-4. **Ghost CMS**: GHOST_API_URL, GHOST_CONTENT_API_KEY, GHOST_ADMIN_API_KEY (optional)
-5. **Third-Party Services**: GA4_MEASUREMENT_ID (optional), EMAIL_SERVICE_API_KEY (optional)
+4. **Newsletter Service**: RESEND_API_KEY (or MAILGUN_API_KEY), NEWSLETTER_FROM_EMAIL
+5. **Third-Party Services**: GA4_MEASUREMENT_ID (optional)
 
 ---
 
@@ -69,14 +69,13 @@ interface EnvironmentVariables {
   NEXT_PUBLIC_SUPABASE_ANON_KEY: string  // Anonymous key (public)
   SUPABASE_SERVICE_ROLE_KEY: string  // Service role key (server-side only)
 
-  // Ghost CMS (required)
-  GHOST_API_URL: string  // Ghost CMS API endpoint
-  GHOST_CONTENT_API_KEY: string  // Content API key for read operations
-  GHOST_ADMIN_API_KEY?: string  // Optional: Admin API key for write operations
+  // Newsletter Service (required)
+  RESEND_API_KEY?: string  // Resend API key (one of RESEND or MAILGUN required)
+  MAILGUN_API_KEY?: string  // Mailgun API key (alternative to Resend)
+  NEWSLETTER_FROM_EMAIL: string  // Verified sender email address
 
   // Third-Party Services (optional for MVP)
   GA4_MEASUREMENT_ID?: string  // Google Analytics 4 measurement ID
-  EMAIL_SERVICE_API_KEY?: string  // Email service API key (SendGrid/Resend)
 }
 ```
 
@@ -90,8 +89,7 @@ function validateEnvironmentVariables(): void {
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
-    'GHOST_API_URL',
-    'GHOST_CONTENT_API_KEY'
+    'NEWSLETTER_FROM_EMAIL'
   ]
 
   for (const varName of required) {
@@ -103,8 +101,16 @@ function validateEnvironmentVariables(): void {
     }
   }
 
+  // At least one newsletter service API key required
+  if (!process.env.RESEND_API_KEY && !process.env.MAILGUN_API_KEY) {
+    throw new Error(
+      `Missing required environment variable: RESEND_API_KEY or MAILGUN_API_KEY\n` +
+      `At least one newsletter service API key is required.`
+    )
+  }
+
   // Format validation for URLs
-  const urlVars = ['PUBLIC_URL', 'NEXT_PUBLIC_SUPABASE_URL', 'GHOST_API_URL']
+  const urlVars = ['PUBLIC_URL', 'NEXT_PUBLIC_SUPABASE_URL']
   for (const varName of urlVars) {
     const value = process.env[varName]
     if (value && !value.match(/^https?:\/\//)) {
@@ -128,38 +134,24 @@ function validateEnvironmentVariables(): void {
 version: '3.8'
 
 services:
-  ghost:
-    image: ghost:latest
-    env_file:
-      - .env  # Loads all environment variables
-    environment:
-      # Ghost-specific vars can override here if needed
-      url: ${GHOST_API_URL}
-
-  mysql:
-    image: mysql:8.0
-    env_file:
-      - .env
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-ghost}
-
   nextjs:
     build: .
     env_file:
       - .env  # Loads all environment variables
     ports:
       - "3000:3000"
-    depends_on:
-      - ghost
-      - mysql
+    environment:
+      - NODE_ENV=development
+    # Note: PostgreSQL via Supabase (cloud or self-hosted)
+    # Note: Newsletter service via Resend/Mailgun (API-based)
 ```
 
 **Environment Variable Flow**:
 1. Developer creates `.env.local` from `.env.example`
 2. Docker Compose reads `.env` file via `env_file` directive
-3. Variables available to all services
+3. Variables available to Next.js service
 4. Next.js app accesses vars via `process.env`
+5. External services (Supabase, Resend/Mailgun) accessed via API keys
 
 ---
 
@@ -179,7 +171,8 @@ services:
 
 - **Database Entities**: 0 (infrastructure feature, no database changes)
 - **Configuration Files**: 3 (.env.example, .env.local, .env.production)
-- **Docker Compose Services**: 3 (Ghost, MySQL, Next.js)
+- **Docker Compose Services**: 1 (Next.js only - PostgreSQL via Supabase external)
 - **Validation Schema**: 1 (environment variable schema for runtime validation)
+- **Environment Variables**: 10 total (8 required, 2 optional)
 - **Migrations Required**: No
 - **Schema Changes**: No
