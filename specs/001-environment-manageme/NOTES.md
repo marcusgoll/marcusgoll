@@ -150,3 +150,224 @@ ls -t .env.production.backup.* | tail -n +4 | xargs rm -f
 5. Check Supabase authentication
 
 ✅ T021: Rollback procedure documented
+
+## Environment Variable Change Process
+
+### When to Update Environment Variables
+
+1. **Adding new third-party service integration**
+2. **Changing API keys or credentials**
+3. **Adding new feature requiring configuration**
+4. **Rotating secrets (recommended quarterly or after team changes)**
+
+### Change Process Checklist
+
+#### Step 1: Update Template (.env.example)
+
+```bash
+# Edit .env.example
+code .env.example
+
+# Add new variable with documentation:
+# - Category comment
+# - Variable name and description
+# - Required vs optional
+# - Example value
+# - Where to get the value
+```
+
+**Example:**
+```bash
+# New Service (optional)
+# Description: API key for new service integration
+# Required: No (optional for MVP)
+# Where to get: https://service.com/api-keys
+# NEW_SERVICE_API_KEY="your-api-key-here"
+```
+
+#### Step 2: Update Validation (if required variable)
+
+```bash
+# Edit lib/validate-env.ts
+code lib/validate-env.ts
+
+# Add to requiredVars object if required:
+NEW_SERVICE_API_KEY: {
+  description: 'API key for new service integration',
+  example: 'sk_test_xxxxx',
+}
+```
+
+#### Step 3: Update TypeScript Schema
+
+```bash
+# Edit lib/env-schema.ts
+code lib/env-schema.ts
+
+# Add to EnvironmentVariables interface with JSDoc:
+/**
+ * New service API key
+ * @required Yes/No
+ * @format xxx-xxxxx
+ * @purpose Description of what it does
+ */
+NEW_SERVICE_API_KEY?: string
+```
+
+#### Step 4: Update Local Environment
+
+```bash
+# Add to your .env.local
+echo "NEW_SERVICE_API_KEY=\"dev-api-key\"" >> .env.local
+
+# Restart development server
+npm run dev
+
+# Verify validation passes
+# Expected: ✅ Environment variables validated (XX.XXms)
+```
+
+#### Step 5: Update Documentation
+
+```bash
+# Update docs/ENV_SETUP.md
+# Add variable to "Environment Variables Reference" table
+# Update required/optional counts
+# Add any service-specific setup instructions
+```
+
+#### Step 6: Commit Changes
+
+```bash
+# Stage changes
+git add .env.example lib/validate-env.ts lib/env-schema.ts docs/ENV_SETUP.md
+
+# Commit with descriptive message
+git commit -m "feat: add NEW_SERVICE_API_KEY environment variable
+
+Variable: NEW_SERVICE_API_KEY
+Required: Yes/No
+Purpose: [Brief description]
+Documentation: Updated .env.example, validation, schema, docs"
+
+# Push to remote
+git push origin feature-branch
+```
+
+#### Step 7: Update Production
+
+```bash
+# On VPS or via secure transfer
+ssh user@your-vps-ip
+
+# Edit .env.production
+nano /var/www/marcusgoll/.env.production
+
+# Add new variable
+NEW_SERVICE_API_KEY="production-api-key"
+
+# Restart application
+docker-compose -f docker-compose.prod.yml restart nextjs
+
+# Verify deployment
+curl https://marcusgoll.com/api/health
+```
+
+#### Step 8: Notify Team
+
+If working with a team:
+1. Add to PR description: "⚠️ New environment variable required: NEW_SERVICE_API_KEY"
+2. Update team documentation or wiki
+3. Send notification to team members
+4. Provide setup instructions
+
+### Secret Rotation Process
+
+**When to Rotate:**
+- Quarterly (best practice)
+- After team member departure
+- If secret may have been compromised
+- Service provider recommends rotation
+
+**Rotation Steps:**
+
+1. **Generate New Secret**
+   ```bash
+   # Get new API key from service provider
+   # Keep old key active during transition
+   ```
+
+2. **Test New Secret Locally**
+   ```bash
+   # Update .env.local with new key
+   NEW_SERVICE_API_KEY="new-api-key"
+
+   # Test application locally
+   npm run dev
+
+   # Verify service works with new key
+   ```
+
+3. **Update Production**
+   ```bash
+   # Backup current .env.production
+   cp .env.production .env.production.backup.$(date +%Y%m%d_%H%M%S)
+
+   # Update with new secret
+   sed -i 's/old-api-key/new-api-key/' .env.production
+
+   # Restart application
+   docker-compose -f docker-compose.prod.yml restart nextjs
+
+   # Monitor for errors
+   docker-compose -f docker-compose.prod.yml logs -f nextjs
+   ```
+
+4. **Revoke Old Secret**
+   ```bash
+   # Wait 24-48 hours for propagation
+   # Verify no errors in logs
+   # Revoke old secret in service provider dashboard
+   ```
+
+### Common Mistakes to Avoid
+
+❌ **Don't:**
+- Commit .env.local or .env.production to git
+- Share secrets via email or chat
+- Use production secrets in development
+- Skip updating validation when adding required variables
+- Forget to restart server after changing environment variables
+
+✅ **Do:**
+- Always update .env.example when adding new variables
+- Document where to obtain secret values
+- Test changes locally before deploying to production
+- Keep backups of .env.production before changes
+- Rotate secrets regularly
+
+### Troubleshooting Variable Changes
+
+**Issue: New variable not loading**
+```bash
+# 1. Verify variable is in .env.local (dev) or .env.production (prod)
+cat .env.local | grep NEW_VARIABLE
+
+# 2. Restart server (environment changes require restart)
+npm run dev  # or docker-compose restart
+
+# 3. Check validation output
+# Should see: ✅ Environment variables validated
+```
+
+**Issue: Validation failing after adding required variable**
+```bash
+# 1. Verify variable is in requiredVars in lib/validate-env.ts
+cat lib/validate-env.ts | grep -A 3 "NEW_VARIABLE"
+
+# 2. Check error message
+npm run dev
+# Error will show missing variable with description and example
+```
+
+✅ T087: Environment variable change process documented
