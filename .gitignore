@@ -45,4 +45,13 @@ yarn-error.log*
 .vscode
 .idea
 
+# prisma generated client
 /app/generated/prisma
+
+# Sensitive credentials and infrastructure
+.credentials/
+**/credentials.txt
+**/secrets.txt
+**/*-credentials.*
+docs/INFRASTRUCTURE.md
+infrastructure/secrets/
