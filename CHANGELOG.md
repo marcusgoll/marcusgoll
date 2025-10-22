@@ -5,6 +5,33 @@ All notable changes to marcusgoll.com will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-10-22
+
+### Added
+
+- **Individual Post Page Enhancements** (Feature 003)
+  - Related posts component with tag-based recommendation algorithm
+  - Table of contents with scroll spy and smooth navigation
+  - Social sharing buttons (Twitter, LinkedIn, Copy Link) with Web Share API support
+  - Previous/Next chronological post navigation
+  - Breadcrumb navigation with BreadcrumbList Schema.org markup
+  - BlogPosting structured data (Schema.org JSON-LD) for rich snippets
+  - Enhanced MDX image component with featured image support
+  - Post utilities library for related posts algorithm and heading extraction
+
+### Changed
+
+- Blog post pages now include comprehensive navigation and discovery features
+- Improved SEO with Schema.org BlogPosting structured data
+- Enhanced accessibility with WCAG 2.1 AA compliant components
+
+### Technical Details
+
+- 8 new reusable blog components
+- 25/25 tasks completed with 100% acceptance criteria validation
+- Zero critical issues, WCAG 2.1 AA compliant
+- All optimization checks passed (build, security, accessibility, performance, code review)
+
 ## [1.0.0] - 2025-10-22
 
 ### Added
