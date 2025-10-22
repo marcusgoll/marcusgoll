@@ -1,0 +1,94 @@
+feature:
+  slug: individual-post-page
+  title: Individual Post Pages (Dynamic Routes)
+  created_at: 2025-10-22T00:00:00Z
+  updated_at: 2025-10-22T00:00:00Z
+  branch_name: feature/003-individual-post-page
+  roadmap_status: in-progress
+
+deployment:
+  model: direct-prod
+  production:
+    url: null
+    deployment_id: null
+    deployed_at: null
+    version: null
+
+workflow:
+  phase: ship
+  status: in_progress
+  completed_phases:
+    - spec
+    - plan
+    - tasks
+    - validate
+    - implement
+    - optimize
+    - preview
+  failed_phases: []
+
+  phases:
+    preview:
+      status: completed
+      summary: "Manual preview testing completed successfully. All 27 acceptance criteria validated across 6 user stories. Zero blocking issues found."
+      pr_number: 43
+      pr_url: https://github.com/marcusgoll/marcusgoll/pull/43
+
+    implement:
+      status: completed
+      summary: "Implemented 25/25 tasks across 6 user stories. All MVP features (US1-US3) and P2 enhancements (US4-US6) complete. 8 new components created, comprehensive documentation added. Ready for optimization."
+      stats:
+        completed: 25
+        total: 25
+        files_changed: 10
+        commits: 8
+
+    optimize:
+      status: completed
+      summary: "All 5 optimization checks passed. Zero critical issues, 2 high-priority recommendations (console.error statements, hardcoded URLs). WCAG 2.1 AA compliant, zero security vulnerabilities, all performance targets met. Production-ready."
+      checks:
+        build: passed
+        security: passed
+        accessibility: passed
+        performance: passed
+        code_review: passed
+      issues:
+        critical: 0
+        high: 2
+        medium: 4
+        low: 2
+
+quality_gates:
+  pre_flight:
+    status: pending
+    checks: []
+  code_review:
+    status: pending
+    critical_issues: 0
+  rollback_capability:
+    status: pending
+    tested: false
+
+manual_gates:
+  preview:
+    status: completed
+    approved: true
+    approved_at: 2025-10-22T00:00:00Z
+  validate_staging:
+    status: pending
+    approved: false
+
+artifacts:
+  spec: specs/003-individual-post-page/spec.md
+  plan: specs/003-individual-post-page/plan.md
+  tasks: specs/003-individual-post-page/tasks.md
+  analysis: specs/003-individual-post-page/analysis.md
+  implementation: null
+  optimization: null
+  ship_summary: null
+
+token_budget:
+  phase: planning
+  limit: 75000
+  used: 0
+  compaction_needed: false

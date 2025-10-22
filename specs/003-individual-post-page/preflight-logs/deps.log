@@ -1,0 +1,5 @@
+Package             Current  Wanted  Latest  Location                         Depended by
+@prisma/client       6.17.1  6.18.0  6.18.0  node_modules/@prisma/client      tech-stack-foundation-core
+eslint-config-next   15.5.6  15.5.6  16.0.0  node_modules/eslint-config-next  tech-stack-foundation-core
+next                 15.5.6  15.5.6  16.0.0  node_modules/next                tech-stack-foundation-core
+prisma               6.17.1  6.18.0  6.18.0  node_modules/prisma              tech-stack-foundation-core
