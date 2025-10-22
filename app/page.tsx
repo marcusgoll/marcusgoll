@@ -7,6 +7,12 @@ export default async function Home() {
   const pageSEO = getPageSEO({
     title: 'Home',
     description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons from Marcus Gollahon.',
+    openGraph: {
+      type: 'website',
+      url: 'https://marcusgoll.com',
+      title: 'Marcus Gollahon | Aviation & Software Development',
+      description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons.',
+    },
   });
   // Fetch latest 5 posts from MDX
   const allPosts = await getAllPosts();

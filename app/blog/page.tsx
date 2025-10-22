@@ -14,6 +14,13 @@ export default async function BlogIndexPage() {
   const pageSEO = getPageSEO({
     title: 'Blog',
     description: 'Aviation career guidance, software development insights, and startup lessons. Teaching systematic thinking from 30,000 feet.',
+    canonical: 'https://marcusgoll.com/blog',
+    openGraph: {
+      type: 'website',
+      url: 'https://marcusgoll.com/blog',
+      title: 'Blog | Marcus Gollahon',
+      description: 'Aviation career guidance, software development insights, and startup lessons. Teaching systematic thinking from 30,000 feet.',
+    },
   });
   const posts = await getAllPosts();
   const tags = await getAllTags();
