@@ -123,6 +123,11 @@ Migrate from Ghost CMS (current headless CMS) to local MDX-based content managem
 - ✅ T031: Create CodeBlock MDX component (components/mdx/code-block.tsx) with copy button and line numbers
 - ✅ T032: Create interactive Demo component (components/mdx/demo.tsx) showing React state management in MDX
 
+**Batch 7: US5 Tag Filtering and Search - COMPLETE**
+- ✅ T040: Create tag archive page (app/blog/tag/[tag]/page.tsx) with generateStaticParams for all tags
+- ✅ T041: Add tag cloud to blog index page (app/blog/page.tsx) with post counts and clickable links
+- ✅ T042: Search functionality (implemented in lib/mdx.ts searchPosts function)
+
 ## Last Updated
 
 2025-10-21T22:48:00Z

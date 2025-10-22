@@ -4,7 +4,7 @@
  * FR-013, US3
  */
 
-import { getAllPosts } from '@/lib/mdx';
+import { getAllPosts, getAllTags } from '@/lib/mdx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 export default async function BlogIndexPage() {
   const posts = await getAllPosts();
+  const tags = await getAllTags();
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
@@ -23,6 +24,26 @@ export default async function BlogIndexPage() {
         <p className="text-lg text-gray-600 dark:text-gray-400">
           Articles and insights about aviation and software development.
         </p>
+
+        {/* Tag cloud */}
+        {tags.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+              Browse by topic
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <Link
+                  key={tag.slug}
+                  href={`/blog/tag/${tag.slug}`}
+                  className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                >
+                  {tag.displayName} ({tag.postCount})
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </header>
 
       {posts.length === 0 ? (
