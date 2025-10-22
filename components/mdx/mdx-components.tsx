@@ -7,6 +7,9 @@
 import type { MDXComponents } from 'mdx/types';
 import Link from 'next/link';
 import { MDXImage } from './mdx-image';
+import { Callout } from './callout';
+import { CodeBlock } from './code-block';
+import { Demo } from './demo';
 
 /**
  * MDX component mappings for custom rendering
@@ -170,4 +173,9 @@ export const mdxComponents: MDXComponents = {
       {children}
     </td>
   ),
+
+  // Custom MDX components (available in MDX content)
+  Callout,
+  CodeBlock,
+  Demo,
 };

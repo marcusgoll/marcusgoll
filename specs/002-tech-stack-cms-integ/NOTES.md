@@ -118,6 +118,11 @@ Migrate from Ghost CMS (current headless CMS) to local MDX-based content managem
 - ✅ T027: Generate sitemap (lib/generate-sitemap.ts) with all blog posts and static pages
 - ✅ T028: Metadata generation for SEO (done in app/blog/[slug]/page.tsx generateMetadata function)
 
+**Batch 6: US4 React Components in MDX - COMPLETE**
+- ✅ T030: Create Callout MDX component (components/mdx/callout.tsx) with info/warning/error/success types
+- ✅ T031: Create CodeBlock MDX component (components/mdx/code-block.tsx) with copy button and line numbers
+- ✅ T032: Create interactive Demo component (components/mdx/demo.tsx) showing React state management in MDX
+
 ## Last Updated
 
 2025-10-21T22:48:00Z
