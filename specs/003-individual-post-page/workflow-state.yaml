@@ -7,11 +7,7 @@ feature:
   roadmap_status: in-progress
 
 deployment:
-  model: staging-prod
-  staging:
-    url: null
-    deployment_id: null
-    deployed_at: null
+  model: direct-prod
   production:
     url: null
     deployment_id: null
@@ -68,8 +64,9 @@ quality_gates:
 
 manual_gates:
   preview:
-    status: pending
-    approved: false
+    status: completed
+    approved: true
+    approved_at: 2025-10-22T00:00:00Z
   validate_staging:
     status: pending
     approved: false

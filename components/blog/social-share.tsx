@@ -136,7 +136,7 @@ export function SocialShare({ url, title }: SocialShareProps) {
       </button>
 
       {/* Web Share API button (mobile only) */}
-      {typeof navigator !== 'undefined' && navigator.share && (
+      {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
         <button
           onClick={handleNativeShare}
           className="inline-flex items-center gap-2 px-4 py-2 min-h-[2.75rem] text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
