@@ -83,6 +83,59 @@ export default function HomepageVariantsIndex() {
           </p>
         </div>
 
+        {/* Merged Concepts Section */}
+        <div className="mb-12 p-6 bg-white rounded-lg border-2 border-gray-900">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Merged Concepts (From v3, v5, v6)
+            </h2>
+            <p className="text-gray-600">
+              Based on your selection of v3, v5, and v6, here are 3 concepts combining the best elements:
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="font-bold text-gray-900 mb-2">M1: Professional Hybrid</h3>
+              <p className="text-sm text-gray-600 mb-3">v5 hero + v6 sticky tags + v5 grid + v6 hover + v5 CTA</p>
+              <Link href="/mock/homepage-post-feed/homepage/m1">
+                <button className="w-full bg-gray-900 text-white text-sm font-medium py-2 px-4 rounded hover:bg-gray-800 transition-colors">
+                  View M1
+                </button>
+              </Link>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="font-bold text-gray-900 mb-2">M2: Sidebar Enhanced</h3>
+              <p className="text-sm text-gray-600 mb-3">v3 sidebar + v5 hero + v6 grid + v6 hover</p>
+              <Link href="/mock/homepage-post-feed/homepage/m2">
+                <button className="w-full bg-gray-900 text-white text-sm font-medium py-2 px-4 rounded hover:bg-gray-800 transition-colors">
+                  View M2
+                </button>
+              </Link>
+            </div>
+
+            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="font-bold text-gray-900 mb-2">M3: Modern Minimal</h3>
+              <p className="text-sm text-gray-600 mb-3">v6 sticky header + v5 grid + subtle featured + v6 hover</p>
+              <Link href="/mock/homepage-post-feed/homepage/m3">
+                <button className="w-full bg-gray-900 text-white text-sm font-medium py-2 px-4 rounded hover:bg-gray-800 transition-colors">
+                  View M3
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-300 pt-12 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Original Variants
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Review the original 10 variants that informed the merged concepts above
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-6 mb-12">
           {variants.map((variant) => (
             <article
