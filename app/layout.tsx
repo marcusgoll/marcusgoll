@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { DefaultSEO } from "@/components/seo/DefaultSEO";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,6 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        {/* Site-wide SEO defaults */}
+        <DefaultSEO />
+
         {/* Google Analytics */}
         {gaId && (
           <>
