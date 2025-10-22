@@ -6,20 +6,22 @@
 
 import { getAllPosts, getAllTags } from '@/lib/mdx';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { PostCard } from '@/components/blog/post-card';
-
-export const metadata: Metadata = {
-  title: 'Blog | Tech Stack Foundation',
-  description: 'Articles and insights about aviation and software development.',
-};
+import { NextSeo } from 'next-seo';
+import { getPageSEO } from '@/lib/seo-config';
 
 export default async function BlogIndexPage() {
+  const pageSEO = getPageSEO({
+    title: 'Blog',
+    description: 'Aviation career guidance, software development insights, and startup lessons. Teaching systematic thinking from 30,000 feet.',
+  });
   const posts = await getAllPosts();
   const tags = await getAllTags();
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <>
+      <NextSeo {...pageSEO} />
+      <div className="mx-auto max-w-4xl px-4 py-12">
       <header className="mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Blog</h1>
         <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -59,5 +61,6 @@ export default async function BlogIndexPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

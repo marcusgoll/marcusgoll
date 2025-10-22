@@ -1,14 +1,22 @@
 import { getAllPosts } from '@/lib/mdx';
 import Link from 'next/link';
+import { NextSeo } from 'next-seo';
+import { getPageSEO } from '@/lib/seo-config';
 
 export default async function Home() {
+  const pageSEO = getPageSEO({
+    title: 'Home',
+    description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons from Marcus Gollahon.',
+  });
   // Fetch latest 5 posts from MDX
   const allPosts = await getAllPosts();
   const latestPosts = allPosts.slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <main className="container mx-auto px-4 py-16">
+    <>
+      <NextSeo {...pageSEO} />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <main className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
             Marcus Gollahon
@@ -108,5 +116,6 @@ export default async function Home() {
         </div>
       </main>
     </div>
+    </>
   );
 }
