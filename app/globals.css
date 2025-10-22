@@ -6,44 +6,44 @@
 
 :root {
 
-  /* Brand Foundation Colors in OKLCH */
-  --navy-900: oklch(0.205 0.043 264.052);
-  --emerald-600: oklch(0.617 0.153 166.108);
-  --sky-blue: oklch(0.699 0.126 232.661);
+  /* Brand Foundation Colors in OKLCH - Stripe Payment */
+  --navy-900: oklch(0.15 0.05 240);
+  --emerald-600: oklch(0.45 0.18 270);
+  --sky-blue: oklch(0.65 0.15 200);
 
-  /* Background Colors */
-  --bg-dark: oklch(0.97 0 0); /* Lightest gray for elevated surfaces */
+  /* Background Colors - Clean professional */
+  --bg-dark: oklch(0.98 0 0); /* Lightest gray for elevated surfaces */
   --bg: oklch(1 0 0); /* Pure white background */
-  --bg-light: oklch(0.985 0 0); /* Off-white for cards */
+  --bg-light: oklch(0.99 0 0); /* Off-white for cards */
 
   /* Text Colors */
-  --text: oklch(0.145 0 0); /* High contrast black for primary text */
-  --text-muted: oklch(0.556 0 0); /* Medium gray for secondary text */
+  --text: oklch(0.15 0 0); /* High contrast black for primary text */
+  --text-muted: oklch(0.48 0 0); /* Medium gray for secondary text */
 
   /* Border Colors */
-  --highlight: oklch(0.617 0.153 166.108); /* Emerald accent border */
-  --border: oklch(0.922 0 0); /* Light gray border */
-  --border-muted: oklch(0.97 0 0); /* Subtle divider border */
+  --highlight: oklch(0.45 0.18 270); /* Stripe purple accent */
+  --border: oklch(0.92 0 0); /* Light gray border */
+  --border-muted: oklch(0.96 0 0); /* Subtle divider border */
 
-  /* Action Colors */
-  --primary: oklch(0.205 0.043 264.052); /* Navy for primary actions */
-  --primary-foreground: oklch(0.985 0 0); /* White text on navy */
-  --secondary: oklch(0.617 0.153 166.108); /* Emerald for secondary actions */
-  --secondary-foreground: oklch(1 0 0); /* White text on emerald */
+  /* Action Colors - Stripe purple */
+  --primary: oklch(0.45 0.18 270); /* Stripe purple for primary actions */
+  --primary-foreground: oklch(1 0 0); /* White text on purple */
+  --secondary: oklch(0.15 0.05 240); /* Dark navy for secondary actions */
+  --secondary-foreground: oklch(1 0 0); /* White text on navy */
 
   /* Alert Colors */
-  --danger: oklch(0.577 0.245 27.325); /* Red for errors */
+  --danger: oklch(0.55 0.24 27); /* Red for errors */
   --danger-foreground: oklch(1 0 0); /* White text on red */
-  --warning: oklch(0.78 0.155 85); /* Amber for warnings */
-  --warning-foreground: oklch(0.205 0 0); /* Dark text on amber */
-  --success: oklch(0.617 0.153 166.108); /* Emerald for success */
-  --success-foreground: oklch(1 0 0); /* White text on emerald */
-  --info: oklch(0.699 0.126 232.661); /* Sky blue for info */
-  --info-foreground: oklch(1 0 0); /* White text on sky blue */
+  --warning: oklch(0.78 0.15 80); /* Amber for warnings */
+  --warning-foreground: oklch(0.15 0 0); /* Dark text on amber */
+  --success: oklch(0.62 0.16 145); /* Green for success */
+  --success-foreground: oklch(1 0 0); /* White text on green */
+  --info: oklch(0.65 0.15 200); /* Cyan for info */
+  --info-foreground: oklch(1 0 0); /* White text on cyan */
 
   /* Spacing */
   --spacing-base: 8px;
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
   /* Legacy shadcn tokens (mapped to new system) */
   --background: var(--bg);
@@ -119,34 +119,34 @@
 }
 
 .dark {
-  /* Background Colors - Dark Mode */
-  --bg-dark: oklch(0.145 0 0); /* Darkest background */
-  --bg: oklch(0.205 0 0); /* Default dark background */
-  --bg-light: oklch(0.269 0 0); /* Elevated surfaces in dark mode */
+  /* Background Colors - Dark Mode - Stripe professional */
+  --bg-dark: oklch(0.14 0 0); /* Darkest background */
+  --bg: oklch(0.19 0 0); /* Default dark background */
+  --bg-light: oklch(0.24 0 0); /* Elevated surfaces in dark mode */
 
   /* Text Colors - Dark Mode */
-  --text: oklch(0.985 0 0); /* High contrast white for primary text */
-  --text-muted: oklch(0.708 0 0); /* Medium gray for secondary text */
+  --text: oklch(0.98 0 0); /* High contrast white for primary text */
+  --text-muted: oklch(0.68 0 0); /* Medium gray for secondary text */
 
   /* Border Colors - Dark Mode */
-  --highlight: oklch(0.617 0.153 166.108); /* Emerald accent (same) */
-  --border: oklch(1 0 0 / 10%); /* Subtle white border */
-  --border-muted: oklch(1 0 0 / 5%); /* Very subtle divider */
+  --highlight: oklch(0.58 0.10 270); /* Desaturated Stripe purple */
+  --border: oklch(0.34 0 0); /* Subtle gray border */
+  --border-muted: oklch(0.24 0 0); /* Very subtle divider */
 
-  /* Action Colors - Dark Mode */
-  --primary: oklch(0.699 0.126 232.661); /* Sky blue for primary actions */
-  --primary-foreground: oklch(0.985 0 0); /* White text */
-  --secondary: oklch(0.617 0.153 166.108); /* Emerald (same) */
+  /* Action Colors - Dark Mode - Desaturated for comfort */
+  --primary: oklch(0.58 0.10 270); /* Desaturated Stripe purple (was 0.18) */
+  --primary-foreground: oklch(1 0 0); /* White text */
+  --secondary: oklch(0.45 0.05 240); /* Dark navy */
   --secondary-foreground: oklch(1 0 0); /* White text */
 
   /* Alert Colors - Dark Mode */
-  --danger: oklch(0.704 0.191 22.216); /* Lighter red for dark mode */
+  --danger: oklch(0.66 0.24 27); /* Red for errors */
   --danger-foreground: oklch(1 0 0); /* White text */
-  --warning: oklch(0.82 0.155 85); /* Lighter amber for dark mode */
-  --warning-foreground: oklch(0.145 0 0); /* Dark text */
-  --success: oklch(0.67 0.153 166.108); /* Lighter emerald for dark mode */
+  --warning: oklch(0.84 0.15 80); /* Amber for warnings */
+  --warning-foreground: oklch(0.14 0 0); /* Dark text */
+  --success: oklch(0.72 0.16 145); /* Green for success */
   --success-foreground: oklch(1 0 0); /* White text */
-  --info: oklch(0.75 0.126 232.661); /* Lighter sky blue for dark mode */
+  --info: oklch(0.75 0.15 200); /* Cyan for info */
   --info-foreground: oklch(1 0 0); /* White text */
 
   /* Legacy shadcn tokens (mapped to new system) */

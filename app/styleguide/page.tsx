@@ -584,12 +584,12 @@ const PRESET_THEMES: BrandTheme[] = [
       // Text - Clean white
       text: { l: 0.98, c: 0, h: 0 },
       "text-muted": { l: 0.68, c: 0, h: 0 },
-      // Borders
-      highlight: { l: 0.58, c: 0.18, h: 270 },
+      // Borders - Desaturated purple
+      highlight: { l: 0.58, c: 0.10, h: 270 },
       border: { l: 0.34, c: 0, h: 0 },
       "border-muted": { l: 0.24, c: 0, h: 0 },
-      // Actions - Brighter Stripe purple
-      primary: { l: 0.58, c: 0.18, h: 270 },
+      // Actions - Desaturated Stripe purple for comfort
+      primary: { l: 0.58, c: 0.10, h: 270 },
       "primary-foreground": { l: 1, c: 0, h: 0 },
       secondary: { l: 0.45, c: 0.05, h: 240 },
       "secondary-foreground": { l: 1, c: 0, h: 0 },
@@ -603,7 +603,7 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.75, c: 0.15, h: 200 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
-    radius: 8,
+    radius: 12,
     spacing: 8,
   },
   {
