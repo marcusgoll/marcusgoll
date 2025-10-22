@@ -19,9 +19,10 @@ deployment:
     version: null
 
 workflow:
-  phase: initialization
+  phase: plan
   status: in_progress
-  completed_phases: []
+  completed_phases:
+    - spec
   failed_phases: []
 
 quality_gates:
@@ -44,7 +45,7 @@ manual_gates:
     approved: false
 
 artifacts:
-  spec: null
+  spec: specs/003-individual-post-page/spec.md
   plan: null
   tasks: null
   analysis: null
