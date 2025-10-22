@@ -83,6 +83,56 @@ export default function HomepageVariantsIndex() {
           </p>
         </div>
 
+        {/* M2 Functional Prototype - SELECTED DESIGN */}
+        <div className="mb-12 p-6 bg-green-50 rounded-lg border-2 border-green-600">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-3 py-1 bg-green-600 text-white text-xs font-bold rounded uppercase tracking-wide">
+                ✓ Selected Design
+              </span>
+              <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded uppercase tracking-wide">
+                Phase 2b: Functional
+              </span>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              M2 Functional Prototype
+            </h2>
+            <p className="text-gray-700 mb-4">
+              Sidebar Enhanced + Magazine Masonry with full accessibility features, keyboard navigation, and responsive behavior.
+            </p>
+            <ul className="text-sm text-gray-600 mb-4 space-y-1">
+              <li>✅ ARIA labels and semantic HTML</li>
+              <li>✅ Keyboard shortcuts (Alt+M, Alt+1-4)</li>
+              <li>✅ Mobile responsive (collapsible sidebar)</li>
+              <li>✅ Screen reader support</li>
+              <li>✅ Loading/empty/error states</li>
+              <li>✅ Focus management</li>
+            </ul>
+            <div className="flex gap-3">
+              <Link href="/mock/homepage-post-feed/homepage/m2-functional">
+                <button className="bg-green-600 text-white font-medium py-2 px-6 rounded hover:bg-green-700 transition-colors">
+                  View Functional Prototype
+                </button>
+              </Link>
+              <Link href="/mock/homepage-post-feed/homepage/m2-functional?state=loading">
+                <button className="bg-gray-100 text-gray-700 text-sm font-medium py-2 px-4 rounded hover:bg-gray-200 transition-colors">
+                  Loading State
+                </button>
+              </Link>
+              <Link href="/mock/homepage-post-feed/homepage/m2-functional?state=empty">
+                <button className="bg-gray-100 text-gray-700 text-sm font-medium py-2 px-4 rounded hover:bg-gray-200 transition-colors">
+                  Empty State
+                </button>
+              </Link>
+              <Link href="/mock/homepage-post-feed/homepage/m2-functional?state=error">
+                <button className="bg-gray-100 text-gray-700 text-sm font-medium py-2 px-4 rounded hover:bg-gray-200 transition-colors">
+                  Error State
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Merged Concepts Section */}
         <div className="mb-12 p-6 bg-white rounded-lg border-2 border-gray-900">
           <div className="mb-6">
