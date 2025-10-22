@@ -2,8 +2,8 @@
 
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
-import { Container } from '@/components/ui/Container';
+import Button from '@/components/ui/Button';
+import Container from '@/components/ui/Container';
 
 /**
  * Variant 3: Sidebar Filter + Magazine Layout
