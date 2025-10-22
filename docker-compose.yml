@@ -1,0 +1,55 @@
+# Docker Compose for Local Development
+# Simplified stack: Next.js only (PostgreSQL via Supabase cloud/self-hosted)
+#
+# Usage:
+#   1. Create .env file: cp .env.example .env
+#   2. Edit .env with your development values
+#   3. Start: docker-compose up
+#   4. Stop: docker-compose down
+#
+# Services:
+#   - nextjs: Next.js application (port 3000)
+#
+# External Services (configured via environment variables):
+#   - PostgreSQL: Supabase (cloud or self-hosted)
+#   - Newsletter: Resend or Mailgun (API-based)
+
+version: '3.8'
+
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: marcusgoll-nextjs-dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env  # Loads environment variables from .env file
+    environment:
+      - NODE_ENV=development
+    volumes:
+      # Mount source code for hot-reload
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+    restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge
+
+# Notes:
+# - PostgreSQL is external (Supabase) - configure via DATABASE_URL in .env
+# - Newsletter service is external (Resend/Mailgun) - configure via RESEND_API_KEY or MAILGUN_API_KEY
+# - For production deployment, use docker-compose.prod.yml
