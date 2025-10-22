@@ -36,37 +36,37 @@ export async function PrevNextNav({ currentSlug }: PrevNextNavProps) {
 
   return (
     <nav
-      className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 flex justify-between gap-4"
+      className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row justify-between gap-4"
       aria-label="Post navigation"
     >
       {/* Previous post button */}
       {previousPost ? (
         <Link
           href={`/blog/${previousPost.slug}`}
-          className="flex-1 group p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+          className="flex-1 group p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition-colors min-h-[4rem]"
         >
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">← Previous</div>
-          <div className="font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          <div className="font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
             {previousPost.frontmatter.title}
           </div>
         </Link>
       ) : (
-        <div className="flex-1" /> // Spacer to maintain layout
+        <div className="flex-1 hidden sm:block" /> // Spacer to maintain layout (desktop only)
       )}
 
       {/* Next post button */}
       {nextPost ? (
         <Link
           href={`/blog/${nextPost.slug}`}
-          className="flex-1 group p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition-colors text-right"
+          className="flex-1 group p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition-colors sm:text-right min-h-[4rem]"
         >
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Next →</div>
-          <div className="font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          <div className="font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
             {nextPost.frontmatter.title}
           </div>
         </Link>
       ) : (
-        <div className="flex-1" /> // Spacer to maintain layout
+        <div className="flex-1 hidden sm:block" /> // Spacer to maintain layout (desktop only)
       )}
     </nav>
   );
