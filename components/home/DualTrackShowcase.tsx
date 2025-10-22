@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Post } from '@/lib/posts';
 import PostGrid from '@/components/blog/PostGrid';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 interface DualTrackShowcaseProps {
   aviationPosts: Post[];
