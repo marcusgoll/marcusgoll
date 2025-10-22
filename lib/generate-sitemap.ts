@@ -82,3 +82,8 @@ ${entries
  * Export for use in build scripts or API routes
  */
 export default generateSitemap;
+
+// Run sitemap generation when executed as a script
+if (require.main === module) {
+  generateSitemap();
+}
