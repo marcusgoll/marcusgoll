@@ -2,21 +2,21 @@ feature:
   slug: individual-post-page
   title: Individual Post Pages (Dynamic Routes)
   created_at: 2025-10-22T00:00:00Z
-  updated_at: 2025-10-22T00:00:00Z
+  updated_at: 2025-10-22T15:31:37Z
   branch_name: feature/003-individual-post-page
-  roadmap_status: in-progress
+  roadmap_status: shipped
 
 deployment:
   model: direct-prod
   production:
-    url: null
-    deployment_id: null
-    deployed_at: null
-    version: null
+    url: https://github.com/marcusgoll/marcusgoll
+    deployment_id: "4241ebd"
+    deployed_at: "2025-10-22T15:31:37Z"
+    version: "1.0.0"
 
 workflow:
   phase: ship
-  status: in_progress
+  status: completed
   completed_phases:
     - spec
     - plan
@@ -25,6 +25,7 @@ workflow:
     - implement
     - optimize
     - preview
+    - ship
   failed_phases: []
 
   phases:
@@ -83,9 +84,9 @@ artifacts:
   plan: specs/003-individual-post-page/plan.md
   tasks: specs/003-individual-post-page/tasks.md
   analysis: specs/003-individual-post-page/analysis.md
-  implementation: null
-  optimization: null
-  ship_summary: null
+  implementation: specs/003-individual-post-page/NOTES.md
+  optimization: specs/003-individual-post-page/optimization-report.md
+  ship_summary: specs/003-individual-post-page/ship-summary.md
 
 token_budget:
   phase: planning
