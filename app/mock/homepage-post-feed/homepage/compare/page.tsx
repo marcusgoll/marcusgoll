@@ -11,6 +11,9 @@ export default function CompareVariants() {
     { id: 2, name: 'Button Pills + Grid', short: 'Pills' },
     { id: 3, name: 'Sidebar Filter', short: 'Sidebar' },
     { id: 4, name: 'Minimal + Masonry', short: 'Masonry' },
+    { id: 5, name: 'Featured Hero + Grid', short: 'Hero' },
+    { id: 6, name: 'Tag Filter + 3-Column', short: 'Modern' },
+    { id: 7, name: 'Bento Grid + Categories', short: 'Bento' },
   ];
 
   const states = ['default', 'loading', 'empty'];
