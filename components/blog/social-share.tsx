@@ -17,16 +17,42 @@ interface SocialShareProps {
 export function SocialShare({ url, title }: SocialShareProps) {
   const [copied, setCopied] = useState(false);
 
-  // Handle clipboard copy with fallback
+  // Handle clipboard copy with fallback for older browsers (T094)
   const handleCopyLink = async () => {
+    // Modern clipboard API (preferred)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+        return;
+      } catch (error) {
+        console.error('Clipboard API failed, trying fallback:', error);
+      }
+    }
+
+    // Fallback for older browsers using document.execCommand (deprecated but widely supported)
     try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-9999px';
+      textArea.style.top = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        console.error('Fallback copy failed');
+      }
     } catch (error) {
-      // Fallback: Show error or use alternative method
-      console.error('Failed to copy to clipboard:', error);
-      // Could implement fallback with document.execCommand if needed
+      console.error('Both clipboard methods failed:', error);
     }
   };
 

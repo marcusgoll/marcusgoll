@@ -1,7 +1,20 @@
 /**
- * Individual blog post page
- * Renders MDX content with metadata and SEO optimization
- * FR-003, FR-009, US1
+ * Individual Blog Post Page
+ *
+ * Comprehensive blog post page with all enhancements from Feature 002:
+ * - US1 (FR-001): Related posts based on tag overlap algorithm
+ * - US2 (FR-002): Previous/Next chronological navigation
+ * - US3 (FR-003): BlogPosting Schema.org JSON-LD for rich snippets
+ * - US4 (FR-005): Social sharing (Twitter, LinkedIn, Copy, Web Share API)
+ * - US5 (FR-006): Table of contents with scroll spy
+ * - US6 (FR-007): Breadcrumb navigation with BreadcrumbList schema
+ *
+ * Architecture:
+ * - Server Component for data fetching and static generation
+ * - Client Components for interactive features (SocialShare, TableOfContents)
+ * - Responsive grid layout (mobile-first, desktop sidebar for TOC)
+ * - SEO optimized with metadata generation and Schema.org structured data
+ * - Accessibility compliant (WCAG 2.1 AA, ARIA labels, keyboard navigation)
  */
 
 import { notFound } from 'next/navigation';
@@ -19,6 +32,10 @@ import { TableOfContents } from '@/components/blog/table-of-contents';
 import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
 import { generateBlogPostingSchema } from '@/lib/schema';
 
+/**
+ * Props for BlogPostPage component
+ * Next.js 15+ uses Promise for params (async route resolution)
+ */
 interface BlogPostPageProps {
   params: Promise<{
     slug: string;
@@ -27,7 +44,10 @@ interface BlogPostPageProps {
 
 /**
  * Generate static params for all blog posts at build time
- * FR-003: Pre-render all posts
+ * Enables Static Site Generation (SSG) for all posts
+ * FR-003: Pre-render all posts for optimal performance
+ *
+ * @returns Array of param objects with slug for each post
  */
 export async function generateStaticParams() {
   const posts = await getAllPosts();
@@ -37,8 +57,12 @@ export async function generateStaticParams() {
 }
 
 /**
- * Generate metadata for SEO (title, description, OG tags)
- * FR-009: SEO meta tags from frontmatter
+ * Generate metadata for SEO optimization
+ * Creates title, description, Open Graph, and Twitter Card tags
+ * FR-009: SEO meta tags automatically derived from frontmatter
+ *
+ * @param params - Route params containing post slug
+ * @returns Metadata object for Next.js head generation
  */
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -74,7 +98,19 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 }
 
 /**
- * Blog post page component
+ * Blog Post Page Component
+ *
+ * Main component that renders a complete blog post with all enhancements.
+ * Server Component - fetches data at build time for static generation.
+ *
+ * Layout Structure:
+ * 1. Container with mobile TOC (collapsible) at top
+ * 2. Grid layout on desktop (article + sticky TOC sidebar)
+ * 3. Article with breadcrumbs, header, featured image, MDX content
+ * 4. Footer with prev/next navigation and related posts
+ *
+ * @param params - Route params containing post slug (Promise in Next.js 15+)
+ * @returns Rendered blog post page or 404
  */
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
@@ -87,10 +123,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const { frontmatter, content } = post;
 
-  // Generate BlogPosting schema for SEO (US3, FR-003)
+  // Generate BlogPosting JSON-LD schema for rich snippets (US3, FR-003)
   const blogPostingSchema = generateBlogPostingSchema(post);
 
-  // Generate breadcrumbs for navigation (US6, FR-007, T063)
+  // Generate breadcrumb segments for hierarchical navigation (US6, FR-007, T063)
+  // Structure: Home > Blog > [Post Title]
   const breadcrumbSegments: BreadcrumbSegment[] = [
     {
       label: 'Home',
@@ -119,15 +156,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         }}
       />
 
+      {/* Main container with responsive padding */}
       <div className="container mx-auto px-4 py-12">
-        {/* Mobile TOC - shown only on mobile devices, before content */}
+        {/* Mobile TOC - collapsible section shown only on mobile devices (< lg breakpoint)
+            Positioned before content for better UX on small screens (US5) */}
         <div className="lg:hidden mb-8">
           <TableOfContents />
         </div>
 
+        {/* Grid layout - single column on mobile, two columns on desktop
+            Desktop: article (1fr) + sticky sidebar (280px) with 12-16px gap */}
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-12 xl:gap-16">
           <article className="max-w-3xl">
-        {/* Breadcrumbs - US6 */}
+        {/* Breadcrumbs navigation - hierarchical path (Home > Blog > Post) with Schema.org (US6) */}
         <Breadcrumbs segments={breadcrumbSegments} />
 
         {/* Post header */}
@@ -153,7 +194,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           )}
         </div>
 
-        {/* Tags */}
+        {/* Tags - clickable links to tag archive pages */}
         <div className="flex flex-wrap gap-2 mb-6">
           {frontmatter.tags.map((tag) => (
             <a
@@ -166,14 +207,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           ))}
         </div>
 
-        {/* Social Share - US4 */}
+        {/* Social Share buttons - Twitter, LinkedIn, Copy Link, Web Share API (US4) */}
         <SocialShare
           url={`https://marcusgoll.com/blog/${slug}`}
           title={frontmatter.title}
         />
       </header>
 
-      {/* Featured image */}
+      {/* Featured image - responsive with 16:9 aspect ratio, priority loading */}
       {frontmatter.featuredImage && (
         <div className="mb-8 relative aspect-video">
           <Image
@@ -187,28 +228,31 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       )}
 
-      {/* MDX content */}
+      {/* MDX content - rendered with syntax highlighting and GitHub-flavored markdown
+          Uses Tailwind Typography plugin (prose) for beautiful default styling */}
       <div className="prose prose-lg dark:prose-invert max-w-none">
         <MDXRemote
           source={content}
           components={mdxComponents}
           options={{
             mdxOptions: {
-              remarkPlugins: [remarkGfm],
-              rehypePlugins: [rehypeHighlight],
+              remarkPlugins: [remarkGfm], // GitHub Flavored Markdown (tables, strikethrough, etc.)
+              rehypePlugins: [rehypeHighlight], // Syntax highlighting for code blocks
             },
           }}
         />
       </div>
 
-          {/* Previous/Next Navigation - US2 */}
+          {/* Previous/Next Navigation - chronological post navigation (US2) */}
           <PrevNextNav currentSlug={slug} />
 
-          {/* Related Posts - US1 */}
+          {/* Related Posts - 3 posts with highest tag overlap, fallback to latest (US1) */}
           <RelatedPosts currentSlug={slug} />
         </article>
 
-        {/* Table of Contents - US5 (sticky sidebar on desktop) */}
+        {/* Table of Contents - sticky sidebar on desktop (hidden on mobile < lg)
+            Auto-generates from H2/H3 headings with scroll spy for active section highlighting (US5)
+            Sticky positioning keeps it visible while scrolling, max-height with overflow for long TOCs */}
         <aside className="hidden lg:block">
           <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
             <h2 className="text-lg font-semibold mb-4">On this page</h2>
