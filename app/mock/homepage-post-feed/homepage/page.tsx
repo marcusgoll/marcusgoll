@@ -26,6 +26,24 @@ export default function HomepageVariantsIndex() {
       description: 'Compact dropdown + Pinterest-inspired masonry grid. Breaks convention.',
       approach: 'Unconventional'
     },
+    {
+      id: 5,
+      name: 'Featured Hero + Grid',
+      description: 'Large featured hero + uniform card grid + subject tags. Anthropic-inspired professional feel.',
+      approach: 'Enterprise'
+    },
+    {
+      id: 6,
+      name: 'Tag Filter + 3-Column',
+      description: 'Sticky tag filter with counts + 3-column grid + hover effects. Magic UI-inspired modern aesthetic.',
+      approach: 'Modern'
+    },
+    {
+      id: 7,
+      name: 'Bento Grid + Categories',
+      description: 'Mixed-size bento layout grouped by category. Hybrid approach with visual variety.',
+      approach: 'Hybrid'
+    },
   ];
 
   const states = ['default', 'loading', 'empty'];
@@ -41,7 +59,7 @@ export default function HomepageVariantsIndex() {
             Feature: <span className="font-semibold">Homepage with Post Feed</span>
           </p>
           <p className="text-gray-700 max-w-3xl">
-            Compare 4 design approaches for displaying blog posts with track filtering.
+            Compare 7 design approaches for displaying blog posts with track filtering.
             Each variant explores a different UX pattern. Test all states and fill out
             the critique document to select the best elements.
           </p>
@@ -62,7 +80,10 @@ export default function HomepageVariantsIndex() {
                     variant.approach === 'Conventional' ? 'bg-blue-100 text-blue-800' :
                     variant.approach === 'Balanced' ? 'bg-green-100 text-green-800' :
                     variant.approach === 'Desktop-first' ? 'bg-purple-100 text-purple-800' :
-                    'bg-orange-100 text-orange-800'
+                    variant.approach === 'Unconventional' ? 'bg-orange-100 text-orange-800' :
+                    variant.approach === 'Enterprise' ? 'bg-indigo-100 text-indigo-800' :
+                    variant.approach === 'Modern' ? 'bg-pink-100 text-pink-800' :
+                    'bg-teal-100 text-teal-800'
                   }`}>
                     {variant.approach}
                   </span>
@@ -115,7 +136,7 @@ export default function HomepageVariantsIndex() {
             Next Steps
           </h2>
           <ol className="list-decimal list-inside space-y-2 text-gray-700">
-            <li>Review all 4 variants (test default, loading, and empty states)</li>
+            <li>Review all 7 variants (test default, loading, and empty states)</li>
             <li>Consider: Which layout is most scannable? Which filter pattern is clearest? Which featured post style is most prominent?</li>
             <li>Fill out <code className="bg-gray-100 px-2 py-1 rounded text-sm">specs/003-homepage-post-feed/design/crit.md</code></li>
             <li>Mark Keep/Change/Kill decisions for each variant</li>
