@@ -14,6 +14,7 @@ import remarkGfm from 'remark-gfm';
 import Image from 'next/image';
 import { RelatedPosts } from '@/components/blog/related-posts';
 import { PrevNextNav } from '@/components/blog/prev-next-nav';
+import { SocialShare } from '@/components/blog/social-share';
 import { generateBlogPostingSchema } from '@/lib/schema';
 
 interface BlogPostPageProps {
@@ -122,7 +123,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-6">
           {frontmatter.tags.map((tag) => (
             <a
               key={tag}
@@ -133,6 +134,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </a>
           ))}
         </div>
+
+        {/* Social Share - US4 */}
+        <SocialShare
+          url={`https://marcusgoll.com/blog/${slug}`}
+          title={frontmatter.title}
+        />
       </header>
 
       {/* Featured image */}
