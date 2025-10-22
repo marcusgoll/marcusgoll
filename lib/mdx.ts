@@ -9,10 +9,10 @@
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
-import { PostFrontmatterSchema, type PostData, type PostFrontmatter, type TagData } from './mdx-types';
+import { PostFrontmatterSchema, type PostData, type PostFrontmatter, type TagData, type RelatedPost } from './mdx-types';
 
 // Re-export types for convenience
-export type { PostData, PostFrontmatter, TagData };
+export type { PostData, PostFrontmatter, TagData, RelatedPost };
 
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'posts');
 
@@ -188,4 +188,73 @@ export function searchPosts(query: string, posts: PostData[]): PostData[] {
 
     return title.includes(searchTerm) || excerpt.includes(searchTerm) || tags.includes(searchTerm);
   });
+}
+
+/**
+ * Get related posts based on tag overlap scoring
+ * Returns posts sorted by relevance (shared tag count) and date
+ * FR-001: Related posts recommendation algorithm
+ *
+ * Algorithm:
+ * 1. Get current post tags
+ * 2. Score all other posts by counting shared tags
+ * 3. Sort by score DESC, then date DESC
+ * 4. Return top N posts (default 3)
+ * 5. Fallback to latest posts if <N posts with score >0
+ *
+ * Performance: <50ms target (NFR-001)
+ * Complexity: O(n) where n = total posts
+ */
+export async function getRelatedPosts(slug: string, limit: number = 3): Promise<RelatedPost[]> {
+  // Get current post and all posts
+  const currentPost = await getPostBySlug(slug);
+  if (!currentPost) {
+    return [];
+  }
+
+  const allPosts = await getAllPosts();
+  const currentTags = currentPost.frontmatter.tags.map((tag) => tag.toLowerCase());
+
+  // Score each post by tag overlap
+  const scoredPosts: RelatedPost[] = allPosts
+    .filter((post) => post.slug !== slug) // Exclude current post
+    .map((post) => {
+      // Calculate relevance score (count of shared tags)
+      const postTags = post.frontmatter.tags.map((tag) => tag.toLowerCase());
+      const sharedTags = currentTags.filter((tag) => postTags.includes(tag));
+      const relevanceScore = sharedTags.length;
+
+      return {
+        ...post,
+        relevanceScore,
+      };
+    });
+
+  // Sort by relevance score DESC, then date DESC
+  scoredPosts.sort((a, b) => {
+    if (a.relevanceScore !== b.relevanceScore) {
+      return b.relevanceScore - a.relevanceScore;
+    }
+    // Tie-breaker: newer posts first
+    return new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime();
+  });
+
+  // Get top N posts with score > 0
+  const relatedPosts = scoredPosts.filter((post) => post.relevanceScore > 0).slice(0, limit);
+
+  // Fallback: If less than limit posts have shared tags, fill with latest posts
+  if (relatedPosts.length < limit) {
+    const remainingCount = limit - relatedPosts.length;
+    const remainingPosts = scoredPosts
+      .filter((post) => post.relevanceScore === 0) // Posts with no shared tags
+      .slice(0, remainingCount)
+      .map((post) => ({
+        ...post,
+        relevanceScore: 0, // Explicitly set to 0 for clarity
+      }));
+
+    return [...relatedPosts, ...remainingPosts];
+  }
+
+  return relatedPosts;
 }

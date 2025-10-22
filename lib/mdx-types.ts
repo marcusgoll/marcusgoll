@@ -51,6 +51,15 @@ export interface TagData {
 }
 
 /**
+ * Related post with relevance score
+ * Used for "related posts" recommendations based on tag overlap
+ * Extends PostData with additional relevanceScore field
+ */
+export interface RelatedPost extends PostData {
+  relevanceScore: number;  // Count of shared tags with current post (higher = more relevant)
+}
+
+/**
  * Validation result returned from parsing functions
  */
 export interface ValidationResult<T> {
