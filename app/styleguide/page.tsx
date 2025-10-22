@@ -29,6 +29,38 @@ type ColorItem = {
   contrast?: string;
 };
 
+type ColorSet = {
+  // Brand foundation
+  "navy-900": OKLCHColor;
+  "emerald-600": OKLCHColor;
+  "sky-blue": OKLCHColor;
+  // Background
+  "bg-dark": OKLCHColor;
+  bg: OKLCHColor;
+  "bg-light": OKLCHColor;
+  // Text
+  text: OKLCHColor;
+  "text-muted": OKLCHColor;
+  // Borders
+  highlight: OKLCHColor;
+  border: OKLCHColor;
+  "border-muted": OKLCHColor;
+  // Actions
+  primary: OKLCHColor;
+  "primary-foreground": OKLCHColor;
+  secondary: OKLCHColor;
+  "secondary-foreground": OKLCHColor;
+  // Alerts
+  danger: OKLCHColor;
+  "danger-foreground": OKLCHColor;
+  warning: OKLCHColor;
+  "warning-foreground": OKLCHColor;
+  success: OKLCHColor;
+  "success-foreground": OKLCHColor;
+  info: OKLCHColor;
+  "info-foreground": OKLCHColor;
+};
+
 type BrandTheme = {
   id: string;
   name: string;
@@ -43,37 +75,8 @@ type BrandTheme = {
     weights: number[];
     url: string;
   };
-  colors: {
-    // Brand foundation
-    "navy-900": OKLCHColor;
-    "emerald-600": OKLCHColor;
-    "sky-blue": OKLCHColor;
-    // Background (light mode)
-    "bg-dark": OKLCHColor;
-    bg: OKLCHColor;
-    "bg-light": OKLCHColor;
-    // Text (light mode)
-    text: OKLCHColor;
-    "text-muted": OKLCHColor;
-    // Borders
-    highlight: OKLCHColor;
-    border: OKLCHColor;
-    "border-muted": OKLCHColor;
-    // Actions
-    primary: OKLCHColor;
-    "primary-foreground": OKLCHColor;
-    secondary: OKLCHColor;
-    "secondary-foreground": OKLCHColor;
-    // Alerts
-    danger: OKLCHColor;
-    "danger-foreground": OKLCHColor;
-    warning: OKLCHColor;
-    "warning-foreground": OKLCHColor;
-    success: OKLCHColor;
-    "success-foreground": OKLCHColor;
-    info: OKLCHColor;
-    "info-foreground": OKLCHColor;
-  };
+  lightColors: ColorSet;
+  darkColors: ColorSet;
   radius: number; // Base radius in px
   spacing: number; // Base spacing in px
 };
@@ -173,7 +176,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 700],
       url: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Google colors
       "navy-900": { l: 0.53, c: 0.17, h: 264 },
       "emerald-600": { l: 0.62, c: 0.16, h: 145 },
@@ -204,6 +207,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.53, c: 0.17, h: 264 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Same brand colors
+      "navy-900": { l: 0.53, c: 0.17, h: 264 },
+      "emerald-600": { l: 0.62, c: 0.16, h: 145 },
+      "sky-blue": { l: 0.63, c: 0.17, h: 264 },
+      // Background - Dark surfaces
+      "bg-dark": { l: 0.15, c: 0, h: 0 },
+      bg: { l: 0.20, c: 0, h: 0 },
+      "bg-light": { l: 0.25, c: 0, h: 0 },
+      // Text - Light on dark
+      text: { l: 0.97, c: 0, h: 0 },
+      "text-muted": { l: 0.70, c: 0, h: 0 },
+      // Borders
+      highlight: { l: 0.63, c: 0.17, h: 264 },
+      border: { l: 0.35, c: 0, h: 0 },
+      "border-muted": { l: 0.25, c: 0, h: 0 },
+      // Actions - Lighter blue for visibility
+      primary: { l: 0.63, c: 0.17, h: 264 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.72, c: 0.16, h: 145 },
+      "secondary-foreground": { l: 0.15, c: 0, h: 0 },
+      // Alerts - Lighter for contrast
+      danger: { l: 0.64, c: 0.22, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.85, c: 0.14, h: 85 },
+      "warning-foreground": { l: 0.15, c: 0, h: 0 },
+      success: { l: 0.72, c: 0.16, h: 145 },
+      "success-foreground": { l: 0.15, c: 0, h: 0 },
+      info: { l: 0.63, c: 0.17, h: 264 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 8,
     spacing: 8,
   },
@@ -221,7 +255,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 700],
       url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Warm palette
       "navy-900": { l: 0.25, c: 0.05, h: 240 },
       "emerald-600": { l: 0.65, c: 0.18, h: 25 },
@@ -252,6 +286,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.6, c: 0.14, h: 220 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Warm palette
+      "navy-900": { l: 0.35, c: 0.05, h: 240 },
+      "emerald-600": { l: 0.75, c: 0.18, h: 25 },
+      "sky-blue": { l: 0.80, c: 0.15, h: 25 },
+      // Background - Dark warm tones
+      "bg-dark": { l: 0.16, c: 0.01, h: 40 },
+      bg: { l: 0.21, c: 0.01, h: 40 },
+      "bg-light": { l: 0.26, c: 0.01, h: 40 },
+      // Text - Light on dark
+      text: { l: 0.98, c: 0.01, h: 40 },
+      "text-muted": { l: 0.68, c: 0.02, h: 40 },
+      // Borders
+      highlight: { l: 0.75, c: 0.18, h: 25 },
+      border: { l: 0.36, c: 0.01, h: 40 },
+      "border-muted": { l: 0.26, c: 0.01, h: 40 },
+      // Actions - Brighter orange for dark mode
+      primary: { l: 0.75, c: 0.18, h: 25 },
+      "primary-foreground": { l: 0.16, c: 0, h: 0 },
+      secondary: { l: 0.45, c: 0.05, h: 240 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts - Lighter for visibility
+      danger: { l: 0.65, c: 0.22, h: 25 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.82, c: 0.15, h: 70 },
+      "warning-foreground": { l: 0.16, c: 0, h: 0 },
+      success: { l: 0.70, c: 0.15, h: 145 },
+      "success-foreground": { l: 0.16, c: 0, h: 0 },
+      info: { l: 0.70, c: 0.14, h: 220 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 12,
     spacing: 8,
   },
@@ -269,7 +334,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 700],
       url: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Bold fintech
       "navy-900": { l: 0.15, c: 0, h: 0 },
       "emerald-600": { l: 0.65, c: 0.2, h: 145 },
@@ -300,6 +365,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.6, c: 0.15, h: 240 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Bold fintech
+      "navy-900": { l: 0.25, c: 0, h: 0 },
+      "emerald-600": { l: 0.75, c: 0.2, h: 145 },
+      "sky-blue": { l: 0.75, c: 0.2, h: 145 },
+      // Background - Dark high contrast
+      "bg-dark": { l: 0.12, c: 0, h: 0 },
+      bg: { l: 0.17, c: 0, h: 0 },
+      "bg-light": { l: 0.22, c: 0, h: 0 },
+      // Text - High contrast white
+      text: { l: 1, c: 0, h: 0 },
+      "text-muted": { l: 0.65, c: 0, h: 0 },
+      // Borders - Sharp visible
+      highlight: { l: 0.75, c: 0.2, h: 145 },
+      border: { l: 0.32, c: 0, h: 0 },
+      "border-muted": { l: 0.22, c: 0, h: 0 },
+      // Actions - Bright green
+      primary: { l: 0.75, c: 0.2, h: 145 },
+      "primary-foreground": { l: 0.12, c: 0, h: 0 },
+      secondary: { l: 0.85, c: 0, h: 0 },
+      "secondary-foreground": { l: 0.12, c: 0, h: 0 },
+      // Alerts - High visibility
+      danger: { l: 0.68, c: 0.26, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.85, c: 0.16, h: 80 },
+      "warning-foreground": { l: 0.12, c: 0, h: 0 },
+      success: { l: 0.75, c: 0.2, h: 145 },
+      "success-foreground": { l: 0.12, c: 0, h: 0 },
+      info: { l: 0.70, c: 0.15, h: 240 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 4,
     spacing: 6,
   },
@@ -317,7 +413,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 700],
       url: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Warm coral
       "navy-900": { l: 0.45, c: 0.02, h: 0 },
       "emerald-600": { l: 0.62, c: 0.2, h: 12 },
@@ -348,6 +444,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.65, c: 0.12, h: 220 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Warm coral
+      "navy-900": { l: 0.55, c: 0.02, h: 0 },
+      "emerald-600": { l: 0.72, c: 0.2, h: 12 },
+      "sky-blue": { l: 0.72, c: 0.2, h: 12 },
+      // Background - Dark warm
+      "bg-dark": { l: 0.17, c: 0.005, h: 20 },
+      bg: { l: 0.22, c: 0.005, h: 20 },
+      "bg-light": { l: 0.27, c: 0.005, h: 20 },
+      // Text - Warm white
+      text: { l: 0.98, c: 0.01, h: 20 },
+      "text-muted": { l: 0.68, c: 0.01, h: 20 },
+      // Borders
+      highlight: { l: 0.72, c: 0.2, h: 12 },
+      border: { l: 0.37, c: 0.005, h: 20 },
+      "border-muted": { l: 0.27, c: 0.005, h: 20 },
+      // Actions - Brighter coral
+      primary: { l: 0.72, c: 0.2, h: 12 },
+      "primary-foreground": { l: 0.17, c: 0, h: 0 },
+      secondary: { l: 0.65, c: 0.02, h: 0 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.67, c: 0.24, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.83, c: 0.15, h: 75 },
+      "warning-foreground": { l: 0.17, c: 0, h: 0 },
+      success: { l: 0.70, c: 0.15, h: 150 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.73, c: 0.12, h: 220 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 10,
     spacing: 8,
   },
@@ -365,7 +492,38 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 700],
       url: "",
     },
-    colors: DEFAULT_TOKENS.colors,
+    lightColors: DEFAULT_TOKENS.colors,
+    darkColors: {
+      // Brand foundation
+      "navy-900": { l: 0.205, c: 0.043, h: 264.052 },
+      "emerald-600": { l: 0.617, c: 0.153, h: 166.108 },
+      "sky-blue": { l: 0.699, c: 0.126, h: 232.661 },
+      // Background - Dark mode (from globals.css)
+      "bg-dark": { l: 0.145, c: 0, h: 0 },
+      bg: { l: 0.205, c: 0, h: 0 },
+      "bg-light": { l: 0.269, c: 0, h: 0 },
+      // Text - Dark mode
+      text: { l: 0.985, c: 0, h: 0 },
+      "text-muted": { l: 0.708, c: 0, h: 0 },
+      // Borders - Dark mode
+      highlight: { l: 0.617, c: 0.153, h: 166.108 },
+      border: { l: 1, c: 0, h: 0 }, // Will use opacity in CSS
+      "border-muted": { l: 1, c: 0, h: 0 }, // Will use opacity in CSS
+      // Actions - Dark mode
+      primary: { l: 0.699, c: 0.126, h: 232.661 },
+      "primary-foreground": { l: 0.985, c: 0, h: 0 },
+      secondary: { l: 0.617, c: 0.153, h: 166.108 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts - Dark mode
+      danger: { l: 0.704, c: 0.191, h: 22.216 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.82, c: 0.155, h: 85 },
+      "warning-foreground": { l: 0.145, c: 0, h: 0 },
+      success: { l: 0.67, c: 0.153, h: 166.108 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.75, c: 0.126, h: 232.661 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: DEFAULT_TOKENS.radius,
     spacing: DEFAULT_TOKENS.spacing,
   },
@@ -383,7 +541,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 600, 700],
       url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Stripe colors
       "navy-900": { l: 0.15, c: 0.05, h: 240 },
       "emerald-600": { l: 0.45, c: 0.18, h: 270 },
@@ -414,6 +572,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.65, c: 0.15, h: 200 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Stripe colors
+      "navy-900": { l: 0.25, c: 0.05, h: 240 },
+      "emerald-600": { l: 0.58, c: 0.18, h: 270 },
+      "sky-blue": { l: 0.75, c: 0.15, h: 200 },
+      // Background - Dark professional
+      "bg-dark": { l: 0.14, c: 0, h: 0 },
+      bg: { l: 0.19, c: 0, h: 0 },
+      "bg-light": { l: 0.24, c: 0, h: 0 },
+      // Text - Clean white
+      text: { l: 0.98, c: 0, h: 0 },
+      "text-muted": { l: 0.68, c: 0, h: 0 },
+      // Borders
+      highlight: { l: 0.58, c: 0.18, h: 270 },
+      border: { l: 0.34, c: 0, h: 0 },
+      "border-muted": { l: 0.24, c: 0, h: 0 },
+      // Actions - Brighter Stripe purple
+      primary: { l: 0.58, c: 0.18, h: 270 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.45, c: 0.05, h: 240 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.66, c: 0.24, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.84, c: 0.15, h: 80 },
+      "warning-foreground": { l: 0.14, c: 0, h: 0 },
+      success: { l: 0.72, c: 0.16, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.75, c: 0.15, h: 200 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 8,
     spacing: 8,
   },
@@ -431,7 +620,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 600, 700],
       url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Notion neutrals
       "navy-900": { l: 0.22, c: 0.01, h: 30 },
       "emerald-600": { l: 0.6, c: 0.14, h: 150 },
@@ -462,6 +651,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.68, c: 0.12, h: 230 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Notion neutrals
+      "navy-900": { l: 0.85, c: 0.01, h: 30 },
+      "emerald-600": { l: 0.70, c: 0.14, h: 150 },
+      "sky-blue": { l: 0.78, c: 0.12, h: 230 },
+      // Background - Dark warm
+      "bg-dark": { l: 0.16, c: 0.01, h: 30 },
+      bg: { l: 0.21, c: 0.01, h: 30 },
+      "bg-light": { l: 0.26, c: 0.01, h: 30 },
+      // Text - Warm light
+      text: { l: 0.96, c: 0.01, h: 40 },
+      "text-muted": { l: 0.68, c: 0.01, h: 40 },
+      // Borders - Subtle dark
+      highlight: { l: 0.85, c: 0.01, h: 30 },
+      border: { l: 0.36, c: 0.01, h: 30 },
+      "border-muted": { l: 0.26, c: 0.01, h: 30 },
+      // Actions - Light primary
+      primary: { l: 0.85, c: 0.01, h: 30 },
+      "primary-foreground": { l: 0.16, c: 0.01, h: 30 },
+      secondary: { l: 0.70, c: 0.14, h: 150 },
+      "secondary-foreground": { l: 0.16, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.66, c: 0.22, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.83, c: 0.14, h: 75 },
+      "warning-foreground": { l: 0.16, c: 0, h: 0 },
+      success: { l: 0.70, c: 0.14, h: 150 },
+      "success-foreground": { l: 0.16, c: 0, h: 0 },
+      info: { l: 0.78, c: 0.12, h: 230 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 6,
     spacing: 8,
   },
@@ -479,7 +699,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 600, 700],
       url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Linear purple/gray
       "navy-900": { l: 0.18, c: 0.02, h: 240 },
       "emerald-600": { l: 0.48, c: 0.15, h: 270 },
@@ -510,6 +730,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.48, c: 0.15, h: 270 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Linear purple/gray
+      "navy-900": { l: 0.88, c: 0.02, h: 240 },
+      "emerald-600": { l: 0.60, c: 0.15, h: 270 },
+      "sky-blue": { l: 0.60, c: 0.15, h: 270 },
+      // Background - Dark sleek
+      "bg-dark": { l: 0.14, c: 0, h: 0 },
+      bg: { l: 0.18, c: 0, h: 0 },
+      "bg-light": { l: 0.23, c: 0, h: 0 },
+      // Text - Clean white
+      text: { l: 0.98, c: 0, h: 0 },
+      "text-muted": { l: 0.68, c: 0.01, h: 240 },
+      // Borders - Minimal visible
+      highlight: { l: 0.60, c: 0.15, h: 270 },
+      border: { l: 0.33, c: 0, h: 0 },
+      "border-muted": { l: 0.23, c: 0, h: 0 },
+      // Actions - Bright Linear purple
+      primary: { l: 0.60, c: 0.15, h: 270 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.72, c: 0.01, h: 240 },
+      "secondary-foreground": { l: 0.14, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.66, c: 0.24, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.84, c: 0.14, h: 80 },
+      "warning-foreground": { l: 0.14, c: 0, h: 0 },
+      success: { l: 0.70, c: 0.15, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.60, c: 0.15, h: 270 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 4,
     spacing: 6,
   },
@@ -527,7 +778,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 600, 700],
       url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Figma multicolor
       "navy-900": { l: 0.2, c: 0.04, h: 240 },
       "emerald-600": { l: 0.52, c: 0.18, h: 210 },
@@ -558,6 +809,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.52, c: 0.18, h: 210 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - Figma multicolor
+      "navy-900": { l: 0.88, c: 0.04, h: 240 },
+      "emerald-600": { l: 0.64, c: 0.18, h: 210 },
+      "sky-blue": { l: 0.64, c: 0.18, h: 210 },
+      // Background - Dark canvas
+      "bg-dark": { l: 0.15, c: 0, h: 0 },
+      bg: { l: 0.20, c: 0, h: 0 },
+      "bg-light": { l: 0.25, c: 0, h: 0 },
+      // Text - Clean white
+      text: { l: 0.98, c: 0, h: 0 },
+      "text-muted": { l: 0.70, c: 0, h: 0 },
+      // Borders
+      highlight: { l: 0.64, c: 0.18, h: 210 },
+      border: { l: 0.35, c: 0, h: 0 },
+      "border-muted": { l: 0.25, c: 0, h: 0 },
+      // Actions - Bright Figma blue
+      primary: { l: 0.64, c: 0.18, h: 210 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.68, c: 0.22, h: 15 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.68, c: 0.22, h: 15 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.84, c: 0.15, h: 75 },
+      "warning-foreground": { l: 0.15, c: 0, h: 0 },
+      success: { l: 0.70, c: 0.15, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.64, c: 0.18, h: 210 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 10,
     spacing: 8,
   },
@@ -575,7 +857,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 600, 700],
       url: "",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - GitHub palette
       "navy-900": { l: 0.16, c: 0.01, h: 240 },
       "emerald-600": { l: 0.52, c: 0.18, h: 145 },
@@ -606,6 +888,37 @@ const PRESET_THEMES: BrandTheme[] = [
       info: { l: 0.62, c: 0.16, h: 230 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
+    darkColors: {
+      // Brand foundation - GitHub dark palette
+      "navy-900": { l: 0.86, c: 0.01, h: 240 },
+      "emerald-600": { l: 0.62, c: 0.18, h: 145 },
+      "sky-blue": { l: 0.72, c: 0.16, h: 230 },
+      // Background - GitHub dark
+      "bg-dark": { l: 0.13, c: 0, h: 0 },
+      bg: { l: 0.16, c: 0, h: 0 },
+      "bg-light": { l: 0.19, c: 0, h: 0 },
+      // Text - Clean white
+      text: { l: 0.98, c: 0, h: 0 },
+      "text-muted": { l: 0.66, c: 0.01, h: 240 },
+      // Borders - Subtle
+      highlight: { l: 0.62, c: 0.18, h: 145 },
+      border: { l: 0.29, c: 0, h: 0 },
+      "border-muted": { l: 0.19, c: 0, h: 0 },
+      // Actions - GitHub green
+      primary: { l: 0.86, c: 0.01, h: 240 },
+      "primary-foreground": { l: 0.13, c: 0, h: 0 },
+      secondary: { l: 0.62, c: 0.18, h: 145 },
+      "secondary-foreground": { l: 0.13, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.67, c: 0.24, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.83, c: 0.15, h: 75 },
+      "warning-foreground": { l: 0.13, c: 0, h: 0 },
+      success: { l: 0.62, c: 0.18, h: 145 },
+      "success-foreground": { l: 0.13, c: 0, h: 0 },
+      info: { l: 0.72, c: 0.16, h: 230 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
     radius: 6,
     spacing: 6,
   },
@@ -623,7 +936,7 @@ const PRESET_THEMES: BrandTheme[] = [
       weights: [400, 500, 600, 700],
       url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     },
-    colors: {
+    lightColors: {
       // Brand foundation - Vercel black/white
       "navy-900": { l: 0, c: 0, h: 0 },
       "emerald-600": { l: 0.5, c: 0.18, h: 220 },
@@ -652,6 +965,37 @@ const PRESET_THEMES: BrandTheme[] = [
       success: { l: 0.6, c: 0.16, h: 145 },
       "success-foreground": { l: 1, c: 0, h: 0 },
       info: { l: 0.5, c: 0.18, h: 220 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
+    darkColors: {
+      // Brand foundation - Vercel dark
+      "navy-900": { l: 1, c: 0, h: 0 },
+      "emerald-600": { l: 0.62, c: 0.18, h: 220 },
+      "sky-blue": { l: 0.62, c: 0.18, h: 220 },
+      // Background - Pure black
+      "bg-dark": { l: 0.10, c: 0, h: 0 },
+      bg: { l: 0, c: 0, h: 0 },
+      "bg-light": { l: 0.15, c: 0, h: 0 },
+      // Text - Pure white
+      text: { l: 1, c: 0, h: 0 },
+      "text-muted": { l: 0.60, c: 0, h: 0 },
+      // Borders - Minimal visible
+      highlight: { l: 1, c: 0, h: 0 },
+      border: { l: 0.25, c: 0, h: 0 },
+      "border-muted": { l: 0.15, c: 0, h: 0 },
+      // Actions - Pure white
+      primary: { l: 1, c: 0, h: 0 },
+      "primary-foreground": { l: 0, c: 0, h: 0 },
+      secondary: { l: 0.60, c: 0, h: 0 },
+      "secondary-foreground": { l: 0, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.68, c: 0.26, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.85, c: 0.16, h: 80 },
+      "warning-foreground": { l: 0, c: 0, h: 0 },
+      success: { l: 0.72, c: 0.16, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.62, c: 0.18, h: 220 },
       "info-foreground": { l: 1, c: 0, h: 0 },
     },
     radius: 4,
@@ -864,19 +1208,35 @@ const loadGoogleFont = (fontFamily: string, weights: number[], url: string) => {
 };
 
 const applyTheme = (theme: BrandTheme) => {
-  const root = document.documentElement;
+  // Remove existing theme style tag if present
+  const existingStyle = document.getElementById("preset-theme-styles");
+  if (existingStyle) {
+    existingStyle.remove();
+  }
 
-  // Apply colors
-  Object.entries(theme.colors).forEach(([key, value]) => {
+  // Build CSS for light mode (:root)
+  let lightCss = ":root {\n";
+  Object.entries(theme.lightColors).forEach(([key, value]) => {
     const oklchValue = `oklch(${value.l} ${value.c} ${value.h})`;
-    root.style.setProperty(`--${key}`, oklchValue);
+    lightCss += `  --${key}: ${oklchValue};\n`;
   });
+  lightCss += `  --radius: ${theme.radius}px;\n`;
+  lightCss += `  --spacing-base: ${theme.spacing}px;\n`;
+  lightCss += "}\n\n";
 
-  // Apply radius
-  root.style.setProperty("--radius", `${theme.radius}px`);
+  // Build CSS for dark mode (.dark)
+  let darkCss = ".dark {\n";
+  Object.entries(theme.darkColors).forEach(([key, value]) => {
+    const oklchValue = `oklch(${value.l} ${value.c} ${value.h})`;
+    darkCss += `  --${key}: ${oklchValue};\n`;
+  });
+  darkCss += "}\n";
 
-  // Apply spacing
-  root.style.setProperty("--spacing-base", `${theme.spacing}px`);
+  // Create and inject style tag
+  const styleTag = document.createElement("style");
+  styleTag.id = "preset-theme-styles";
+  styleTag.textContent = lightCss + darkCss;
+  document.head.appendChild(styleTag);
 
   // Load font
   loadGoogleFont(theme.fonts.family, theme.fonts.weights, theme.fonts.url);
