@@ -61,6 +61,86 @@ Next.js dev server caches compiled code in `.next/` directory. When files are re
 
 ---
 
+### ERR-002: Tailwind CSS Not Rendering (v3 vs v4 Mismatch)
+
+**Error ID**: ERR-002
+**Phase**: Testing (Preview)
+**Date**: 2025-10-22 10:00
+**Component**: frontend/css-configuration
+**Severity**: High (blocked visual testing)
+
+**Description**:
+Tailwind CSS styles were not rendering in the browser. The page loaded successfully but had no styling applied - only unstyled HTML elements were visible.
+
+Visual inspection showed:
+- No color utilities applied
+- No spacing/padding visible
+- No responsive grid layouts
+- Plain browser default styles only
+
+**Root Cause**:
+Project is using **Tailwind CSS v4.1.15**, but configuration files still had v3 syntax:
+
+1. `app/globals.css` had v3 directives:
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
+
+2. `tailwind.config.ts` missing `content` directory:
+   - Content paths didn't include `./content/**/*.mdx`
+   - Tailwind wasn't scanning MDX files for utility classes
+
+In Tailwind v4, the syntax changed:
+- Use `@import "tailwindcss";` instead of `@tailwind` directives
+- Configuration is simpler but content paths still required
+
+**Resolution**:
+1. Updated `app/globals.css` to Tailwind v4 syntax:
+   ```diff
+   - @tailwind base;
+   - @tailwind components;
+   - @tailwind utilities;
+   + @import "tailwindcss";
+   ```
+
+2. Updated `tailwind.config.ts` to include content directory:
+   ```diff
+   content: [
+     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+     "./components/**/*.{js,ts,jsx,tsx,mdx}",
+     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+   +  "./content/**/*.{md,mdx}",
+   ],
+   ```
+
+3. Restarted dev server with clean cache
+4. Verified Tailwind classes rendering in HTML
+
+**Prevention**:
+- When upgrading Tailwind major versions, check migration guide
+- Update all configuration files for new syntax
+- Always include all content directories where utility classes are used
+- Test visual rendering after CSS framework upgrades
+- Document CSS framework version in project README
+
+**Related**:
+- Package: tailwindcss@4.1.15, @tailwindcss/postcss@4.1.15
+- Docs: https://tailwindcss.com/docs/upgrade-guide#migrating-to-v4
+- Code: app/globals.css:1-3, tailwind.config.ts:4-8
+- Resolution commits: [pending]
+
+**Verification**:
+- ✅ Tailwind utility classes visible in HTML source
+- ✅ Color utilities rendering (text-blue-600, bg-gray-100, etc.)
+- ✅ Spacing utilities working (px-4, py-2, gap-2, etc.)
+- ✅ Responsive utilities applying (lg:grid, md:flex, etc.)
+- ✅ Dark mode variants rendering (dark:bg-gray-800, etc.)
+- ✅ Hover states working (hover:bg-gray-200, etc.)
+
+---
+
 ## Deployment Phase (Phase 6-7)
 [Populated during staging validation and production deployment]
 
