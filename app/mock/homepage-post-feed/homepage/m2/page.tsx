@@ -22,11 +22,12 @@ export default function MergedConcept2() {
   const state = searchParams?.get('state') || 'default';
 
   const posts = [
-    { id: 1, title: 'Systematic Thinking in Aviation Safety', track: 'Aviation', excerpt: 'How commercial aviation applies systematic principles to prevent failures. Lessons from decades of incident analysis.', date: 'Oct 15, 2025', featured: true, hasImage: true },
-    { id: 2, title: 'Scalable Architecture Patterns', track: 'Dev/Startup', excerpt: 'Building systems that scale from prototype to production.', date: 'Oct 14, 2025', featured: false, hasImage: false },
-    { id: 3, title: 'Human Factors in Cockpit Design', track: 'Cross-pollination', excerpt: 'What aviation human factors research teaches us about interface design.', date: 'Oct 13, 2025', featured: false, hasImage: true },
-    { id: 4, title: 'Pre-flight Checklist Philosophy', track: 'Aviation', excerpt: 'The cognitive science behind effective checklists.', date: 'Oct 12, 2025', featured: false, hasImage: false },
-    { id: 5, title: 'Startup Velocity vs Safety', track: 'Dev/Startup', excerpt: 'How to move fast without breaking critical systems.', date: 'Oct 11, 2025', featured: false, hasImage: true },
+    { id: 1, title: 'Systematic Thinking in Aviation Safety', track: 'Aviation', excerpt: 'How commercial aviation applies systematic principles to prevent failures. Lessons from decades of incident analysis and crew resource management.', date: 'Oct 15, 2025', featured: true, hasImage: true, size: 'large' },
+    { id: 2, title: 'Scalable Architecture Patterns', track: 'Dev/Startup', excerpt: 'Building systems that scale from prototype to production. Real-world patterns from 0 to 100k users.', date: 'Oct 14, 2025', featured: false, hasImage: false, size: 'small' },
+    { id: 3, title: 'Human Factors in Cockpit Design', track: 'Cross-pollination', excerpt: 'What aviation human factors research teaches us about interface design and error prevention in software systems.', date: 'Oct 13, 2025', featured: false, hasImage: true, size: 'medium' },
+    { id: 4, title: 'Pre-flight Checklist Philosophy', track: 'Aviation', excerpt: 'The cognitive science behind effective checklists and how to apply it to code reviews.', date: 'Oct 12, 2025', featured: false, hasImage: false, size: 'small' },
+    { id: 5, title: 'Startup Velocity vs Safety', track: 'Dev/Startup', excerpt: 'How to move fast without breaking critical systems. Lessons from aviation applied to startup engineering culture.', date: 'Oct 11, 2025', featured: false, hasImage: true, size: 'medium' },
+    { id: 6, title: 'Decision Making Under Pressure', track: 'Cross-pollination', excerpt: 'Emergency decision frameworks from aviation applied to production incidents and crisis management.', date: 'Oct 10, 2025', featured: false, hasImage: true, size: 'medium' },
   ];
 
   const filteredPosts = track === 'all' ? posts : posts.filter(p => p.track.toLowerCase().includes(track));
@@ -144,38 +145,52 @@ export default function MergedConcept2() {
                 </article>
               )}
 
-              {/* 3-Column Grid with Hover (from v6) */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {regularPosts.map((post) => (
-                  <article
-                    key={post.id}
-                    className="group cursor-pointer border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    {post.hasImage ? (
-                      <div className="aspect-video bg-gray-200 overflow-hidden">
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm transform transition-transform duration-300 group-hover:scale-105">
-                          Featured Image
+              {/* Magazine Masonry Grid */}
+              <div className="columns-1 md:columns-2 gap-6 space-y-6">
+                {regularPosts.map((post) => {
+                  const isLarge = post.size === 'large';
+                  const isMedium = post.size === 'medium';
+
+                  return (
+                    <article
+                      key={post.id}
+                      className="break-inside-avoid group cursor-pointer border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all"
+                    >
+                      {post.hasImage && (
+                        <div className={`bg-gray-200 overflow-hidden ${
+                          isLarge ? 'aspect-[4/3]' :
+                          isMedium ? 'aspect-video' :
+                          'aspect-square'
+                        }`}>
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm transform transition-transform duration-300 group-hover:scale-105">
+                            {isLarge ? 'Large' : isMedium ? 'Medium' : 'Small'}
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="h-3 bg-gray-100"></div>
-                    )}
-                    <div className="p-5">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:underline decoration-2 underline-offset-4 transition-all">
-                        {post.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                        {post.excerpt}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500">{post.date}</span>
-                        <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded">
+                      )}
+                      <div className="p-5">
+                        <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded mb-3">
                           {post.track}
                         </span>
+                        <h3 className={`font-bold text-gray-900 mb-2 group-hover:underline decoration-2 underline-offset-4 transition-all ${
+                          isLarge ? 'text-2xl' :
+                          isMedium ? 'text-lg' :
+                          'text-base'
+                        }`}>
+                          {post.title}
+                        </h3>
+                        <p className={`text-gray-600 mb-3 ${
+                          isLarge ? 'text-base' : 'text-sm'
+                        }`}>
+                          {post.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>{post.date}</span>
+                          <span className="font-medium text-gray-900">Read →</span>
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </main>
           </div>
