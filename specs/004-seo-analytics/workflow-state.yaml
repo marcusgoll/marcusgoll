@@ -1,0 +1,95 @@
+feature:
+  slug: seo-analytics
+  title: SEO & Analytics Infrastructure
+  created_at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  updated_at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+  branch_name: feature/004-seo-analytics
+  roadmap_status: in-progress
+  github_issue: 35
+
+deployment:
+  model: direct-prod
+  production:
+    url: ""
+    deployment_id: ""
+    deployed_at: ""
+    version: ""
+
+workflow:
+  phase: spec
+  status: in_progress
+  completed_phases: []
+  failed_phases: []
+  
+  phases:
+    spec:
+      status: not_started
+      summary: ""
+    clarify:
+      status: not_started
+      summary: ""
+    plan:
+      status: not_started
+      summary: ""
+    tasks:
+      status: not_started
+      summary: ""
+    validate:
+      status: not_started
+      summary: ""
+    implement:
+      status: not_started
+      summary: ""
+      stats:
+        completed: 0
+        total: 0
+        files_changed: 0
+        commits: 0
+    optimize:
+      status: not_started
+      summary: ""
+      checks:
+        build: not_run
+        security: not_run
+        accessibility: not_run
+        performance: not_run
+        code_review: not_run
+      issues:
+        critical: 0
+        high: 0
+        medium: 0
+        low: 0
+
+quality_gates:
+  pre_flight:
+    status: pending
+    checks: []
+  code_review:
+    status: pending
+    critical_issues: 0
+  rollback_capability:
+    status: pending
+    tested: false
+
+manual_gates:
+  preview:
+    status: pending
+    approved: false
+  validate_staging:
+    status: pending
+    approved: false
+
+artifacts:
+  spec: ""
+  plan: ""
+  tasks: ""
+  analysis: ""
+  implementation: ""
+  optimization: ""
+  ship_summary: ""
+
+token_budget:
+  phase: planning
+  limit: 75000
+  used: 0
+  compaction_needed: false
