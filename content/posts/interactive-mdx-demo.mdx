@@ -1,0 +1,103 @@
+---
+title: "Interactive MDX Demo: React Components in Content"
+slug: "interactive-mdx-demo"
+date: "2025-10-21T14:00:00Z"
+excerpt: "Explore the power of MDX by testing interactive React components embedded directly in blog content. See state management, custom components, and more."
+author: "Marcus Gollahon"
+tags: ["dev", "mdx", "react", "tutorial"]
+draft: false
+---
+
+# Interactive MDX Demo
+
+One of the most powerful features of MDX is the ability to embed **interactive React components** directly in your content. Let's explore what's possible!
+
+## Try It Yourself
+
+<Demo
+  initialValue="Hello, MDX!"
+  description="Edit the text below and click the button to see React state management in action."
+/>
+
+## Custom Components
+
+### Callouts
+
+Use callouts to highlight important information:
+
+<Callout type="info" title="Information">
+  This is an informational callout. Perfect for tips and helpful notes.
+</Callout>
+
+<Callout type="warning" title="Warning">
+  This is a warning callout. Use it to alert readers about potential issues.
+</Callout>
+
+<Callout type="error" title="Error">
+  This is an error callout. Highlight critical information or breaking changes.
+</Callout>
+
+<Callout type="success" title="Success">
+  This is a success callout. Celebrate achievements and positive outcomes!
+</Callout>
+
+### Enhanced Code Blocks
+
+<CodeBlock language="javascript" filename="example.js" showLineNumbers>
+// Enhanced code block with copy button and line numbers
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet("World"));
+</CodeBlock>
+
+Features:
+- Copy to clipboard button
+- Syntax highlighting
+- Language and filename display
+- Optional line numbers
+
+## Markdown Features
+
+### Standard Markdown
+
+All standard Markdown features work:
+
+- **Bold text**
+- *Italic text*
+- `Inline code`
+- [Links](https://nextjs.org)
+
+### GitHub Flavored Markdown
+
+Tables work great:
+
+| Component | Purpose | Interactive |
+|-----------|---------|-------------|
+| Callout | Highlight info | No |
+| CodeBlock | Show code | Yes (copy) |
+| Demo | Example | Yes (full) |
+
+Strikethrough text: ~~This is incorrect~~
+
+### Lists
+
+Numbered lists:
+1. First item
+2. Second item
+3. Third item
+
+Task lists:
+- [x] Setup MDX
+- [x] Create components
+- [x] Write demo post
+- [ ] Add more examples
+
+## Conclusion
+
+MDX opens up endless possibilities for creating rich, interactive content. From simple callouts to fully interactive demos, you can now build engaging experiences directly in your blog posts.
+
+<Callout type="success" title="Ready to start?">
+  Check out our documentation to learn how to create your own MDX posts with custom components.
+</Callout>

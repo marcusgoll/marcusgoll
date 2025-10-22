@@ -128,6 +128,12 @@ Migrate from Ghost CMS (current headless CMS) to local MDX-based content managem
 - ✅ T041: Add tag cloud to blog index page (app/blog/page.tsx) with post counts and clickable links
 - ✅ T042: Search functionality (implemented in lib/mdx.ts searchPosts function)
 
+**Batch 8: Polish, Migration, and Deployment - COMPLETE**
+- ✅ T050: Create Ghost to MDX migration script (scripts/migrate-ghost-to-mdx.ts) with dry-run mode and image downloads
+- ✅ T051: Add feature flag routing middleware (middleware.ts) for Ghost/MDX toggle during transition
+- ✅ T052: Create sample MDX posts for testing (content/posts/welcome-to-mdx.mdx, interactive-mdx-demo.mdx)
+- ✅ T053: Update homepage to fetch latest posts from MDX (app/page.tsx) with latest 5 posts display
+
 ## Last Updated
 
 2025-10-21T22:48:00Z
