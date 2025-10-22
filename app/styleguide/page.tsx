@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import Container from "@/components/ui/Container";
 
 // ============================================================================
@@ -368,6 +368,294 @@ const PRESET_THEMES: BrandTheme[] = [
     colors: DEFAULT_TOKENS.colors,
     radius: DEFAULT_TOKENS.radius,
     spacing: DEFAULT_TOKENS.spacing,
+  },
+  {
+    id: "stripe-payment",
+    name: "Stripe Payment",
+    description: "Professional, trustworthy fintech",
+    preview: {
+      primary: "#635BFF",
+      secondary: "#0A2540",
+      accent: "#00D4FF",
+    },
+    fonts: {
+      family: "Inter",
+      weights: [400, 500, 600, 700],
+      url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+    },
+    colors: {
+      // Brand foundation - Stripe colors
+      "navy-900": { l: 0.15, c: 0.05, h: 240 },
+      "emerald-600": { l: 0.45, c: 0.18, h: 270 },
+      "sky-blue": { l: 0.65, c: 0.15, h: 200 },
+      // Background - Clean professional
+      "bg-dark": { l: 0.98, c: 0, h: 0 },
+      bg: { l: 1, c: 0, h: 0 },
+      "bg-light": { l: 0.99, c: 0, h: 0 },
+      // Text
+      text: { l: 0.15, c: 0, h: 0 },
+      "text-muted": { l: 0.48, c: 0, h: 0 },
+      // Borders
+      highlight: { l: 0.45, c: 0.18, h: 270 },
+      border: { l: 0.92, c: 0, h: 0 },
+      "border-muted": { l: 0.96, c: 0, h: 0 },
+      // Actions - Stripe purple
+      primary: { l: 0.45, c: 0.18, h: 270 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.15, c: 0.05, h: 240 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.55, c: 0.24, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.78, c: 0.15, h: 80 },
+      "warning-foreground": { l: 0.15, c: 0, h: 0 },
+      success: { l: 0.62, c: 0.16, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.65, c: 0.15, h: 200 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
+    radius: 8,
+    spacing: 8,
+  },
+  {
+    id: "notion-productivity",
+    name: "Notion Productivity",
+    description: "Calm, focused, productive",
+    preview: {
+      primary: "#37352F",
+      secondary: "#E9E5DD",
+      accent: "#D4D2C8",
+    },
+    fonts: {
+      family: "Inter",
+      weights: [400, 500, 600, 700],
+      url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+    },
+    colors: {
+      // Brand foundation - Notion neutrals
+      "navy-900": { l: 0.22, c: 0.01, h: 30 },
+      "emerald-600": { l: 0.6, c: 0.14, h: 150 },
+      "sky-blue": { l: 0.68, c: 0.12, h: 230 },
+      // Background - Warm beige
+      "bg-dark": { l: 0.94, c: 0.01, h: 40 },
+      bg: { l: 1, c: 0, h: 0 },
+      "bg-light": { l: 0.96, c: 0.01, h: 40 },
+      // Text - Soft black
+      text: { l: 0.22, c: 0.01, h: 30 },
+      "text-muted": { l: 0.5, c: 0.01, h: 30 },
+      // Borders - Subtle
+      highlight: { l: 0.22, c: 0.01, h: 30 },
+      border: { l: 0.88, c: 0.01, h: 40 },
+      "border-muted": { l: 0.92, c: 0.01, h: 40 },
+      // Actions - Soft black primary
+      primary: { l: 0.22, c: 0.01, h: 30 },
+      "primary-foreground": { l: 0.96, c: 0.01, h: 40 },
+      secondary: { l: 0.6, c: 0.14, h: 150 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.54, c: 0.22, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.76, c: 0.14, h: 75 },
+      "warning-foreground": { l: 0.22, c: 0, h: 0 },
+      success: { l: 0.6, c: 0.14, h: 150 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.68, c: 0.12, h: 230 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
+    radius: 6,
+    spacing: 8,
+  },
+  {
+    id: "linear-saas",
+    name: "Linear SaaS",
+    description: "Modern, sleek, developer-focused",
+    preview: {
+      primary: "#5E6AD2",
+      secondary: "#8A8F98",
+      accent: "#B4B4B8",
+    },
+    fonts: {
+      family: "Inter",
+      weights: [400, 500, 600, 700],
+      url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+    },
+    colors: {
+      // Brand foundation - Linear purple/gray
+      "navy-900": { l: 0.18, c: 0.02, h: 240 },
+      "emerald-600": { l: 0.48, c: 0.15, h: 270 },
+      "sky-blue": { l: 0.48, c: 0.15, h: 270 },
+      // Background - Dark mode optimized
+      "bg-dark": { l: 0.96, c: 0, h: 0 },
+      bg: { l: 1, c: 0, h: 0 },
+      "bg-light": { l: 0.98, c: 0, h: 0 },
+      // Text - High tech
+      text: { l: 0.12, c: 0, h: 0 },
+      "text-muted": { l: 0.48, c: 0.01, h: 240 },
+      // Borders - Minimal
+      highlight: { l: 0.48, c: 0.15, h: 270 },
+      border: { l: 0.9, c: 0, h: 0 },
+      "border-muted": { l: 0.94, c: 0, h: 0 },
+      // Actions - Linear purple
+      primary: { l: 0.48, c: 0.15, h: 270 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.52, c: 0.01, h: 240 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.54, c: 0.24, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.78, c: 0.14, h: 80 },
+      "warning-foreground": { l: 0.12, c: 0, h: 0 },
+      success: { l: 0.6, c: 0.15, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.48, c: 0.15, h: 270 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
+    radius: 4,
+    spacing: 6,
+  },
+  {
+    id: "figma-creative",
+    name: "Figma Creative",
+    description: "Creative, vibrant, design-focused",
+    preview: {
+      primary: "#0C8CE9",
+      secondary: "#F24E1E",
+      accent: "#A259FF",
+    },
+    fonts: {
+      family: "Inter",
+      weights: [400, 500, 600, 700],
+      url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+    },
+    colors: {
+      // Brand foundation - Figma multicolor
+      "navy-900": { l: 0.2, c: 0.04, h: 240 },
+      "emerald-600": { l: 0.52, c: 0.18, h: 210 },
+      "sky-blue": { l: 0.52, c: 0.18, h: 210 },
+      // Background - Clean canvas
+      "bg-dark": { l: 0.97, c: 0, h: 0 },
+      bg: { l: 1, c: 0, h: 0 },
+      "bg-light": { l: 0.98, c: 0, h: 0 },
+      // Text
+      text: { l: 0.15, c: 0, h: 0 },
+      "text-muted": { l: 0.5, c: 0, h: 0 },
+      // Borders
+      highlight: { l: 0.52, c: 0.18, h: 210 },
+      border: { l: 0.9, c: 0, h: 0 },
+      "border-muted": { l: 0.95, c: 0, h: 0 },
+      // Actions - Figma blue
+      primary: { l: 0.52, c: 0.18, h: 210 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.58, c: 0.22, h: 15 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.58, c: 0.22, h: 15 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.78, c: 0.15, h: 75 },
+      "warning-foreground": { l: 0.15, c: 0, h: 0 },
+      success: { l: 0.6, c: 0.15, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.52, c: 0.18, h: 210 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
+    radius: 10,
+    spacing: 8,
+  },
+  {
+    id: "github-developer",
+    name: "GitHub Developer",
+    description: "Technical, precise, code-focused",
+    preview: {
+      primary: "#24292F",
+      secondary: "#238636",
+      accent: "#58A6FF",
+    },
+    fonts: {
+      family: "system-ui",
+      weights: [400, 500, 600, 700],
+      url: "",
+    },
+    colors: {
+      // Brand foundation - GitHub palette
+      "navy-900": { l: 0.16, c: 0.01, h: 240 },
+      "emerald-600": { l: 0.52, c: 0.18, h: 145 },
+      "sky-blue": { l: 0.62, c: 0.16, h: 230 },
+      // Background - Clean white
+      "bg-dark": { l: 0.97, c: 0, h: 0 },
+      bg: { l: 1, c: 0, h: 0 },
+      "bg-light": { l: 0.98, c: 0, h: 0 },
+      // Text - Developer-friendly
+      text: { l: 0.16, c: 0.01, h: 240 },
+      "text-muted": { l: 0.46, c: 0.01, h: 240 },
+      // Borders - Sharp
+      highlight: { l: 0.52, c: 0.18, h: 145 },
+      border: { l: 0.88, c: 0, h: 0 },
+      "border-muted": { l: 0.94, c: 0, h: 0 },
+      // Actions - GitHub dark
+      primary: { l: 0.16, c: 0.01, h: 240 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.52, c: 0.18, h: 145 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.55, c: 0.24, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.76, c: 0.15, h: 75 },
+      "warning-foreground": { l: 0.16, c: 0, h: 0 },
+      success: { l: 0.52, c: 0.18, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.62, c: 0.16, h: 230 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
+    radius: 6,
+    spacing: 6,
+  },
+  {
+    id: "vercel-modern",
+    name: "Vercel Modern",
+    description: "Ultra-modern, minimal, bold",
+    preview: {
+      primary: "#000000",
+      secondary: "#666666",
+      accent: "#0070F3",
+    },
+    fonts: {
+      family: "Inter",
+      weights: [400, 500, 600, 700],
+      url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+    },
+    colors: {
+      // Brand foundation - Vercel black/white
+      "navy-900": { l: 0, c: 0, h: 0 },
+      "emerald-600": { l: 0.5, c: 0.18, h: 220 },
+      "sky-blue": { l: 0.5, c: 0.18, h: 220 },
+      // Background - Pure white
+      "bg-dark": { l: 0.98, c: 0, h: 0 },
+      bg: { l: 1, c: 0, h: 0 },
+      "bg-light": { l: 0.99, c: 0, h: 0 },
+      // Text - Pure black
+      text: { l: 0, c: 0, h: 0 },
+      "text-muted": { l: 0.4, c: 0, h: 0 },
+      // Borders - Minimal
+      highlight: { l: 0, c: 0, h: 0 },
+      border: { l: 0.9, c: 0, h: 0 },
+      "border-muted": { l: 0.95, c: 0, h: 0 },
+      // Actions - Pure black
+      primary: { l: 0, c: 0, h: 0 },
+      "primary-foreground": { l: 1, c: 0, h: 0 },
+      secondary: { l: 0.4, c: 0, h: 0 },
+      "secondary-foreground": { l: 1, c: 0, h: 0 },
+      // Alerts
+      danger: { l: 0.55, c: 0.26, h: 27 },
+      "danger-foreground": { l: 1, c: 0, h: 0 },
+      warning: { l: 0.78, c: 0.16, h: 80 },
+      "warning-foreground": { l: 0, c: 0, h: 0 },
+      success: { l: 0.6, c: 0.16, h: 145 },
+      "success-foreground": { l: 1, c: 0, h: 0 },
+      info: { l: 0.5, c: 0.18, h: 220 },
+      "info-foreground": { l: 1, c: 0, h: 0 },
+    },
+    radius: 4,
+    spacing: 6,
   },
 ];
 
@@ -747,35 +1035,37 @@ export default function StyleguidePage() {
                   Theme Applied!
                 </span>
               )}
-              <Button
-                variant="secondary"
-                size="icon"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                aria-label="Toggle dark mode"
-              >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              {mounted && (
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  aria-label="Toggle dark mode"
                 >
-                  {theme === "dark" ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                    />
-                  )}
-                </svg>
-              </Button>
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {theme === "dark" ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                      />
+                    )}
+                  </svg>
+                </Button>
+              )}
               <Link href="/">
                 <Button variant="secondary">Back to Home</Button>
               </Link>
