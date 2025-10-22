@@ -12,6 +12,7 @@ import { mdxComponents } from '@/components/mdx/mdx-components';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import Image from 'next/image';
+import { RelatedPosts } from '@/components/blog/related-posts';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -147,6 +148,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           }}
         />
       </div>
+
+      {/* Related Posts - US1 */}
+      <RelatedPosts currentSlug={slug} />
     </article>
   );
 }
