@@ -1,0 +1,59 @@
+feature:
+  slug: individual-post-page
+  title: Individual Post Pages (Dynamic Routes)
+  created_at: 2025-10-22T00:00:00Z
+  updated_at: 2025-10-22T00:00:00Z
+  branch_name: feature/003-individual-post-page
+  roadmap_status: in-progress
+
+deployment:
+  model: staging-prod
+  staging:
+    url: null
+    deployment_id: null
+    deployed_at: null
+  production:
+    url: null
+    deployment_id: null
+    deployed_at: null
+    version: null
+
+workflow:
+  phase: initialization
+  status: in_progress
+  completed_phases: []
+  failed_phases: []
+
+quality_gates:
+  pre_flight:
+    status: pending
+    checks: []
+  code_review:
+    status: pending
+    critical_issues: 0
+  rollback_capability:
+    status: pending
+    tested: false
+
+manual_gates:
+  preview:
+    status: pending
+    approved: false
+  validate_staging:
+    status: pending
+    approved: false
+
+artifacts:
+  spec: null
+  plan: null
+  tasks: null
+  analysis: null
+  implementation: null
+  optimization: null
+  ship_summary: null
+
+token_budget:
+  phase: planning
+  limit: 75000
+  used: 0
+  compaction_needed: false
