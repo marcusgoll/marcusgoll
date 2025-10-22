@@ -13,6 +13,8 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import Image from 'next/image';
 import { RelatedPosts } from '@/components/blog/related-posts';
+import { PrevNextNav } from '@/components/blog/prev-next-nav';
+import { generateBlogPostingSchema } from '@/lib/schema';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -82,9 +84,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const { frontmatter, content } = post;
 
+  // Generate BlogPosting schema for SEO (US3, FR-003)
+  const blogPostingSchema = generateBlogPostingSchema(post);
+
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12">
-      {/* Post header */}
+    <>
+      {/* BlogPosting JSON-LD for SEO - US3 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogPostingSchema),
+        }}
+      />
+
+      <article className="mx-auto max-w-3xl px-4 py-12">
+        {/* Post header */}
       <header className="mb-8">
         <h1 className="text-4xl font-bold tracking-tight mb-4">{frontmatter.title}</h1>
 
@@ -149,8 +163,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         />
       </div>
 
-      {/* Related Posts - US1 */}
-      <RelatedPosts currentSlug={slug} />
-    </article>
+      {/* Previous/Next Navigation - US2 */}
+      <PrevNextNav currentSlug={slug} />
+
+        {/* Related Posts - US1 */}
+        <RelatedPosts currentSlug={slug} />
+      </article>
+    </>
   );
 }
