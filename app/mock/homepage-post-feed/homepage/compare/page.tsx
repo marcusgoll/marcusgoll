@@ -14,6 +14,9 @@ export default function CompareVariants() {
     { id: 5, name: 'Featured Hero + Grid', short: 'Hero' },
     { id: 6, name: 'Tag Filter + 3-Column', short: 'Modern' },
     { id: 7, name: 'Bento Grid + Categories', short: 'Bento' },
+    { id: 8, name: 'Text-First Grid', short: 'Google' },
+    { id: 9, name: 'Centered Single-Column', short: 'Linear' },
+    { id: 10, name: 'Dense List View', short: 'Dense' },
   ];
 
   const states = ['default', 'loading', 'empty'];
