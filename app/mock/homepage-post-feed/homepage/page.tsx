@@ -83,6 +83,42 @@ export default function HomepageVariantsIndex() {
           </p>
         </div>
 
+        {/* M2 Polished Prototype - PHASE 2c COMPLETE */}
+        <div className="mb-12 p-6 bg-purple-50 rounded-lg border-2 border-purple-600">
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded uppercase tracking-wide">
+                ⭐ Latest - Phase 2c: Polished
+              </span>
+              <span className="px-3 py-1 bg-green-600 text-white text-xs font-bold rounded uppercase tracking-wide">
+                ✓ Selected Design
+              </span>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              M2 Functional Polished
+            </h2>
+            <p className="text-gray-700 mb-4">
+              Complete implementation with shadcn UI, dark mode, animated hero background, and production-ready components.
+            </p>
+            <ul className="text-sm text-gray-600 mb-4 space-y-1">
+              <li>✅ shadcn/ui components (Button, Dialog)</li>
+              <li>✅ Dark mode with OKLCH brand colors</li>
+              <li>✅ FlickeringGrid animated background in hero</li>
+              <li>✅ Newsletter subscribe modal</li>
+              <li>✅ Centered avatar (no text)</li>
+              <li>✅ Keyboard shortcuts hidden on mobile/tablet</li>
+              <li>✅ All Phase 2b features maintained</li>
+            </ul>
+            <div className="flex gap-3">
+              <Link href="/mock/homepage-post-feed/homepage/m2-functional-polished">
+                <button className="bg-purple-600 text-white font-medium py-2 px-6 rounded hover:bg-purple-700 transition-colors">
+                  View Polished Prototype
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* M2 Functional Prototype - SELECTED DESIGN */}
         <div className="mb-12 p-6 bg-green-50 rounded-lg border-2 border-green-600">
           <div className="mb-4">
