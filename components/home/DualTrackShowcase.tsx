@@ -22,8 +22,8 @@ export default function DualTrackShowcase({
       <section>
         <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h2 className="mb-2 text-3xl font-bold text-navy-900">Aviation</h2>
-            <p className="text-gray-600">
+            <h2 className="mb-2 text-3xl font-bold text-foreground">Aviation</h2>
+            <p className="text-muted-foreground">
               Flight training, CFI resources, and aviation career guidance
             </p>
           </div>
@@ -41,7 +41,7 @@ export default function DualTrackShowcase({
         {aviationPosts.length > 0 ? (
           <PostGrid posts={aviationPosts} />
         ) : (
-          <div className="py-12 text-center text-gray-500">
+          <div className="py-12 text-center text-muted-foreground">
             <p>No aviation posts available yet. Check back soon!</p>
           </div>
         )}
@@ -51,10 +51,10 @@ export default function DualTrackShowcase({
       <section>
         <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h2 className="mb-2 text-3xl font-bold text-navy-900">
+            <h2 className="mb-2 text-3xl font-bold text-foreground">
               Dev/Startup
             </h2>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Software development, systematic thinking, and startup insights
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function DualTrackShowcase({
         {devStartupPosts.length > 0 ? (
           <PostGrid posts={devStartupPosts} />
         ) : (
-          <div className="py-12 text-center text-gray-500">
+          <div className="py-12 text-center text-muted-foreground">
             <p>No dev/startup posts available yet. Check back soon!</p>
           </div>
         )}
