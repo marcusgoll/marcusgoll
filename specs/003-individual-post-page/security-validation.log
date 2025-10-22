@@ -1,0 +1,157 @@
+Security Validation Report
+==========================
+Generated: 2025-10-22
+Feature: 003-individual-post-page
+Components Scanned: 6 files
+
+Dependency Vulnerabilities:
+---------------------------
+- Critical: 0
+- High: 0
+- Moderate: 0
+- Low: 0
+- Total Dependencies: 619 (257 prod, 303 dev, 79 optional)
+
+Status: CLEAN - No vulnerabilities detected
+
+
+Code Security Analysis:
+-----------------------
+
+1. XSS Prevention:
+   ✓ SECURE - dangerouslySetInnerHTML usage is limited and safe:
+     - breadcrumbs.tsx:46 - JSON.stringify() output for Schema.org (safe)
+     - app/blog/[slug]/page.tsx:154 - JSON.stringify() output for Schema.org (safe)
+   ✓ No direct innerHTML/outerHTML manipulation detected
+   ✓ All user content rendered via React (auto-escaped)
+   ✓ MDX content processed through next-mdx-remote with safe defaults
+
+2. Input Sanitization:
+   ✓ SECURE - URL parameter handling:
+     - Slug parameter extracted from Next.js route params (framework sanitized)
+     - getPostBySlug() validates slug against filesystem (path.join prevents traversal)
+     - Returns null for invalid slugs, triggering 404 via notFound()
+   ✓ SECURE - Social share URL encoding:
+     - social-share.tsx:75-76 - encodeURIComponent() applied to URL and title
+     - Prevents injection in social media share URLs
+
+3. Injection Risks:
+   ✓ No SQL injection risk (static file-based CMS, no database)
+   ✓ No command injection (no shell execution)
+   ✓ Path traversal prevented by path.join() normalization in getPostBySlug()
+   ✓ No eval() or Function() constructor usage
+
+4. External Link Security:
+   ✓ SECURE - All external links include rel="noopener noreferrer":
+     - social-share.tsx:86 (Twitter share)
+     - social-share.tsx:100 (LinkedIn share)
+   ✓ Prevents tabnabbing attacks and referrer leakage
+
+5. Clipboard API Security:
+   ✓ SECURE - Clipboard usage in social-share.tsx:
+     - navigator.clipboard.writeText() only writes provided URL (no sensitive data)
+     - Fallback document.execCommand('copy') uses temporary textarea (removed after use)
+     - No reading from clipboard
+     - Error handling prevents information leakage
+
+6. Schema.org JSON-LD Injection:
+   ✓ SECURE - JSON-LD generation:
+     - lib/schema.ts:60-94 - BlogPosting schema uses JSON.stringify()
+     - lib/schema.ts:105-118 - BreadcrumbList schema uses JSON.stringify()
+     - All data from validated frontmatter (gray-matter library)
+     - No user-controlled input in schema generation
+
+7. Component-Specific Security:
+
+   a) social-share.tsx:
+      ✓ Props validated by TypeScript (url: string, title: string)
+      ✓ URL encoding applied before external navigation
+      ✓ Native Web Share API usage is safe (browser-controlled)
+
+   b) table-of-contents.tsx:
+      ✓ DOM queries limited to article element
+      ✓ Heading IDs generated from textContent (sanitized by regex)
+      ✓ IntersectionObserver usage is safe
+      ✓ Smooth scroll uses element.getBoundingClientRect() (safe)
+
+   c) breadcrumbs.tsx:
+      ✓ Segments passed as props (server-controlled)
+      ✓ No user input in breadcrumb generation
+      ✓ Schema generation uses validated data
+
+   d) related-posts.tsx:
+      ✓ Server component - data fetched at build time
+      ✓ No client-side state or user input
+      ✓ PostCard component renders validated data
+
+   e) app/blog/[slug]/page.tsx:
+      ✓ Server component - static generation at build time
+      ✓ Slug validation via getPostBySlug() (returns null for invalid)
+      ✓ notFound() called for invalid posts
+      ✓ Metadata generation uses validated frontmatter
+      ✓ No direct user input rendering
+
+8. Security Best Practices:
+   ✓ TypeScript strict mode enforced (type safety)
+   ✓ Server Components used where possible (reduced attack surface)
+   ✓ Client Components marked explicitly ('use client')
+   ✓ Next.js built-in XSS protection active
+   ✓ Content Security Policy headers should be configured (deployment concern)
+
+
+Issues Found:
+-------------
+None - All code follows secure coding practices
+
+
+Recommendations:
+----------------
+1. OPTIONAL - Add Content Security Policy (CSP) headers in next.config.js:
+   - Restrict script-src to 'self' and trusted CDNs
+   - Add unsafe-inline only for JSON-LD scripts
+   - Configure frame-ancestors to prevent clickjacking
+
+2. OPTIONAL - Add rate limiting for Web Share API (prevent abuse):
+   - Consider debouncing share button clicks
+   - Low priority (browser already provides user consent)
+
+3. OPTIONAL - Add HTTPS enforcement in production:
+   - Verify Next.js deployment enforces HTTPS
+   - Add Strict-Transport-Security header
+
+4. COMPLETED - Regular dependency audits:
+   - Continue running npm audit before deployments
+   - Keep dependencies updated
+
+
+Security Checklist:
+-------------------
+[✓] Input sanitization: URL params validated via framework
+[✓] XSS prevention: React auto-escaping + safe dangerouslySetInnerHTML usage
+[✓] Safe external links: rel="noopener noreferrer" present on all target="_blank"
+[✓] Clipboard API: Secure write-only usage without sensitive data exposure
+[✓] No SQL injection: Static file-based CMS
+[✓] No command injection: No shell execution
+[✓] Path traversal prevention: path.join() normalization
+[✓] Type safety: TypeScript strict mode
+[✓] Minimal attack surface: Server Components prioritized
+[✓] Dependency security: Zero vulnerabilities
+
+
+Status: PASSED
+===============
+
+Summary: All 6 components reviewed demonstrate secure coding practices. No
+critical, high, or moderate security vulnerabilities detected in dependencies
+or code. The feature is production-ready from a security perspective.
+
+Key Security Strengths:
+- Zero dependency vulnerabilities
+- Proper input validation and sanitization
+- XSS prevention through React and safe JSON-LD generation
+- External link security (noopener noreferrer)
+- TypeScript type safety
+- Server-side rendering reduces client-side attack surface
+- Framework-level security (Next.js built-in protections)
+
+No blocking issues identified. Feature approved for deployment.

@@ -1,5 +1,8 @@
 import type { NextConfig } from "next";
 import { validateEnvironmentVariables } from "./lib/validate-env";
+import createMDX from '@next/mdx';
+import rehypeHighlight from 'rehype-highlight';
+import remarkGfm from 'remark-gfm';
 
 // Validate environment variables at startup (fail-fast)
 // This runs before the app accepts any requests
@@ -11,6 +14,14 @@ const nextConfig: NextConfig = {
   images: {
     domains: [], // Ghost CMS removed - using markdown/MDX for blog posts
   },
+  pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
 };
 
-export default nextConfig;
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeHighlight],
+  },
+});
+
+export default withMDX(nextConfig);
