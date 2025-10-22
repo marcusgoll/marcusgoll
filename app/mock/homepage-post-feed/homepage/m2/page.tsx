@@ -22,11 +22,11 @@ export default function MergedConcept2() {
   const state = searchParams?.get('state') || 'default';
 
   const posts = [
-    { id: 1, title: 'Systematic Thinking in Aviation Safety', track: 'Aviation', excerpt: 'How commercial aviation applies systematic principles to prevent failures. Lessons from decades of incident analysis.', date: 'Oct 15, 2025', featured: true },
-    { id: 2, title: 'Scalable Architecture Patterns', track: 'Dev/Startup', excerpt: 'Building systems that scale from prototype to production.', date: 'Oct 14, 2025', featured: false },
-    { id: 3, title: 'Human Factors in Cockpit Design', track: 'Cross-pollination', excerpt: 'What aviation human factors research teaches us about interface design.', date: 'Oct 13, 2025', featured: false },
-    { id: 4, title: 'Pre-flight Checklist Philosophy', track: 'Aviation', excerpt: 'The cognitive science behind effective checklists.', date: 'Oct 12, 2025', featured: false },
-    { id: 5, title: 'Startup Velocity vs Safety', track: 'Dev/Startup', excerpt: 'How to move fast without breaking critical systems.', date: 'Oct 11, 2025', featured: false },
+    { id: 1, title: 'Systematic Thinking in Aviation Safety', track: 'Aviation', excerpt: 'How commercial aviation applies systematic principles to prevent failures. Lessons from decades of incident analysis.', date: 'Oct 15, 2025', featured: true, hasImage: true },
+    { id: 2, title: 'Scalable Architecture Patterns', track: 'Dev/Startup', excerpt: 'Building systems that scale from prototype to production.', date: 'Oct 14, 2025', featured: false, hasImage: false },
+    { id: 3, title: 'Human Factors in Cockpit Design', track: 'Cross-pollination', excerpt: 'What aviation human factors research teaches us about interface design.', date: 'Oct 13, 2025', featured: false, hasImage: true },
+    { id: 4, title: 'Pre-flight Checklist Philosophy', track: 'Aviation', excerpt: 'The cognitive science behind effective checklists.', date: 'Oct 12, 2025', featured: false, hasImage: false },
+    { id: 5, title: 'Startup Velocity vs Safety', track: 'Dev/Startup', excerpt: 'How to move fast without breaking critical systems.', date: 'Oct 11, 2025', featured: false, hasImage: true },
   ];
 
   const filteredPosts = track === 'all' ? posts : posts.filter(p => p.track.toLowerCase().includes(track));
@@ -39,15 +39,23 @@ export default function MergedConcept2() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="bg-gray-900 text-white">
+        <Container>
+          <div className="py-16 text-center">
+            <h1 className="text-5xl font-bold mb-4">
+              Systematic thinking from 30,000 feet
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Aviation principles applied to software engineering and startups.
+              Learn how commercial aviation's systematic approach to safety translates to building resilient systems.
+            </p>
+          </div>
+        </Container>
+      </div>
+
       <Container>
         <div className="py-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Marcus Gollahon
-          </h1>
-          <p className="text-lg text-gray-600 mb-8">
-            Aviation & Software Development
-          </p>
-
           <div className="flex gap-8">
             {/* Persistent Sidebar (from v3) */}
             <aside className="w-64 flex-shrink-0 sticky top-8 self-start">
@@ -111,11 +119,13 @@ export default function MergedConcept2() {
               {/* Featured Hero (from v5) */}
               {featuredPost && (
                 <article className="mb-10 cursor-pointer group">
-                  <div className="aspect-[2/1] bg-gray-200 rounded-lg mb-4 overflow-hidden">
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                      Featured Illustration
+                  {featuredPost.hasImage && (
+                    <div className="aspect-[2/1] bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                        Featured Illustration
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <span className="inline-block px-3 py-1 text-xs font-semibold bg-gray-900 text-white rounded mb-3 uppercase tracking-wide">
                     {featuredPost.track}
                   </span>
@@ -141,11 +151,15 @@ export default function MergedConcept2() {
                     key={post.id}
                     className="group cursor-pointer border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
                   >
-                    <div className="aspect-video bg-gray-200 overflow-hidden">
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm transform transition-transform duration-300 group-hover:scale-105">
-                        Featured Image
+                    {post.hasImage ? (
+                      <div className="aspect-video bg-gray-200 overflow-hidden">
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm transform transition-transform duration-300 group-hover:scale-105">
+                          Featured Image
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="h-3 bg-gray-100"></div>
+                    )}
                     <div className="p-5">
                       <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:underline decoration-2 underline-offset-4 transition-all">
                         {post.title}
