@@ -5,8 +5,8 @@
  */
 
 import type { MDXComponents } from 'mdx/types';
-import Image from 'next/image';
 import Link from 'next/link';
+import { MDXImage } from './mdx-image';
 
 /**
  * MDX component mappings for custom rendering
@@ -72,21 +72,10 @@ export const mdxComponents: MDXComponents = {
 
   // Images with Next.js Image component (optimized)
   img: ({ src, alt, ...props }) => {
-    // If src is a string and starts with /, it's a local image
-    if (typeof src === 'string' && src.startsWith('/')) {
-      return (
-        <Image
-          src={src}
-          alt={alt || ''}
-          width={800}
-          height={450}
-          className="rounded-lg my-6"
-          {...props}
-        />
-      );
+    if (typeof src === 'string') {
+      return <MDXImage src={src} alt={alt || ''} {...props} />;
     }
-
-    // Fallback to standard img for external images
+    // Fallback for non-string src
     return <img src={src} alt={alt} className="rounded-lg my-6" {...props} />;
   },
 

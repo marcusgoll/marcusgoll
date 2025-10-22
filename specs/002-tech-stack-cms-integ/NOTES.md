@@ -107,6 +107,11 @@ Migrate from Ghost CMS (current headless CMS) to local MDX-based content managem
 - ✅ T011: Create MDX components provider (components/mdx/mdx-components.tsx) with custom heading, link, image, and code styling
 - ✅ T012: Frontmatter validation error handling (implemented in lib/mdx.ts validateFrontmatter function)
 
+**Batch 4: US2 Markdown Syntax Support - COMPLETE**
+- ✅ T020: Configure rehype-highlight for syntax highlighting (done in next.config.ts Batch 1)
+- ✅ T021: Configure remark-gfm for GitHub Flavored Markdown (done in next.config.ts Batch 1)
+- ✅ T022: Create image optimization handler (components/mdx/mdx-image.tsx) with automatic Next.js Image optimization
+
 ## Last Updated
 
 2025-10-21T22:48:00Z
