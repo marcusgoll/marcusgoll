@@ -112,6 +112,12 @@ Migrate from Ghost CMS (current headless CMS) to local MDX-based content managem
 - ✅ T021: Configure remark-gfm for GitHub Flavored Markdown (done in next.config.ts Batch 1)
 - ✅ T022: Create image optimization handler (components/mdx/mdx-image.tsx) with automatic Next.js Image optimization
 
+**Batch 5: US3 URL Preservation and SEO - COMPLETE**
+- ✅ T025: Create blog index page (app/blog/page.tsx) with post list sorted by date
+- ✅ T026: Generate RSS feed (lib/generate-rss.ts) with RSS 2.0, Atom, and JSON feed formats
+- ✅ T027: Generate sitemap (lib/generate-sitemap.ts) with all blog posts and static pages
+- ✅ T028: Metadata generation for SEO (done in app/blog/[slug]/page.tsx generateMetadata function)
+
 ## Last Updated
 
 2025-10-21T22:48:00Z
