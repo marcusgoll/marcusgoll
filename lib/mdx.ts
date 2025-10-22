@@ -11,6 +11,9 @@ import path from 'path';
 import matter from 'gray-matter';
 import { PostFrontmatterSchema, type PostData, type PostFrontmatter, type TagData } from './mdx-types';
 
+// Re-export types for convenience
+export type { PostData, PostFrontmatter, TagData };
+
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'posts');
 
 /**

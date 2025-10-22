@@ -8,6 +8,7 @@ import { getAllTags, getPostsByTag } from '@/lib/mdx';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { PostCard } from '@/components/blog/post-card';
 
 interface TagArchivePageProps {
   params: Promise<{
@@ -87,57 +88,7 @@ export default async function TagArchivePage({ params }: TagArchivePageProps) {
 
       <div className="space-y-8">
         {posts.map((post) => (
-          <article key={post.slug} className="border-b border-gray-200 dark:border-gray-800 pb-8 last:border-0">
-            <Link href={`/blog/${post.slug}`} className="group">
-              {/* Post header */}
-              <h2 className="text-2xl font-semibold tracking-tight mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                {post.frontmatter.title}
-              </h2>
-
-              {/* Post metadata */}
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
-                <time dateTime={post.frontmatter.date}>
-                  {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </time>
-                <span>•</span>
-                <span>{post.frontmatter.author}</span>
-                {post.frontmatter.readingTime && (
-                  <>
-                    <span>•</span>
-                    <span>{post.frontmatter.readingTime} min read</span>
-                  </>
-                )}
-              </div>
-
-              {/* Post excerpt */}
-              <p className="text-gray-700 dark:text-gray-300 mb-4">{post.frontmatter.excerpt}</p>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2">
-                {post.frontmatter.tags.map((postTag) => {
-                  const tagSlug = postTag.toLowerCase().replace(/\s+/g, '-');
-                  const isCurrentTag = tagSlug === tag;
-
-                  return (
-                    <span
-                      key={postTag}
-                      className={`px-3 py-1 text-sm rounded-full ${
-                        isCurrentTag
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-800'
-                      }`}
-                    >
-                      {postTag}
-                    </span>
-                  );
-                })}
-              </div>
-            </Link>
-          </article>
+          <PostCard key={post.slug} post={post} />
         ))}
       </div>
     </div>

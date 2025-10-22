@@ -36,6 +36,25 @@ function initializeGhostAPI() {
 }
 
 /**
+ * Sanitize slug for safe file system usage
+ * Prevents path traversal attacks
+ */
+function sanitizeSlug(slug: string): string {
+  const sanitized = slug
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/--+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  // Validate after sanitization
+  if (!sanitized || sanitized.includes('..') || sanitized.includes('/') || sanitized.includes('\\')) {
+    throw new Error(`Invalid slug after sanitization: ${slug}`);
+  }
+
+  return sanitized;
+}
+
+/**
  * Initialize Turndown service for HTML to Markdown conversion
  */
 function initializeTurndown() {
@@ -61,18 +80,21 @@ function initializeTurndown() {
  * Convert Ghost post to MDX format
  */
 function convertToMDX(post: any, turndown: TurndownService) {
+  // Sanitize slug for safe file system usage
+  const sanitizedSlug = sanitizeSlug(post.slug);
+
   // Convert HTML to Markdown
   const markdown = turndown.turndown(post.html || '');
 
   // Create frontmatter
   const frontmatter = {
     title: post.title,
-    slug: post.slug,
+    slug: sanitizedSlug,
     date: post.published_at || post.created_at,
     excerpt: post.excerpt || post.meta_description || '',
     author: post.primary_author?.name || 'Marcus Gollahon',
     tags: post.tags?.map((tag: any) => tag.name) || [],
-    featuredImage: post.feature_image ? `/images/posts/${post.slug}/featured.jpg` : undefined,
+    featuredImage: post.feature_image ? `/images/posts/${sanitizedSlug}/featured.jpg` : undefined,
     draft: post.status !== 'published',
   };
 
@@ -98,8 +120,11 @@ async function downloadFeaturedImage(post: any) {
   }
 
   try {
+    // Sanitize slug for safe file system usage
+    const sanitizedSlug = sanitizeSlug(post.slug);
+
     const imageUrl = post.feature_image;
-    const postImagesDir = path.join(IMAGES_DIR, post.slug);
+    const postImagesDir = path.join(IMAGES_DIR, sanitizedSlug);
 
     if (!isDryRun) {
       await fs.mkdir(postImagesDir, { recursive: true });
@@ -153,11 +178,14 @@ async function migrate() {
     try {
       console.log(`📝 Processing: ${post.title} (${post.slug})`);
 
+      // Sanitize slug for safe file system usage
+      const sanitizedSlug = sanitizeSlug(post.slug);
+
       // Convert to MDX
       const mdxContent = convertToMDX(post, turndown);
 
       // Write MDX file
-      const filePath = path.join(CONTENT_DIR, `${post.slug}.mdx`);
+      const filePath = path.join(CONTENT_DIR, `${sanitizedSlug}.mdx`);
 
       if (!isDryRun) {
         await fs.writeFile(filePath, mdxContent, 'utf-8');

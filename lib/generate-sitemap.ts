@@ -73,8 +73,8 @@ ${entries
     await fs.writeFile(path.join(publicDir, 'sitemap.xml'), xml, 'utf-8');
     console.log('✅ Sitemap generated successfully');
   } catch (error) {
-    console.error('❌ Failed to generate sitemap:', error);
-    throw error;
+    console.error('❌ Failed to generate sitemap (non-critical):', error);
+    // Don't throw - allow build to continue
   }
 }
 

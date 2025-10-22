@@ -76,8 +76,8 @@ export async function generateRSSFeed() {
 
     console.log('✅ RSS feed generated successfully');
   } catch (error) {
-    console.error('❌ Failed to generate RSS feed:', error);
-    throw error;
+    console.error('❌ Failed to generate RSS feed (non-critical):', error);
+    // Don't throw - allow build to continue
   }
 }
 

@@ -11,6 +11,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { mdxComponents } from '@/components/mdx/mdx-components';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
+import Image from 'next/image';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -121,11 +122,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* Featured image */}
       {frontmatter.featuredImage && (
-        <div className="mb-8">
-          <img
+        <div className="mb-8 relative aspect-video">
+          <Image
             src={frontmatter.featuredImage}
             alt={frontmatter.title}
-            className="w-full h-auto rounded-lg"
+            width={1200}
+            height={630}
+            priority
+            className="w-full h-auto rounded-lg object-cover"
           />
         </div>
       )}
