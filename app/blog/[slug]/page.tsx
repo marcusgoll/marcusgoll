@@ -16,6 +16,7 @@ import { RelatedPosts } from '@/components/blog/related-posts';
 import { PrevNextNav } from '@/components/blog/prev-next-nav';
 import { SocialShare } from '@/components/blog/social-share';
 import { TableOfContents } from '@/components/blog/table-of-contents';
+import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
 import { generateBlogPostingSchema } from '@/lib/schema';
 
 interface BlogPostPageProps {
@@ -89,6 +90,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Generate BlogPosting schema for SEO (US3, FR-003)
   const blogPostingSchema = generateBlogPostingSchema(post);
 
+  // Generate breadcrumbs for navigation (US6, FR-007, T063)
+  const breadcrumbSegments: BreadcrumbSegment[] = [
+    {
+      label: 'Home',
+      url: 'https://marcusgoll.com',
+      position: 1,
+    },
+    {
+      label: 'Blog',
+      url: 'https://marcusgoll.com/blog',
+      position: 2,
+    },
+    {
+      label: frontmatter.title,
+      url: `https://marcusgoll.com/blog/${slug}`,
+      position: 3,
+    },
+  ];
+
   return (
     <>
       {/* BlogPosting JSON-LD for SEO - US3 */}
@@ -107,6 +127,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-12 xl:gap-16">
           <article className="max-w-3xl">
+        {/* Breadcrumbs - US6 */}
+        <Breadcrumbs segments={breadcrumbSegments} />
+
         {/* Post header */}
       <header className="mb-8">
         <h1 className="text-4xl font-bold tracking-tight mb-4">{frontmatter.title}</h1>

@@ -95,12 +95,24 @@ export function generateBlogPostingSchema(post: PostData): BlogPostingSchema {
 }
 
 /**
- * Placeholder function for BreadcrumbList schema generation
- * Will be implemented in T061
+ * Generate BreadcrumbList JSON-LD schema for SEO
+ * FR-007: Breadcrumb navigation with Schema.org structured data
+ * T061: Implementation of breadcrumb schema generation
+ *
+ * @param segments - Array of breadcrumb segments with label, url, and position
+ * @returns BreadcrumbListSchema object for JSON-LD script tag
  */
 export function generateBreadcrumbListSchema(
   segments: Array<{ label: string; url: string; position: number }>
 ): BreadcrumbListSchema {
-  // Implementation in T061
-  throw new Error('Not implemented yet - T061');
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: segments.map((segment) => ({
+      '@type': 'ListItem',
+      position: segment.position,
+      name: segment.label,
+      item: segment.url,
+    })),
+  };
 }
