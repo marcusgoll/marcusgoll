@@ -522,31 +522,27 @@ Common mistake: Over-communicating while the system burns.
 
 ### Production Error Rate Spike
 
-```
-Error rate spike detected
-├─ User-facing impact?
-│  ├─ Yes → Rollback immediately
-│  └─ No → Investigate, prepare hotfix
-├─ Known issue?
-│  ├─ Yes → Apply known mitigation
-│  └─ No → Triage, assign investigator
-└─ Can we throttle?
-   ├─ Yes → Reduce load, investigate
-   └─ No → Rollback or failover
-```
+Error rate spike detected:
+- User-facing impact?
+  - Yes → Rollback immediately
+  - No → Investigate, prepare hotfix
+- Known issue?
+  - Yes → Apply known mitigation
+  - No → Triage, assign investigator
+- Can we throttle?
+  - Yes → Reduce load, investigate
+  - No → Rollback or failover
 
 ### Database Connection Pool Exhausted
 
-```
-Connection pool exhausted
-├─ Scale pool size (immediate mitigation)
-├─ Identify connection leak
-│  ├─ New deployment? → Rollback
-│  └─ Traffic spike? → Scale horizontally
-└─ Long-term fix
-   ├─ Fix connection leak
-   └─ Implement connection monitoring
-```
+Connection pool exhausted:
+- Scale pool size (immediate mitigation)
+- Identify connection leak
+  - New deployment? → Rollback
+  - Traffic spike? → Scale horizontally
+- Long-term fix
+  - Fix connection leak
+  - Implement connection monitoring
 
 ## Cognitive Biases Under Pressure
 
