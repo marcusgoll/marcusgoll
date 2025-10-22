@@ -102,6 +102,11 @@ Migrate from Ghost CMS (current headless CMS) to local MDX-based content managem
 - ✅ T006: Create TypeScript types and Zod schemas (lib/mdx-types.ts)
 - ✅ T007: Create core MDX parsing library (lib/mdx.ts with getAllPosts, getPostBySlug, getPostsByTag, getAllTags, searchPosts)
 
+**Batch 3: US1 Core (MDX Rendering) - COMPLETE**
+- ✅ T010: Create blog post page component (app/blog/[slug]/page.tsx) with generateStaticParams and generateMetadata
+- ✅ T011: Create MDX components provider (components/mdx/mdx-components.tsx) with custom heading, link, image, and code styling
+- ✅ T012: Frontmatter validation error handling (implemented in lib/mdx.ts validateFrontmatter function)
+
 ## Last Updated
 
 2025-10-21T22:48:00Z
