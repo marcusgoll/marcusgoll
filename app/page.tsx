@@ -2,6 +2,7 @@ import { getAllPosts } from '@/lib/mdx';
 import Link from 'next/link';
 import { NextSeo } from 'next-seo';
 import { getPageSEO } from '@/lib/seo-config';
+import { generateWebSiteSchema } from '@/lib/json-ld';
 
 export default async function Home() {
   const pageSEO = getPageSEO({
@@ -18,9 +19,20 @@ export default async function Home() {
   const allPosts = await getAllPosts();
   const latestPosts = allPosts.slice(0, 5);
 
+  // Generate WebSite JSON-LD for homepage (US5, T020)
+  const websiteSchema = generateWebSiteSchema();
+
   return (
     <>
       <NextSeo {...pageSEO} />
+
+      {/* WebSite JSON-LD for SEO - US5, T020 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteSchema),
+        }}
+      />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <main className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
