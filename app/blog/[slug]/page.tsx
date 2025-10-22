@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Container from '@/components/ui/Container';
 import TrackBadge from '@/components/blog/TrackBadge';
 import PageViewTracker from '@/components/analytics/PageViewTracker';
-import { getPostBySlug, getPrimaryTrack, getAllPosts } from '@/lib/ghost';
+import { getPostBySlug, getPrimaryTrack, getAllPosts } from '@/lib/posts';
 
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;

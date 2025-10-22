@@ -1,8 +1,8 @@
-import { GhostPost, getPrimaryTrack } from '@/lib/ghost';
+import { Post, getPrimaryTrack } from '@/lib/posts';
 import PostCard from './PostCard';
 
 interface PostGridProps {
-  posts: GhostPost[];
+  posts: Post[];
 }
 
 /**

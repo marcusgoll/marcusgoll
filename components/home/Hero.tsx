@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import Button from '@/components/ui/Button';
 
 /**
@@ -31,20 +32,16 @@ export default function Hero() {
 
             {/* Dual CTAs */}
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center md:justify-start">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => (window.location.href = '/aviation')}
-              >
-                Explore Aviation
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={() => (window.location.href = '/dev-startup')}
-              >
-                Explore Dev/Startup
-              </Button>
+              <Link href="/aviation">
+                <Button variant="primary" size="lg">
+                  Explore Aviation
+                </Button>
+              </Link>
+              <Link href="/dev-startup">
+                <Button variant="secondary" size="lg">
+                  Explore Dev/Startup
+                </Button>
+              </Link>
             </div>
           </div>
 

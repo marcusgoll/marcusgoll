@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Container from '@/components/ui/Container';
 import PostGrid from '@/components/blog/PostGrid';
 import PageViewTracker from '@/components/analytics/PageViewTracker';
-import { getPostsByTag } from '@/lib/ghost';
+import { getPostsByTag } from '@/lib/posts';
 
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;

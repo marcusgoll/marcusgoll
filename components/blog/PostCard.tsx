@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { GhostPost } from '@/lib/ghost';
+import { Post } from '@/lib/posts';
 import TrackBadge from './TrackBadge';
 
 interface PostCardProps {
-  post: GhostPost;
+  post: Post;
   track?: 'aviation' | 'dev-startup' | 'cross-pollination' | null;
 }
 

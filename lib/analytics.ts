@@ -1,9 +1,9 @@
 /**
  * Analytics Module - GA4 event tracking for dual-track content strategy
- * Tracks user engagement with aviation, dev-startup, and cross-pollination content
+ * Tracks user engagement with aviation, dev-startup, cross-pollination, and general content
  */
 
-type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination';
+type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination' | 'general';
 
 interface TrackContentClickParams {
   track: ContentTrack;

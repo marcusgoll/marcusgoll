@@ -4,10 +4,8 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { trackPageView } from '@/lib/analytics';
 
-type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination' | 'general';
-
 interface PageViewTrackerProps {
-  track?: ContentTrack;
+  track?: 'aviation' | 'dev-startup' | 'cross-pollination' | 'general';
 }
 
 /**

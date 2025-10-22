@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { GhostPost } from '@/lib/ghost';
+import { Post } from '@/lib/posts';
 import PostGrid from '@/components/blog/PostGrid';
 import Button from '@/components/ui/Button';
 
 interface DualTrackShowcaseProps {
-  aviationPosts: GhostPost[];
-  devStartupPosts: GhostPost[];
+  aviationPosts: Post[];
+  devStartupPosts: Post[];
 }
 
 /**

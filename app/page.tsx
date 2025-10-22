@@ -3,7 +3,7 @@ import Hero from '@/components/home/Hero';
 import DualTrackShowcase from '@/components/home/DualTrackShowcase';
 import Container from '@/components/ui/Container';
 import PageViewTracker from '@/components/analytics/PageViewTracker';
-import { getPostsByTag } from '@/lib/ghost';
+import { getPostsByTag } from '@/lib/posts';
 
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;

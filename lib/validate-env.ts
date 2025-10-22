@@ -141,7 +141,6 @@ export function checkEnvironmentVariables(): {
   duration: number
 } {
   const startTime = performance.now()
-  const errors: ValidationError[] = []
 
   try {
     validateEnvironmentVariables()
@@ -150,7 +149,7 @@ export function checkEnvironmentVariables(): {
       errors: [],
       duration: performance.now() - startTime,
     }
-  } catch (error) {
+  } catch {
     // Parse errors from validation exception
     // (This is a simplified implementation - in production you'd want proper error parsing)
     return {
