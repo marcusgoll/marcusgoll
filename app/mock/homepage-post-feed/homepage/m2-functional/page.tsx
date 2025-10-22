@@ -11,11 +11,15 @@ import Container from '@/components/ui/Container';
  *
  * Phase 2b enhancements:
  * - Full accessibility (ARIA labels, semantic HTML, keyboard nav)
- * - Responsive behavior (sidebar → mobile drawer)
+ * - Mobile overlay menu (full width on top of content)
  * - Loading/empty/error states
  * - Screen reader announcements
  * - Focus management
- * - Keyboard shortcuts
+ * - Keyboard shortcuts (Alt+M, Alt+1-4)
+ * - Return to top button
+ * - Profile avatar in sidebar
+ * - Prominent category badges
+ * - Hero CTAs (primary + secondary)
  */
 
 type Post = {
@@ -44,14 +48,19 @@ export default function M2FunctionalPrototype() {
   const state = searchParams?.get('state') || 'default';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Alt+M: Toggle mobile menu
-      if (e.altKey && e.key === 'm') {
+      if (e.altKey && (e.key === 'm' || e.key === 'M')) {
         e.preventDefault();
-        setMobileMenuOpen(prev => !prev);
+        console.log('Alt+M pressed'); // Debug log
+        setMobileMenuOpen(prev => {
+          console.log('Menu state changing to:', !prev); // Debug log
+          return !prev;
+        });
       }
       // Alt+1-4: Quick filter navigation
       if (e.altKey && ['1', '2', '3', '4'].includes(e.key)) {
@@ -64,6 +73,16 @@ export default function M2FunctionalPrototype() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Scroll to top button visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Screen reader announcements for filter changes
@@ -87,6 +106,10 @@ export default function M2FunctionalPrototype() {
     aviation: posts.filter(p => p.track === 'Aviation').length,
     dev: posts.filter(p => p.track === 'Dev/Startup').length,
     cross: posts.filter(p => p.track === 'Cross-pollination').length,
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (state === 'loading') {
@@ -116,17 +139,33 @@ export default function M2FunctionalPrototype() {
         Skip to main content
       </a>
 
-      {/* Hero Section */}
+      {/* Hero Section (not sticky) */}
       <header className="bg-gray-900 text-white">
         <Container>
           <div className="py-16 text-center">
             <h1 className="text-5xl font-bold mb-4">
               Systematic thinking from 30,000 feet
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
               Aviation principles applied to software engineering and startups.
               Learn how commercial aviation&apos;s systematic approach to safety translates to building resilient systems.
             </p>
+            <div className="flex gap-4 justify-center">
+              <Button
+                variant="default"
+                size="default"
+                className="bg-white text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
+              >
+                Read Latest Posts
+              </Button>
+              <Button
+                variant="outline"
+                size="default"
+                className="border-2 border-white text-white hover:bg-white hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
+              >
+                Subscribe to Newsletter
+              </Button>
+            </div>
           </div>
         </Container>
       </header>
@@ -135,8 +174,11 @@ export default function M2FunctionalPrototype() {
         <div className="py-8">
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden mb-4 px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+            onClick={() => {
+              console.log('Button clicked'); // Debug log
+              setMobileMenuOpen(!mobileMenuOpen);
+            }}
+            className="lg:hidden mb-4 px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 z-50 relative"
             aria-expanded={mobileMenuOpen}
             aria-controls="sidebar-nav"
             aria-label="Toggle navigation menu"
@@ -144,74 +186,110 @@ export default function M2FunctionalPrototype() {
             {mobileMenuOpen ? 'Close' : 'Open'} Menu
           </button>
 
-          <div className="flex gap-8">
-            {/* Persistent Sidebar (Desktop) / Collapsible (Mobile) */}
+          {/* Mobile Overlay Backdrop */}
+          {mobileMenuOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+
+          <div className="flex gap-8 relative">
+            {/* Sidebar - Mobile Overlay / Desktop Sidebar */}
             <aside
               id="sidebar-nav"
               className={`
-                w-64 flex-shrink-0 lg:sticky lg:top-8 lg:self-start
-                ${mobileMenuOpen ? 'block' : 'hidden lg:block'}
+                w-80 flex-shrink-0 bg-white z-50
+                lg:sticky lg:top-8 lg:self-start
+                fixed top-0 left-0 h-full overflow-y-auto shadow-xl
+                transition-transform duration-300 ease-in-out
+                ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                lg:shadow-none lg:relative lg:h-auto
               `}
               aria-label="Blog navigation and filters"
             >
-              <nav aria-label="Content filter">
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
-                    Filter by Track
-                  </h2>
-                  <ul className="space-y-1" role="list">
-                    {[
-                      { key: 'all', label: 'All Posts', count: postCounts.all, shortcut: '1' },
-                      { key: 'aviation', label: 'Aviation', count: postCounts.aviation, shortcut: '2' },
-                      { key: 'dev', label: 'Dev/Startup', count: postCounts.dev, shortcut: '3' },
-                      { key: 'cross', label: 'Cross-pollination', count: postCounts.cross, shortcut: '4' },
-                    ].map(({ key, label, count, shortcut }) => (
-                      <li key={key}>
-                        <Link href={`?track=${key}`}>
-                          <div
-                            className={`px-3 py-2 rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 ${
-                              track === key
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-700 hover:bg-gray-100'
-                            }`}
-                            role="button"
-                            aria-current={track === key ? 'page' : undefined}
-                            aria-label={`${label} (${count} posts, Alt+${shortcut})`}
-                          >
-                            {label} ({count})
-                          </div>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </nav>
-
-              {/* Sidebar Newsletter CTA */}
-              <aside className="mt-4 p-4 bg-gray-900 text-white rounded-lg" aria-label="Newsletter signup">
-                <p className="text-sm mb-3">
-                  Get systematic thinking insights delivered weekly
-                </p>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="w-full bg-white text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
-                  aria-label="Subscribe to newsletter"
+              <div className="p-4 lg:p-0">
+                {/* Close button for mobile */}
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="lg:hidden absolute top-4 right-4 p-2 text-gray-600 hover:text-gray-900"
+                  aria-label="Close menu"
                 >
-                  Subscribe
-                </Button>
-              </aside>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
 
-              {/* Keyboard Shortcuts Help */}
-              <details className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-                <summary className="font-semibold text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-900">
-                  Keyboard Shortcuts
-                </summary>
-                <ul className="mt-2 space-y-1 text-gray-600">
-                  <li><kbd className="px-1 bg-gray-200 rounded">Alt+M</kbd> Toggle menu</li>
-                  <li><kbd className="px-1 bg-gray-200 rounded">Alt+1-4</kbd> Quick filter</li>
-                </ul>
-              </details>
+                {/* Profile Avatar */}
+                <div className="mb-6 text-center lg:text-left">
+                  <div className="w-20 h-20 bg-gray-300 rounded-full mx-auto lg:mx-0 mb-3 flex items-center justify-center text-gray-600 text-sm">
+                    Avatar
+                  </div>
+                  <h3 className="font-bold text-gray-900">Marcus Gollahon</h3>
+                  <p className="text-sm text-gray-600">Aviation & Development</p>
+                </div>
+
+                {/* Navigation Filter */}
+                <nav aria-label="Content filter">
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+                      Filter by Track
+                    </h2>
+                    <ul className="space-y-1" role="list">
+                      {[
+                        { key: 'all', label: 'All Posts', count: postCounts.all, shortcut: '1' },
+                        { key: 'aviation', label: 'Aviation', count: postCounts.aviation, shortcut: '2' },
+                        { key: 'dev', label: 'Dev/Startup', count: postCounts.dev, shortcut: '3' },
+                        { key: 'cross', label: 'Cross-pollination', count: postCounts.cross, shortcut: '4' },
+                      ].map(({ key, label, count, shortcut }) => (
+                        <li key={key}>
+                          <Link href={`?track=${key}`} onClick={() => setMobileMenuOpen(false)}>
+                            <div
+                              className={`px-3 py-2 rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 ${
+                                track === key
+                                  ? 'bg-gray-900 text-white'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                              }`}
+                              role="button"
+                              aria-current={track === key ? 'page' : undefined}
+                              aria-label={`${label} (${count} posts, Alt+${shortcut})`}
+                            >
+                              {label} ({count})
+                            </div>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </nav>
+
+                {/* Sidebar Newsletter CTA */}
+                <aside className="mt-4 p-4 bg-gray-900 text-white rounded-lg" aria-label="Newsletter signup">
+                  <p className="text-sm mb-3">
+                    Get systematic thinking insights delivered weekly
+                  </p>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="w-full bg-white text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
+                    aria-label="Subscribe to newsletter"
+                  >
+                    Subscribe
+                  </Button>
+                </aside>
+
+                {/* Keyboard Shortcuts Help */}
+                <details className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-sm">
+                  <summary className="font-semibold text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-900">
+                    Keyboard Shortcuts
+                  </summary>
+                  <ul className="mt-2 space-y-1 text-gray-600">
+                    <li><kbd className="px-1 bg-gray-200 rounded">Alt+M</kbd> Toggle menu</li>
+                    <li><kbd className="px-1 bg-gray-200 rounded">Alt+1-4</kbd> Quick filter</li>
+                  </ul>
+                </details>
+              </div>
             </aside>
 
             {/* Main Content */}
@@ -222,7 +300,7 @@ export default function M2FunctionalPrototype() {
                   className="mb-10 cursor-pointer group focus-within:ring-2 focus-within:ring-gray-900 rounded-lg"
                   aria-labelledby={`post-title-${featuredPost.id}`}
                 >
-                  <Link href={`/blog/${featuredPost.id}`} className="block focus:outline-none">
+                  <Link href={`/mock/homepage-post-feed/blog/${featuredPost.id}`} className="block focus:outline-none">
                     {featuredPost.hasImage && (
                       <div
                         className="aspect-[2/1] bg-gray-200 rounded-lg mb-4 overflow-hidden"
@@ -234,7 +312,7 @@ export default function M2FunctionalPrototype() {
                         </div>
                       </div>
                     )}
-                    <span className="inline-block px-3 py-1 text-xs font-semibold bg-gray-900 text-white rounded mb-3 uppercase tracking-wide">
+                    <span className="inline-block px-4 py-2 text-sm font-bold bg-gray-900 text-white rounded-full mb-3 uppercase tracking-wider shadow-lg">
                       {featuredPost.track}
                     </span>
                     <h2
@@ -280,7 +358,7 @@ export default function M2FunctionalPrototype() {
                       className="break-inside-avoid group cursor-pointer border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all focus-within:ring-2 focus-within:ring-gray-900"
                       aria-labelledby={`post-title-${post.id}`}
                     >
-                      <Link href={`/blog/${post.id}`} className="block focus:outline-none">
+                      <Link href={`/mock/homepage-post-feed/blog/${post.id}`} className="block focus:outline-none">
                         {post.hasImage && (
                           <div
                             className={`bg-gray-200 overflow-hidden ${
@@ -297,7 +375,7 @@ export default function M2FunctionalPrototype() {
                           </div>
                         )}
                         <div className="p-5">
-                          <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded mb-3">
+                          <span className="inline-block px-3 py-1 text-xs font-bold bg-gray-900 text-white rounded-full mb-3 uppercase tracking-wider">
                             {post.track}
                           </span>
                           <h3
@@ -337,6 +415,19 @@ export default function M2FunctionalPrototype() {
         </div>
       </Container>
 
+      {/* Return to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 p-3 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 z-50 transition-opacity"
+          aria-label="Return to top"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </button>
+      )}
+
       {/* Accessibility Notes (for review only) */}
       <div className="bg-gray-50 border-t border-gray-200 py-8 mt-12">
         <Container>
@@ -349,12 +440,16 @@ export default function M2FunctionalPrototype() {
               <li>✅ Focus indicators (ring-2 on all interactive elements)</li>
               <li>✅ Screen reader announcements (filter changes)</li>
               <li>✅ Skip to main content link</li>
-              <li>✅ Mobile responsive (sidebar → collapsible menu)</li>
+              <li>✅ Mobile overlay menu (full width on top of content)</li>
               <li>✅ Loading/empty/error states</li>
               <li>✅ Time elements with datetime attributes</li>
               <li>✅ Image alt text via aria-label</li>
               <li>✅ Button aria-labels for context</li>
               <li>✅ Keyboard shortcuts help section</li>
+              <li>✅ Return to top button</li>
+              <li>✅ Profile avatar in sidebar</li>
+              <li>✅ Prominent category badges</li>
+              <li>✅ Hero CTAs (primary + secondary)</li>
             </ul>
           </div>
         </Container>
