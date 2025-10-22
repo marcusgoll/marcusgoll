@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { RelatedPosts } from '@/components/blog/related-posts';
 import { PrevNextNav } from '@/components/blog/prev-next-nav';
 import { SocialShare } from '@/components/blog/social-share';
+import { TableOfContents } from '@/components/blog/table-of-contents';
 import { generateBlogPostingSchema } from '@/lib/schema';
 
 interface BlogPostPageProps {
@@ -98,7 +99,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         }}
       />
 
-      <article className="mx-auto max-w-3xl px-4 py-12">
+      <div className="container mx-auto px-4 py-12">
+        {/* Mobile TOC - shown only on mobile devices, before content */}
+        <div className="lg:hidden mb-8">
+          <TableOfContents />
+        </div>
+
+        <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-12 xl:gap-16">
+          <article className="max-w-3xl">
         {/* Post header */}
       <header className="mb-8">
         <h1 className="text-4xl font-bold tracking-tight mb-4">{frontmatter.title}</h1>
@@ -170,12 +178,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         />
       </div>
 
-      {/* Previous/Next Navigation - US2 */}
-      <PrevNextNav currentSlug={slug} />
+          {/* Previous/Next Navigation - US2 */}
+          <PrevNextNav currentSlug={slug} />
 
-        {/* Related Posts - US1 */}
-        <RelatedPosts currentSlug={slug} />
-      </article>
+          {/* Related Posts - US1 */}
+          <RelatedPosts currentSlug={slug} />
+        </article>
+
+        {/* Table of Contents - US5 (sticky sidebar on desktop) */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <h2 className="text-lg font-semibold mb-4">On this page</h2>
+            <TableOfContents />
+          </div>
+        </aside>
+      </div>
+    </div>
     </>
   );
 }
