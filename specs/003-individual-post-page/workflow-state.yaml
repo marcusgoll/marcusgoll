@@ -12,7 +12,7 @@ deployment:
     url: https://github.com/marcusgoll/marcusgoll
     deployment_id: "4241ebd"
     deployed_at: "2025-10-22T15:31:37Z"
-    version: "1.0.0"
+    version: "1.1.0"
 
 workflow:
   phase: ship
