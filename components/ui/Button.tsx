@@ -3,7 +3,7 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { trackContentTrackClick } from '@/lib/analytics';
 
-type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination';
+type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination' | 'general';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
