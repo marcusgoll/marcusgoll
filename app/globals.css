@@ -6,45 +6,72 @@
 
 :root {
 
-  /* Brand colors in OKLCH */
+  /* Brand Foundation Colors in OKLCH */
   --navy-900: oklch(0.205 0.043 264.052);
   --emerald-600: oklch(0.617 0.153 166.108);
   --sky-blue: oklch(0.699 0.126 232.661);
 
+  /* Background Colors */
+  --bg-dark: oklch(0.97 0 0); /* Lightest gray for elevated surfaces */
+  --bg: oklch(1 0 0); /* Pure white background */
+  --bg-light: oklch(0.985 0 0); /* Off-white for cards */
+
+  /* Text Colors */
+  --text: oklch(0.145 0 0); /* High contrast black for primary text */
+  --text-muted: oklch(0.556 0 0); /* Medium gray for secondary text */
+
+  /* Border Colors */
+  --highlight: oklch(0.617 0.153 166.108); /* Emerald accent border */
+  --border: oklch(0.922 0 0); /* Light gray border */
+  --border-muted: oklch(0.97 0 0); /* Subtle divider border */
+
+  /* Action Colors */
+  --primary: oklch(0.205 0.043 264.052); /* Navy for primary actions */
+  --primary-foreground: oklch(0.985 0 0); /* White text on navy */
+  --secondary: oklch(0.617 0.153 166.108); /* Emerald for secondary actions */
+  --secondary-foreground: oklch(1 0 0); /* White text on emerald */
+
+  /* Alert Colors */
+  --danger: oklch(0.577 0.245 27.325); /* Red for errors */
+  --danger-foreground: oklch(1 0 0); /* White text on red */
+  --warning: oklch(0.78 0.155 85); /* Amber for warnings */
+  --warning-foreground: oklch(0.205 0 0); /* Dark text on amber */
+  --success: oklch(0.617 0.153 166.108); /* Emerald for success */
+  --success-foreground: oklch(1 0 0); /* White text on emerald */
+  --info: oklch(0.699 0.126 232.661); /* Sky blue for info */
+  --info-foreground: oklch(1 0 0); /* White text on sky blue */
+
   /* Spacing */
   --spacing-base: 8px;
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+
+  /* Legacy shadcn tokens (mapped to new system) */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--bg-light);
+  --card-foreground: var(--text);
+  --popover: var(--bg-light);
+  --popover-foreground: var(--text);
+  --muted: var(--bg-dark);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--bg-dark);
+  --accent-foreground: var(--text);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--highlight);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: var(--bg-light);
+  --sidebar-foreground: var(--text);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--bg-dark);
+  --sidebar-accent-foreground: var(--text);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--highlight);
 }
 
 @layer utilities {
@@ -92,37 +119,63 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Background Colors - Dark Mode */
+  --bg-dark: oklch(0.145 0 0); /* Darkest background */
+  --bg: oklch(0.205 0 0); /* Default dark background */
+  --bg-light: oklch(0.269 0 0); /* Elevated surfaces in dark mode */
+
+  /* Text Colors - Dark Mode */
+  --text: oklch(0.985 0 0); /* High contrast white for primary text */
+  --text-muted: oklch(0.708 0 0); /* Medium gray for secondary text */
+
+  /* Border Colors - Dark Mode */
+  --highlight: oklch(0.617 0.153 166.108); /* Emerald accent (same) */
+  --border: oklch(1 0 0 / 10%); /* Subtle white border */
+  --border-muted: oklch(1 0 0 / 5%); /* Very subtle divider */
+
+  /* Action Colors - Dark Mode */
+  --primary: oklch(0.699 0.126 232.661); /* Sky blue for primary actions */
+  --primary-foreground: oklch(0.985 0 0); /* White text */
+  --secondary: oklch(0.617 0.153 166.108); /* Emerald (same) */
+  --secondary-foreground: oklch(1 0 0); /* White text */
+
+  /* Alert Colors - Dark Mode */
+  --danger: oklch(0.704 0.191 22.216); /* Lighter red for dark mode */
+  --danger-foreground: oklch(1 0 0); /* White text */
+  --warning: oklch(0.82 0.155 85); /* Lighter amber for dark mode */
+  --warning-foreground: oklch(0.145 0 0); /* Dark text */
+  --success: oklch(0.67 0.153 166.108); /* Lighter emerald for dark mode */
+  --success-foreground: oklch(1 0 0); /* White text */
+  --info: oklch(0.75 0.126 232.661); /* Lighter sky blue for dark mode */
+  --info-foreground: oklch(1 0 0); /* White text */
+
+  /* Legacy shadcn tokens (mapped to new system) */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--bg-light);
+  --card-foreground: var(--text);
+  --popover: var(--bg-light);
+  --popover-foreground: var(--text);
+  --muted: var(--bg-light);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--bg-light);
+  --accent-foreground: var(--text);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--highlight);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: var(--bg-light);
+  --sidebar-foreground: var(--text);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--bg-light);
+  --sidebar-accent-foreground: var(--text);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--highlight);
 }
 
 @layer base {
