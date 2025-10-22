@@ -75,9 +75,9 @@ manual_gates:
     approved_by: null
 
 design_workflow:
-  enabled: null
+  enabled: true
   phases:
-    variations: not_started
+    variations: completed
     functional: not_started
     polish: not_started
 
