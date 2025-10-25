@@ -216,24 +216,24 @@ type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination' | 'general'
 
 interface TrackNewsletterViewParams {
   location: string;
-  track?: ContentTrack;
+  content_track?: ContentTrack;
 }
 
 interface TrackNewsletterSubmitParams {
   location: string;
-  track?: ContentTrack;
+  content_track?: ContentTrack;
   source?: string;
 }
 
 interface TrackNewsletterSuccessParams {
   location: string;
-  track?: ContentTrack;
+  content_track?: ContentTrack;
   source?: string;
 }
 
 interface TrackPageViewParams {
-  path: string;
-  track?: ContentTrack;
+  page_path: string;
+  content_track?: ContentTrack;
 }
 ```
 

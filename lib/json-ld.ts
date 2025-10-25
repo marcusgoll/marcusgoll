@@ -56,7 +56,7 @@ const PERSON_SCHEMA = {
  */
 export function generateArticleSchema(post: PostData) {
   const { frontmatter, slug } = post;
-  const articleUrl = `${SITE_URL}/blog/${slug}`;
+  const articleUrl = `${SITE_URL}/blog/${encodeURIComponent(slug)}`;
 
   return {
     '@context': 'https://schema.org',
@@ -66,7 +66,7 @@ export function generateArticleSchema(post: PostData) {
     author: PERSON_SCHEMA,
     publisher: ORGANIZATION_SCHEMA,
     datePublished: frontmatter.date,
-    dateModified: frontmatter.date, // Could track actual modification date if available
+    dateModified: frontmatter.modified ?? frontmatter.updated ?? frontmatter.date, // Prefer explicit modified/updated fields
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': articleUrl,

@@ -131,9 +131,9 @@ All constitution MUST principles are addressed:
 
 **Finding W001** 🟡 **WARNING** - Terminology:
 - **Location**: spec.md (line 258) vs plan.md (line 258)
-- **Issue**: Spec uses "NEXT_PUBLIC_GA_ID" in some places, plan standardizes on "NEXT_PUBLIC_GA_MEASUREMENT_ID"
+- **Issue**: Spec uses `NEXT_PUBLIC_GA_ID` in some places while the plan standardizes on `NEXT_PUBLIC_GA_MEASUREMENT_ID`, creating potential confusion.
 - **Impact**: Low (plan.md notes migration path from old variable name)
-- **Recommendation**: Verify existing codebase uses consistent variable name
+- **Recommendation**: Verify and standardize all code and docs to use `NEXT_PUBLIC_GA_MEASUREMENT_ID`; add a short migration note that maps `NEXT_PUBLIC_GA_ID` → `NEXT_PUBLIC_GA_MEASUREMENT_ID` and run a quick repo-wide grep to update references.
 - **Severity**: WARNING (documentation clarity, not blocking)
 
 ---

@@ -24,7 +24,7 @@ Implementation of comprehensive SEO and analytics infrastructure for discoverabi
 - Performance targets well-defined and measurable
 
 **Minor Warnings** (non-blocking):
-1. W001 - Environment variable naming consistency (NEXT_PUBLIC_GA_ID vs NEXT_PUBLIC_GA_MEASUREMENT_ID)
+1. W001 - Environment variable naming consistency (use `NEXT_PUBLIC_GA_MEASUREMENT_ID` as the canonical client-side GA4 variable; remove or migrate any uses of `NEXT_PUBLIC_GA_ID`.)
 2. W002 - Documentation reminders for T028-T030 tasks
 
 **Next Phase**: `/implement` (proceed to task execution)
