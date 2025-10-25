@@ -104,6 +104,44 @@ This feature enhances the existing syntax highlighting implementation (from Feat
 
 ## Checkpoints
 - Phase 0 (Specification): 2025-10-24
+- Phase 1 (Planning): 2025-10-24
+- Phase 2 (Tasks): 2025-10-25
+
+## Phase 2: Tasks (2025-10-25 04:10)
+
+**Summary**:
+- Total tasks: 27
+- User story breakdown: US1 (5), US2 (2), US3 (4), US4 (3), US5 (2), US6 (1), Setup (2), Polish (8)
+- Parallel opportunities: 15 tasks marked [P]
+- Setup tasks: 2
+- Task file: specs/006-syntax-highlighting/tasks.md
+
+**Task Organization**:
+- Phase 1: Setup (2 tasks) - Shiki installation, directory verification
+- Phase 2: US1 - Shiki Upgrade (5 tasks) - Rehype plugin, config, tests, migration
+- Phase 3: US2 - Dark/Light Themes (2 tasks) - CSS variables, dual theme config
+- Phase 4: US3 - Line Highlighting (4 tasks) - Metadata parsing, CSS, component enhancement
+- Phase 5: US4 - Keyboard Accessibility (3 tasks) - Keyboard nav, ARIA labels, live regions
+- Phase 6: US5 - Inline Code Styling (2 tasks) - Component update, CSS
+- Phase 7: US6 - Aviation Code Support (1 task) - Testing with real aviation examples
+- Phase 8: Polish (8 tasks) - Error handling, smoke tests, benchmarks, documentation
+
+**Key Decisions from Task Breakdown**:
+1. **TDD Approach**: Tests created before implementation (T004, T005 before T006)
+2. **Component Enhancement Strategy**: Preserve existing CodeBlock features (copy button, line numbers, filename)
+3. **Parallel Execution**: 15 tasks can run in parallel (tests, CSS, configs in different files)
+4. **MVP Strategy**: Phases 1-4 (US1-US3) for first release, US4-US6 as enhancements
+5. **Reuse Analysis**: 5 existing components identified (CodeBlock, MDX pipeline, globals.css, next.config.ts, package.json)
+6. **New Infrastructure**: 3 components to create (rehype-shiki.ts, shiki-config.ts, enhanced CSS)
+
+**Checkpoint**:
+- ✅ Tasks generated: 27
+- ✅ User story organization: 8 phases (Setup, US1-US6, Polish)
+- ✅ Dependency graph: US1 blocks US2-US6, Setup blocks all
+- ✅ Parallel opportunities: 15 tasks identified
+- ✅ MVP strategy: US1-US3 (Shiki + themes + line highlighting)
+- ✅ Test coverage: 5 test tasks (unit + integration + E2E)
+- 📋 Ready for: /analyze
 
 ## Last Updated
-2025-10-24T22:53:00-07:00
+2025-10-25T04:10:00Z
