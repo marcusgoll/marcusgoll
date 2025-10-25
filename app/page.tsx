@@ -1,14 +1,54 @@
 import { getAllPosts } from '@/lib/mdx';
 import Link from 'next/link';
+import type { Metadata } from 'next';
+import { generateWebSiteSchema } from '@/lib/json-ld';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
+export const metadata: Metadata = {
+  title: 'Home',
+  description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons from Marcus Gollahon.',
+  openGraph: {
+    type: 'website',
+    url: `${SITE_URL}`,
+    title: 'Marcus Gollahon | Aviation & Software Development',
+    description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons.',
+    siteName: 'Marcus Gollahon',
+    images: [
+      {
+        url: `${SITE_URL}/images/og-default.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Marcus Gollahon - Aviation and Software Development',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@marcusgoll',
+    creator: '@marcusgoll',
+  },
+};
 
 export default async function Home() {
   // Fetch latest 5 posts from MDX
   const allPosts = await getAllPosts();
   const latestPosts = allPosts.slice(0, 5);
 
+  // Generate WebSite JSON-LD for homepage (US5, T020)
+  const websiteSchema = generateWebSiteSchema();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <main className="container mx-auto px-4 py-16">
+    <>
+      {/* WebSite JSON-LD for SEO - US5, T020 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteSchema),
+        }}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <main className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
             Marcus Gollahon
@@ -108,5 +148,6 @@ export default async function Home() {
         </div>
       </main>
     </div>
+    </>
   );
 }

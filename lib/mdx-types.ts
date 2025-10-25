@@ -23,6 +23,8 @@ export const PostFrontmatterSchema = z.object({
   publishedAt: z.string().datetime('PublishedAt must be valid ISO 8601 datetime').optional(),
   draft: z.boolean().default(false),
   readingTime: z.number().optional(),
+  modified: z.string().datetime('Modified must be valid ISO 8601 datetime').optional(),
+  updated: z.string().datetime('Updated must be valid ISO 8601 datetime').optional(),
 });
 
 /**
