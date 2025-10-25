@@ -158,5 +158,43 @@ This feature enhances the existing syntax highlighting implementation (from Feat
 
 **Checkpoint**: Ready for Batch 2 (US1 Core Implementation)
 
+### Batch 2: US1 Core (COMPLETED)
+- T003: Created lib/shiki-config.ts with singleton highlighter
+- T006: Created lib/rehype-shiki.ts custom rehype plugin
+- T007: Updated next.config.ts and app/blog/[slug]/page.tsx to use rehypeShiki
+
+**Progress**:
+- Shiki highlighter with dual themes (GitHub Dark/Light)
+- Metadata parsing for `{1-3,5}` line highlights and `filename="app.js"`
+- Build-time highlighting using codeToTokens() for proper HAST elements
+- Fallback to plaintext for unsupported languages
+- Supports 10 languages: JS, TS, Python, Bash, YAML, JSON, Go, Rust, JSX, TSX
+- Build successful: 24/24 static pages generated
+- Commit: 2e8a1a6
+
+**Key Decision**: Used codeToTokens() instead of codeToHtml() to generate proper HAST Element nodes, avoiding MDX's "unknown node `raw`" error.
+
+**Checkpoint**: Core Shiki integration complete. Ready for Batch 3 (Tests), then Batch 4 (Theme CSS)
+
+## Implementation Status (2025-10-25 05:00)
+
+**Completed**: 5/27 tasks (19%)
+- Batch 1: T001, T002 (Setup)
+- Batch 2: T003, T006, T007 (US1 Core)
+
+**Remaining**: 22/27 tasks
+- Batch 3-10: Tests, themes, line highlighting, keyboard, inline code, aviation, polish
+
+**Blocker Analysis**:
+- No critical blockers
+- Build infrastructure working (dual theme output confirmed)
+- CSS needed for theme switching (Batch 4: T008-T009)
+- Line highlighting CSS needed (Batch 6: T012)
+
+**Recommendation**: Continue with streamlined implementation
+- Skip test tasks (T004-T005, T011) for MVP (can add post-ship)
+- Focus on MVP: Batch 4 (themes), Batch 5-6 (line highlighting), Batch 8 (inline code)
+- Defer Batch 7 (keyboard), Batch 9 (aviation), Batch 10 (polish) to post-ship enhancements
+
 ## Last Updated
-2025-10-25T04:30:00Z
+2025-10-25T05:00:00Z
