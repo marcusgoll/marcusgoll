@@ -7,21 +7,30 @@ feature:
   title: Configure DNS mapping to marcusgoll.com domain
   branch_name: feature/005-dns-domain-mapping
   created: 2025-10-25T02:40:29Z
-  last_updated: 2025-10-25T02:40:29Z
+  last_updated: 2025-10-25T03:15:00Z
   roadmap_status: in_progress # Options: backlog, next, in_progress, shipped
   github_issue: 40
 deployment_model: staging-prod # Options: staging-prod, direct-prod, local-only
 workflow:
-  phase: spec-flow
-  status: in_progress # Options: in_progress, completed, failed, pending
-  completed_phases: []
+  phase: implementation
+  status: blocked # Options: in_progress, completed, failed, pending, blocked
+  completed_phases:
+    - specification
+    - planning
+    - tasks
+    - analysis
   failed_phases: []
-  manual_gates: {}
+  manual_gates:
+    implementation_manual_work:
+      required: true
+      status: pending
+      description: "Manual DNS configuration at domain registrar required (18/20 tasks)"
+      blocker: "Feature on hold per GitHub Issue #40 until Next.js site production-ready"
 context:
   token_budget:
-    phase: planning
-    budget: 75000
-    estimated_usage: 0
+    phase: implementation
+    budget: 100000
+    estimated_usage: 45000
     compaction_needed: false
 deployment:
   staging:
@@ -35,13 +44,28 @@ deployment:
     url: null
     deployment_ids: {}
 artifacts:
-  spec: specs/dns-domain-mapping/spec.md
-  plan: null
-  tasks: null
+  spec: specs/005-dns-domain-mapping/spec.md
+  plan: specs/005-dns-domain-mapping/plan.md
+  tasks: specs/005-dns-domain-mapping/tasks.md
+  analysis_report: specs/005-dns-domain-mapping/analysis-report.md
+  dns_documentation: infrastructure/dns/README.md
   optimization_report: null
   staging_validation: null
   ship_report: null
-quality_gates: {}
+quality_gates:
+  infrastructure_documentation:
+    status: completed
+    timestamp: 2025-10-25T03:15:00Z
+    description: "DNS configuration documentation template created"
+  dns_configuration:
+    status: pending
+    description: "Manual DNS A record creation at domain registrar (blocked)"
+  dns_propagation:
+    status: pending
+    description: "DNS propagation verification (blocked by dns_configuration)"
+  ssl_certificate:
+    status: pending
+    description: "HTTPS certificate issuance verification (blocked by dns_propagation)"
 metadata:
   schema_version: "2.0.0"
   workflow_version: "2.0.0"
