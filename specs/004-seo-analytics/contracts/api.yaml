@@ -1,0 +1,303 @@
+# API Contracts: SEO & Analytics Infrastructure
+
+## Overview
+
+This feature does **not introduce or modify any API endpoints**. All functionality is client-side infrastructure (meta tags, analytics tracking, sitemap generation).
+
+---
+
+## Existing Endpoints (Unchanged)
+
+This feature integrates with existing Next.js routes but does not modify their API contracts:
+
+### Static Files
+
+#### GET /sitemap.xml
+**Purpose**: Serve generated sitemap for search engines
+
+**Status**: 200 OK (if generated), 404 Not Found (if generation failed)
+
+**Response Headers**:
+```
+Content-Type: application/xml; charset=utf-8
+```
+
+**Response Body** (XML):
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://marcusgoll.com</loc>
+    <lastmod>2025-10-22T18:00:00.000Z</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Additional URLs -->
+</urlset>
+```
+
+**Notes**:
+- Generated at build time (postbuild script)
+- Served as static file from `public/sitemap.xml`
+- No authentication required (public resource)
+
+---
+
+#### GET /robots.txt
+**Purpose**: Provide crawler directives to search engines and AI bots
+
+**Status**: 200 OK
+
+**Response Headers**:
+```
+Content-Type: text/plain; charset=utf-8
+```
+
+**Response Body** (Plain text):
+```
+User-agent: *
+Allow: /
+Disallow: /api
+Disallow: /admin
+
+User-agent: GPTBot
+Allow: /blog/
+Disallow: /
+
+Sitemap: https://marcusgoll.com/sitemap.xml
+```
+
+**Notes**:
+- Static file in `public/robots.txt`
+- No authentication required (public resource)
+- AI crawler directives (GPTBot, ClaudeBot, Google-Extended, CCBot)
+
+---
+
+## Client-Side Contracts
+
+### Google Analytics 4 Events
+
+**Interface**: `window.gtag(command, eventName, params)`
+
+**Event: page_view** (FR-014)
+```typescript
+gtag('event', 'page_view', {
+  page_path: string;        // Current URL path
+  content_track?: string;   // aviation | dev-startup | cross-pollination | general
+});
+```
+
+**Event: newsletter_view** (FR-016)
+```typescript
+gtag('event', 'newsletter_view', {
+  location: string;         // Page where form displayed
+  content_track?: string;   // Content track (aviation, dev-startup, etc.)
+});
+```
+
+**Event: newsletter_submit** (FR-017)
+```typescript
+gtag('event', 'newsletter_submit', {
+  location: string;         // Page where form submitted
+  content_track?: string;   // Content track
+  source?: string;          // Source attribution (optional)
+});
+```
+
+**Event: newsletter_success** (FR-018)
+```typescript
+gtag('event', 'newsletter_success', {
+  location: string;         // Page where success confirmed
+  content_track?: string;   // Content track
+  source?: string;          // Source attribution (optional)
+});
+```
+
+**Notes**:
+- All events sent to Google Analytics 4 via gtag.js
+- No server-side API required
+- Events fail silently if GA4 unavailable (NFR-008)
+- No PII in event parameters (NFR-007)
+
+---
+
+## TypeScript Interfaces
+
+### SEO Configuration
+
+```typescript
+// lib/seo-config.ts
+interface SEOConfig {
+  title: string;                    // 50-60 characters (FR-005)
+  description: string;              // 150-160 characters (FR-005)
+  canonical: string;                // Absolute URL
+  openGraph: OpenGraphConfig;
+  twitter: TwitterConfig;
+}
+
+interface OpenGraphConfig {
+  title: string;
+  description: string;
+  url: string;
+  type: 'website' | 'article';
+  images: OpenGraphImage[];
+}
+
+interface OpenGraphImage {
+  url: string;                      // 1200×630px (recommended)
+  width: number;
+  height: number;
+  alt: string;
+}
+
+interface TwitterConfig {
+  handle: string;                   // @marcusgoll
+  site: string;
+  cardType: 'summary' | 'summary_large_image';
+}
+```
+
+---
+
+### JSON-LD Schemas
+
+**Article Schema** (FR-006):
+```typescript
+// lib/json-ld.ts
+interface ArticleSchema {
+  '@context': 'https://schema.org';
+  '@type': 'Article';
+  headline: string;
+  author: PersonSchema;
+  datePublished: string;            // ISO 8601 timestamp
+  dateModified?: string;            // ISO 8601 timestamp
+  image: string;                    // Absolute URL
+  publisher: OrganizationSchema;
+}
+
+interface PersonSchema {
+  '@type': 'Person';
+  name: string;
+  url: string;
+}
+
+interface OrganizationSchema {
+  '@type': 'Organization';
+  name: string;
+  logo: ImageObjectSchema;
+}
+
+interface ImageObjectSchema {
+  '@type': 'ImageObject';
+  url: string;
+}
+```
+
+**WebSite Schema** (FR-007):
+```typescript
+interface WebSiteSchema {
+  '@context': 'https://schema.org';
+  '@type': 'WebSite';
+  name: string;
+  url: string;
+  description: string;
+  author: PersonSchema;
+}
+```
+
+---
+
+### Analytics Events
+
+```typescript
+// lib/analytics.ts
+type ContentTrack = 'aviation' | 'dev-startup' | 'cross-pollination' | 'general';
+
+interface TrackNewsletterViewParams {
+  location: string;
+  content_track?: ContentTrack;
+}
+
+interface TrackNewsletterSubmitParams {
+  location: string;
+  content_track?: ContentTrack;
+  source?: string;
+}
+
+interface TrackNewsletterSuccessParams {
+  location: string;
+  content_track?: ContentTrack;
+  source?: string;
+}
+
+interface TrackPageViewParams {
+  page_path: string;
+  content_track?: ContentTrack;
+}
+```
+
+---
+
+## External API Dependencies
+
+### Google Analytics 4 Measurement Protocol (Indirect)
+
+**Endpoint**: `https://www.googletagmanager.com/gtag/js?id={GA_MEASUREMENT_ID}`
+
+**Purpose**: Load GA4 tracking script
+
+**Authentication**: None (public measurement ID)
+
+**Usage**: Loaded via `<script>` tag in `app/layout.tsx`
+
+**Error Handling**: Silent failure if script blocked (ad blocker, network error)
+
+---
+
+### Google Rich Results Test (Validation Only)
+
+**Endpoint**: `https://search.google.com/test/rich-results`
+
+**Purpose**: Validate JSON-LD structured data
+
+**Authentication**: None (public testing tool)
+
+**Usage**: Manual validation during development and QA
+
+---
+
+## Breaking Changes
+
+**None** - This feature is additive infrastructure with no API contract modifications.
+
+---
+
+## Migration Requirements
+
+**None** - No database, no API endpoints, no data backfill required.
+
+---
+
+## Versioning
+
+**API Version**: N/A (no API endpoints)
+
+**Client Library Version**:
+- `next-seo@^6.5.0` (new dependency)
+- GA4 gtag.js (loaded from Google CDN, version managed by Google)
+
+---
+
+## Notes
+
+**Why no API endpoints?**
+- SEO meta tags: Server-side rendered in HTML head (no API needed)
+- Sitemap: Static file generated at build time (no runtime API)
+- Analytics: Client-side events sent directly to Google Analytics 4 (no server proxy)
+- robots.txt: Static file (no dynamic generation)
+
+**Future API considerations**:
+- If implementing server-side event tracking, would add: `POST /api/analytics/event`
+- If implementing custom SEO dashboard, would add: `GET /api/seo/metrics`
+- Currently out of scope (use Google Search Console and GA4 dashboards)
