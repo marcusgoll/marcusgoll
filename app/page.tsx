@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import Hero from '@/components/home/Hero';
-import DualTrackShowcase from '@/components/home/DualTrackShowcase';
-import Container from '@/components/ui/Container';
+import HomePageClient from '@/components/home/HomePageClient';
 import PageViewTracker from '@/components/analytics/PageViewTracker';
-import { getPostsByTag } from '@/lib/posts';
+import { getAllPosts } from '@/lib/posts';
 
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;
@@ -16,13 +15,18 @@ export const metadata: Metadata = {
 };
 
 /**
- * Homepage - Dual-track content display
- * Showcases latest posts from Aviation and Dev/Startup tracks
+ * Homepage - M2 Design (Sidebar Enhanced + Magazine Masonry)
+ *
+ * Features:
+ * - Sidebar with track filters and post counts
+ * - Magazine masonry layout with CSS columns
+ * - Featured post hero
+ * - Mobile responsive with menu overlay
+ * - Keyboard shortcuts
  */
 export default async function Home() {
-  // Fetch latest posts from both tracks (3 per track for homepage)
-  const aviationPosts = await getPostsByTag('aviation', 3);
-  const devStartupPosts = await getPostsByTag('dev-startup', 3);
+  // Fetch all posts
+  const allPosts = await getAllPosts();
 
   return (
     <div className="min-h-screen">
@@ -32,15 +36,8 @@ export default async function Home() {
       {/* Hero Section */}
       <Hero />
 
-      {/* Dual-Track Content Showcase */}
-      <main className="py-16">
-        <Container>
-          <DualTrackShowcase
-            aviationPosts={aviationPosts}
-            devStartupPosts={devStartupPosts}
-          />
-        </Container>
-      </main>
+      {/* M2 Layout (Sidebar + Magazine Masonry) */}
+      <HomePageClient allPosts={allPosts} />
     </div>
   );
 }
