@@ -22,7 +22,7 @@ import { getAllPosts, getPostBySlug } from '@/lib/mdx';
 import type { Metadata } from 'next';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { mdxComponents } from '@/components/mdx/mdx-components';
-import rehypeHighlight from 'rehype-highlight';
+import rehypeShiki from '@/lib/rehype-shiki';
 import remarkGfm from 'remark-gfm';
 import Image from 'next/image';
 import { RelatedPosts } from '@/components/blog/related-posts';
@@ -263,7 +263,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           options={{
             mdxOptions: {
               remarkPlugins: [remarkGfm], // GitHub Flavored Markdown (tables, strikethrough, etc.)
-              rehypePlugins: [rehypeHighlight], // Syntax highlighting for code blocks
+              rehypePlugins: [rehypeShiki], // Shiki syntax highlighting with dual themes
             },
           }}
         />

@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 import { validateEnvironmentVariables } from "./lib/validate-env";
 import createMDX from '@next/mdx';
-import rehypeHighlight from 'rehype-highlight';
+import rehypeShiki from './lib/rehype-shiki';
 import remarkGfm from 'remark-gfm';
 
 // Validate environment variables at startup (fail-fast)
@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
 const withMDX = createMDX({
   options: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypeHighlight],
+    rehypePlugins: [rehypeShiki],
   },
 });
 
