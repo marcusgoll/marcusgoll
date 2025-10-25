@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   title: "Marcus Gollahon | Aviation & Software Development",
   description:
     "Teaching systematic thinking from 30,000 feet. Aviation career guidance and software development insights.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  viewport: "width=device-width, initial-scale=1",
+  themeColor: "#0F172A",
 };
 
 export default function RootLayout({

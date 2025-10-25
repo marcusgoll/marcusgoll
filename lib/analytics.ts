@@ -25,6 +25,23 @@ interface TrackPageViewParams {
   track?: ContentTrack;
 }
 
+interface TrackNewsletterViewParams {
+  location: string;
+  track?: ContentTrack;
+}
+
+interface TrackNewsletterSubmitParams {
+  location: string;
+  track?: ContentTrack;
+  email?: string; // Optional for analytics (should be hashed if sent)
+}
+
+interface TrackNewsletterSuccessParams {
+  location: string;
+  track?: ContentTrack;
+  source?: string; // Newsletter source (e.g., 'sidebar', 'footer', 'inline')
+}
+
 /**
  * Check if gtag is available (client-side only, GA4 loaded)
  */
@@ -70,6 +87,75 @@ export const trackNewsletterSignup = ({
   });
 
   console.debug('[Analytics] Newsletter signup:', { location, track });
+};
+
+/**
+ * Track newsletter form view (US6, T021)
+ * Fires when user views a newsletter signup form
+ * Helps measure form visibility and engagement
+ */
+export const trackNewsletterView = ({
+  location,
+  track,
+}: TrackNewsletterViewParams): void => {
+  if (!isGtagAvailable()) return;
+
+  window.gtag('event', 'newsletter_view', {
+    location: location,
+    content_track: track || 'general',
+    event_category: 'newsletter',
+    event_label: `view_${location}`,
+  });
+
+  console.debug('[Analytics] Newsletter view:', { location, track });
+};
+
+/**
+ * Track newsletter form submit attempt (US6, T021)
+ * Fires when user submits the newsletter form (before success/failure)
+ * Helps measure conversion funnel and identify drop-off points
+ */
+export const trackNewsletterSubmit = ({
+  location,
+  track,
+  email,
+}: TrackNewsletterSubmitParams): void => {
+  if (!isGtagAvailable()) return;
+
+  window.gtag('event', 'newsletter_submit', {
+    location: location,
+    content_track: track || 'general',
+    event_category: 'newsletter',
+    event_label: `submit_${location}`,
+    // Don't send actual email - GA4 PII compliance
+    has_email: email ? 'yes' : 'no',
+  });
+
+  console.debug('[Analytics] Newsletter submit:', { location, track });
+};
+
+/**
+ * Track newsletter signup success (US6, T021)
+ * Fires after successful newsletter subscription
+ * Tracks which content drives successful conversions
+ */
+export const trackNewsletterSuccess = ({
+  location,
+  track,
+  source,
+}: TrackNewsletterSuccessParams): void => {
+  if (!isGtagAvailable()) return;
+
+  window.gtag('event', 'newsletter_success', {
+    location: location,
+    content_track: track || 'general',
+    source: source || 'unknown',
+    event_category: 'conversion',
+    event_label: `success_${location}_${source || 'unknown'}`,
+    value: 1, // Assign value to conversion
+  });
+
+  console.debug('[Analytics] Newsletter success:', { location, track, source });
 };
 
 /**
