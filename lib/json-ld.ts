@@ -7,7 +7,7 @@
  * US5, T018
  */
 
-import type { Post } from './mdx';
+import type { PostData } from './mdx';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
 const SITE_NAME = 'Marcus Gollahon';
@@ -54,7 +54,7 @@ const PERSON_SCHEMA = {
  * </script>
  * ```
  */
-export function generateArticleSchema(post: Post) {
+export function generateArticleSchema(post: PostData) {
   const { frontmatter, slug } = post;
   const articleUrl = `${SITE_URL}/blog/${slug}`;
 

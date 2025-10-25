@@ -2,13 +2,18 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { DefaultSEO } from "@/components/seo/DefaultSEO";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Marcus Gollahon | Aviation & Software Development",
   description:
     "Teaching systematic thinking from 30,000 feet. Aviation career guidance and software development insights.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  viewport: "width=device-width, initial-scale=1",
+  themeColor: "#0F172A",
 };
 
 export default function RootLayout({
@@ -21,9 +26,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        {/* Site-wide SEO defaults */}
-        <DefaultSEO />
-
         {/* Google Analytics */}
         {gaId && (
           <>

@@ -6,28 +6,44 @@
 
 import { getAllPosts, getAllTags } from '@/lib/mdx';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { PostCard } from '@/components/blog/post-card';
-import { NextSeo } from 'next-seo';
-import { getPageSEO } from '@/lib/seo-config';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
+export const metadata: Metadata = {
+  title: 'Blog',
+  description: 'Aviation career guidance, software development insights, and startup lessons. Teaching systematic thinking from 30,000 feet.',
+  alternates: {
+    canonical: `${SITE_URL}/blog`,
+  },
+  openGraph: {
+    type: 'website',
+    url: `${SITE_URL}/blog`,
+    title: 'Blog | Marcus Gollahon',
+    description: 'Aviation career guidance, software development insights, and startup lessons. Teaching systematic thinking from 30,000 feet.',
+    siteName: 'Marcus Gollahon',
+    images: [
+      {
+        url: `${SITE_URL}/images/og-default.jpg`,
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@marcusgoll',
+    creator: '@marcusgoll',
+  },
+};
 
 export default async function BlogIndexPage() {
-  const pageSEO = getPageSEO({
-    title: 'Blog',
-    description: 'Aviation career guidance, software development insights, and startup lessons. Teaching systematic thinking from 30,000 feet.',
-    canonical: 'https://marcusgoll.com/blog',
-    openGraph: {
-      type: 'website',
-      url: 'https://marcusgoll.com/blog',
-      title: 'Blog | Marcus Gollahon',
-      description: 'Aviation career guidance, software development insights, and startup lessons. Teaching systematic thinking from 30,000 feet.',
-    },
-  });
   const posts = await getAllPosts();
   const tags = await getAllTags();
 
   return (
     <>
-      <NextSeo {...pageSEO} />
       <div className="mx-auto max-w-4xl px-4 py-12">
       <header className="mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Blog</h1>

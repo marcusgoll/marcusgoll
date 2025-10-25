@@ -31,8 +31,8 @@ import { SocialShare } from '@/components/blog/social-share';
 import { TableOfContents } from '@/components/blog/table-of-contents';
 import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
 import { generateBlogPostingSchema } from '@/lib/schema';
-import { NextSeo } from 'next-seo';
-import { getPageSEO, getOgImageUrl } from '@/lib/seo-config';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
 
 /**
  * Props for BlogPostPage component
@@ -78,23 +78,47 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
   const { frontmatter } = post;
 
+  // Helper to get absolute image URL
+  const getImageUrl = (imagePath?: string) => {
+    if (!imagePath) return `${SITE_URL}/images/og-default.jpg`;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `${SITE_URL}${imagePath.startsWith('/') ? imagePath : `/${imagePath}`}`;
+  };
+
+  const imageUrl = getImageUrl(frontmatter.featuredImage);
+
   return {
     title: frontmatter.title,
     description: frontmatter.excerpt,
     authors: [{ name: frontmatter.author }],
+    alternates: {
+      canonical: `${SITE_URL}/blog/${slug}`,
+    },
     openGraph: {
       title: frontmatter.title,
       description: frontmatter.excerpt,
       type: 'article',
+      url: `${SITE_URL}/blog/${slug}`,
       publishedTime: frontmatter.date,
       authors: [frontmatter.author],
-      images: frontmatter.featuredImage ? [frontmatter.featuredImage] : [],
+      tags: frontmatter.tags,
+      siteName: 'Marcus Gollahon',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: frontmatter.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@marcusgoll',
+      creator: '@marcusgoll',
       title: frontmatter.title,
       description: frontmatter.excerpt,
-      images: frontmatter.featuredImage ? [frontmatter.featuredImage] : [],
+      images: [imageUrl],
     },
   };
 }
@@ -128,30 +152,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Generate BlogPosting JSON-LD schema for rich snippets (US3, FR-003)
   const blogPostingSchema = generateBlogPostingSchema(post);
 
-  // Generate SEO metadata for NextSeo (US1, T009)
-  const pageSEO = getPageSEO({
-    title: frontmatter.title,
-    description: frontmatter.excerpt,
-    canonical: `https://marcusgoll.com/blog/${slug}`,
-    openGraph: {
-      type: 'article',
-      title: frontmatter.title,
-      description: frontmatter.excerpt,
-      url: `https://marcusgoll.com/blog/${slug}`,
-      article: {
-        publishedTime: frontmatter.date,
-        authors: [frontmatter.author],
-        tags: frontmatter.tags,
-      },
-      images: frontmatter.featuredImage ? [{
-        url: getOgImageUrl(frontmatter.featuredImage),
-        width: 1200,
-        height: 630,
-        alt: frontmatter.title,
-      }] : undefined,
-    },
-  });
-
   // Generate breadcrumb segments for hierarchical navigation (US6, FR-007, T063)
   // Structure: Home > Blog > [Post Title]
   const breadcrumbSegments: BreadcrumbSegment[] = [
@@ -174,9 +174,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <>
-      {/* NextSeo component for meta tags - US1, T009 */}
-      <NextSeo {...pageSEO} />
-
       {/* BlogPosting JSON-LD for SEO - US3 */}
       <script
         type="application/ld+json"

@@ -1,20 +1,36 @@
 import { getAllPosts } from '@/lib/mdx';
 import Link from 'next/link';
-import { NextSeo } from 'next-seo';
-import { getPageSEO } from '@/lib/seo-config';
+import type { Metadata } from 'next';
 import { generateWebSiteSchema } from '@/lib/json-ld';
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
+export const metadata: Metadata = {
+  title: 'Home',
+  description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons from Marcus Gollahon.',
+  openGraph: {
+    type: 'website',
+    url: `${SITE_URL}`,
+    title: 'Marcus Gollahon | Aviation & Software Development',
+    description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons.',
+    siteName: 'Marcus Gollahon',
+    images: [
+      {
+        url: `${SITE_URL}/images/og-default.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Marcus Gollahon - Aviation and Software Development',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@marcusgoll',
+    creator: '@marcusgoll',
+  },
+};
+
 export default async function Home() {
-  const pageSEO = getPageSEO({
-    title: 'Home',
-    description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons from Marcus Gollahon.',
-    openGraph: {
-      type: 'website',
-      url: 'https://marcusgoll.com',
-      title: 'Marcus Gollahon | Aviation & Software Development',
-      description: 'Teaching systematic thinking from 30,000 feet. Aviation career guidance, software development insights, and startup lessons.',
-    },
-  });
   // Fetch latest 5 posts from MDX
   const allPosts = await getAllPosts();
   const latestPosts = allPosts.slice(0, 5);
@@ -24,8 +40,6 @@ export default async function Home() {
 
   return (
     <>
-      <NextSeo {...pageSEO} />
-
       {/* WebSite JSON-LD for SEO - US5, T020 */}
       <script
         type="application/ld+json"
