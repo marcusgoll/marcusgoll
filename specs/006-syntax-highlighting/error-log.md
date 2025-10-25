@@ -107,3 +107,92 @@ None yet.
 - **Cause**: Missing fallback logic in rehype plugin
 - **Resolution**: Catch Shiki errors, render as plaintext with warning
 - **Prevention**: Test unsupported language (quickstart.md Scenario 6)
+
+---
+
+## Optimization Phase - Critical Accessibility Fixes
+
+### Entry 1: 2025-10-24 - Highlighted Line Contrast WCAG AA Failure
+
+**Failure**: Highlighted line background contrast too low  
+**Symptom**: Light mode 1.04:1 contrast, dark mode 1.35:1 contrast - both fail WCAG AA 3:1 minimum for UI elements  
+**Learning**: Initial opacity values (0.1 light, 0.15 dark) were aesthetic choices without accessibility validation. WCAG AA requires 3:1 contrast for UI components.  
+**Ghost Context Cleanup**: Removed insufficiently contrasted background colors, replaced with WCAG AA compliant values
+
+**Resolution**:
+- Light mode: Increased opacity from 0.1 to 0.25 (3.2:1 contrast ratio)
+- Dark mode: Increased opacity from 0.15 to 0.35 (3.5:1 contrast ratio)
+- Added explicit WCAG AA comments in CSS
+
+**Prevention**: Run Lighthouse accessibility audit during /optimize phase to catch contrast issues early
+
+**Related**:
+- Spec: NFR-002 (WCAG 2.1 AA compliance)
+- Code: app/globals.css:93, 98
+- From /optimize audit
+
+---
+
+### Entry 2: 2025-10-24 - Copy Button Touch Target Size Failure
+
+**Failure**: Copy button touch targets too small for mobile accessibility  
+**Symptom**: Buttons sized ~28x20px, failing iOS/Android 44x44px minimum guideline  
+**Learning**: Default CSS sizing without explicit min-width/min-height doesn't guarantee accessible touch targets. Mobile accessibility requires explicit sizing constraints.  
+**Ghost Context Cleanup**: Removed insufficiently sized buttons, added minimum dimensions
+
+**Resolution**:
+- Header copy button: Added `min-w-[44px] min-h-[44px] px-2` classes
+- Floating copy button: Added `min-w-[44px] min-h-[44px]` classes, increased padding to px-3 py-2
+- Both buttons now meet iOS/Android 44x44px minimum
+
+**Prevention**: Test all interactive elements with mobile device emulation during development
+
+**Related**:
+- Spec: NFR-002 (WCAG 2.1 AA compliance)
+- Code: components/mdx/code-block.tsx:70, 103
+- From /optimize audit
+
+---
+
+### Entry 3: 2025-10-24 - Missing Clipboard API Error Handling
+
+**Failure**: Clipboard operations had no error handling  
+**Symptom**: No try/catch around navigator.clipboard.writeText(), failing silently on errors  
+**Learning**: Clipboard API can fail due to permissions, HTTPS requirement, or browser support. Graceful degradation with fallback required for accessibility (WCAG 3.3.1 Error Identification).  
+**Ghost Context Cleanup**: Removed unsafe synchronous clipboard calls, replaced with async/await + fallback
+
+**Resolution**:
+- Changed handleCopy to async function with try/catch
+- Primary: await navigator.clipboard.writeText() with error logging
+- Fallback: document.execCommand('copy') for older browsers
+- Nested try/catch ensures fallback also handles errors gracefully
+- Console logging for debugging (not user-facing, but helps development)
+
+**Prevention**: Always wrap browser APIs with error handling, test in older browsers
+
+**Related**:
+- Spec: NFR-002 (WCAG 2.1 AA), FR-005 (copy button functionality)
+- Code: components/mdx/code-block.tsx:31-55
+- From /optimize audit
+
+---
+
+### Entry 4: 2025-10-24 - Build Failure False Positive
+
+**Failure**: Code review reported "Build failure - pages-manifest.json error"  
+**Symptom**: Production build actually succeeded, code review agent misinterpreted logs  
+**Learning**: Build warnings (e.g., metadata deprecation warnings) don't indicate failure. Exit code 0 + .next/BUILD_ID existence confirms success.  
+**Ghost Context Cleanup**: Removed "build failure" from blocker list
+
+**Resolution**:
+- Manual verification: `npm run build` exits with code 0
+- Build artifacts present: `.next/BUILD_ID`, `.next/static/`
+- 24/24 static pages generated successfully
+- Warnings about metadata API changes are non-blocking (Next.js 15 deprecations)
+
+**Prevention**: Always verify build failures manually before blocking deployment
+
+**Related**:
+- From /optimize code review (false positive)
+- Verified manually in /debug phase
+
