@@ -1,0 +1,120 @@
+# Workflow State for Dokploy Deployment Platform Integration
+# Last Updated: 2025-10-26
+feature:
+  slug: dokploy-deployment-platform
+  number: "047"
+  title: "Dokploy deployment platform integration"
+  branch_name: feature/047-dokploy-deployment-platform
+  github_issue: 47
+  created_at: "2025-10-26T00:00:00Z"
+  updated_at: "2025-10-26T00:00:00Z"
+deployment:
+  model: direct-prod # staging-prod | direct-prod | local-only
+  environment:
+    staging:
+      url: null
+      deployment_id: null
+      deployed_at: null
+    production:
+      url: null
+      deployment_id: null
+      deployed_at: null
+workflow:
+  phase: planning
+  status: in_progress
+  completed_phases:
+    - specification
+  failed_phases: []
+  phases:
+    specification:
+      status: completed
+      summary: Created comprehensive specification with 10 user stories covering 5-phase Dokploy integration. Zero clarification markers. MVP focus on US1-US5 (13-19 hours).
+      started_at: null
+      completed_at: "2025-10-26T00:00:00Z"
+    clarification:
+      status: not_required
+      summary: null
+      started_at: null
+      completed_at: null
+    planning:
+      status: in_progress
+      summary: null
+      started_at: null
+      completed_at: null
+    tasks:
+      status: pending
+      summary: null
+      started_at: null
+      completed_at: null
+    analysis:
+      status: pending
+      summary: null
+      started_at: null
+      completed_at: null
+    implementation:
+      status: pending
+      summary: null
+      started_at: null
+      completed_at: null
+      stats:
+        total_tasks: 0
+        completed_tasks: 0
+        error_count: 0
+    optimization:
+      status: pending
+      summary: null
+      started_at: null
+      completed_at: null
+    preview:
+      status: pending
+      approved: false
+      approved_at: null
+      notes: null
+    deployment:
+      status: pending
+      summary: null
+      started_at: null
+      completed_at: null
+quality_gates:
+  pre_flight:
+    status: pending
+    checks:
+      environment_vars: null
+      build_success: null
+      docker_build: null
+      ci_config: null
+      dependencies: null
+  code_review:
+    status: pending
+    critical_issues: 0
+    blocker_issues: 0
+    passed: null
+  rollback_capability:
+    status: not_applicable # Only for staging-prod model
+    tested: null
+    passed: null
+manual_gates:
+  preview:
+    required: true
+    completed: false
+    approved: false
+    approved_at: null
+  staging_validation:
+    required: false # Only for staging-prod model
+    completed: false
+    approved: false
+    approved_at: null
+artifacts:
+  spec: specs/047-dokploy-deployment-platform/spec.md
+  plan: null
+  tasks: null
+  analysis_report: null
+  ship_summary: null
+  optimization_report: null
+  code_review_report: null
+  release_notes: null
+token_budget:
+  phase: initialization
+  estimated_tokens: 0
+  threshold: 80
+  compaction_needed: false
