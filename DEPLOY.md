@@ -18,7 +18,7 @@ After code is merged to `main` and the build passes, deploy to VPS:
 ###  1. SSH into your VPS
 
 ```bash
-ssh your-user@178.156.129.179
+ssh hetzner
 ```
 
 ### 2. Navigate to project directory
