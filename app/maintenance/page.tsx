@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   robots: 'noindex, nofollow', // Prevent indexing maintenance page
 }
 
-export default function MaintenancePage(): JSX.Element {
+export default function MaintenancePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-navy-900 px-4 py-16 sm:px-6 lg:px-8">
       {/* Main Content Container */}

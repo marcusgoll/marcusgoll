@@ -87,9 +87,10 @@ export function middleware(request: NextRequest): NextResponse {
       return response
     } else {
       // Token is invalid - log failed attempt
+      const ip = request.headers.get('x-forwarded-for') || 'unknown'
       logBypassAttempt(false, {
         token: bypassToken,
-        ip: request.ip || 'unknown',
+        ip: ip,
       })
     }
   }
