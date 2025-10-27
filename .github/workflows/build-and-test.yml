@@ -26,8 +26,8 @@ jobs:
 
       - name: Build application
         env:
-          PUBLIC_URL: "https://marcusgoll.com"
-          NEXT_PUBLIC_SITE_URL: "https://marcusgoll.com"
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.PUBLIC_URL }}
           NODE_ENV: "production"
           # Ghost CMS (using placeholder values for build)
           GHOST_API_URL: "https://demo.ghost.io"
