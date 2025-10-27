@@ -77,6 +77,25 @@ export function validateEnvironmentVariables(): void {
     })
   }
 
+  // Optional: Maintenance mode validation (warn if misconfigured)
+  const maintenanceMode = process.env.MAINTENANCE_MODE?.toLowerCase()
+  if (maintenanceMode === 'true') {
+    const maintenanceToken = process.env.MAINTENANCE_BYPASS_TOKEN
+    if (!maintenanceToken || maintenanceToken.trim() === '') {
+      console.warn(
+        '\n⚠️  WARNING: MAINTENANCE_MODE is enabled but MAINTENANCE_BYPASS_TOKEN is not set.\n' +
+        '   Developers will not be able to bypass maintenance mode.\n' +
+        '   Generate token: openssl rand -hex 32\n'
+      )
+    } else if (maintenanceToken.length < 32) {
+      console.warn(
+        '\n⚠️  WARNING: MAINTENANCE_BYPASS_TOKEN is too short (< 32 characters).\n' +
+        '   Recommended: 64-character hex string for 256-bit entropy.\n' +
+        '   Generate token: openssl rand -hex 32\n'
+      )
+    }
+  }
+
   // Format validation for URLs
   const urlVars = ['PUBLIC_URL', 'NEXT_PUBLIC_SUPABASE_URL']
   for (const varName of urlVars) {
