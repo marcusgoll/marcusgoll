@@ -30,7 +30,7 @@ export default function DualTrackShowcase({
           <Link href="/aviation">
             <Button
               variant="outline"
-              size="md"
+              size="default"
               track="aviation"
               analyticsLocation="homepage"
             >
@@ -61,7 +61,7 @@ export default function DualTrackShowcase({
           <Link href="/dev-startup">
             <Button
               variant="outline"
-              size="md"
+              size="default"
               track="dev-startup"
               analyticsLocation="homepage"
             >
