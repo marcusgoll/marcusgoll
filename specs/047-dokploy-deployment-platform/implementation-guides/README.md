@@ -29,7 +29,7 @@ This directory contains step-by-step implementation guides for migrating marcusg
 
 **Migration Strategy**: Blue-green deployment at infrastructure level
 **Risk Level**: LOW (production unchanged until Phase 6 cutover)
-**Rollback Capability**: Multiple levels (Dokploy rollback, Nginx revert, VPS snapshot)
+**Rollback Capability**: Multiple levels (Dokploy rollback, Caddyfile revert, VPS snapshot)
 
 ---
 
@@ -57,8 +57,8 @@ This directory contains step-by-step implementation guides for migrating marcusg
 
 **Deliverables**:
 - Dokploy running on VPS (port 3000)
-- Nginx subdomain config (deploy.marcusgoll.com)
-- SSL certificate via Let's Encrypt
+- Caddy subdomain config (deploy.marcusgoll.com)
+- SSL certificate via Caddy automatic HTTPS
 - Admin access configured and tested
 
 **Status**: [ ] Not Started / [ ] In Progress / [ ] Complete
@@ -116,7 +116,7 @@ This directory contains step-by-step implementation guides for migrating marcusg
 **Description**: Switch marcusgoll.com to Dokploy-managed app
 
 **Deliverables**:
-- Nginx backup created
+- Caddyfile backup created
 - Production domain in Dokploy
 - marcusgoll.com routing updated
 - Production validation passed
@@ -237,7 +237,7 @@ Each phase has validation checklists. **DO NOT proceed** to next phase if valida
 
 **Rollback Decision Points**:
 - If Phase 1-5 fail: No impact on production, debug and retry
-- If Phase 6 fails: Rollback to pre-Dokploy Nginx config (<10 min)
+- If Phase 6 fails: Rollback to pre-Dokploy Caddyfile config (<10 min)
 - If Phase 7 reveals issues: Rollback or fix via Dokploy deployments
 
 ---
@@ -299,7 +299,7 @@ Each phase has validation checklists. **DO NOT proceed** to next phase if valida
 
 **Rollback Resources**:
 - VPS Snapshot: Hetzner Console → Snapshots → pre-dokploy-migration-2025-10-26
-- Nginx Backup: /etc/nginx/sites-available/marcusgoll.backup-pre-dokploy
+- Caddyfile Backup: Docker volume /etc/caddy/Caddyfile.backup-pre-dokploy
 - Config Backup: D:\Coding\marcusgoll\specs\047-dokploy-deployment-platform\configs\pre-migration-backup\
 
 **Support Escalation**:

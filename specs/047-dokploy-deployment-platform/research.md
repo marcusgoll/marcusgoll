@@ -11,9 +11,9 @@
 - **Scope Boundaries**: Content-focused blog with newsletter, self-hosted infrastructure, no e-commerce
 
 ### System Architecture (from system-architecture.md)
-- **Components**: Next.js App Router, PostgreSQL (Supabase), Nginx reverse proxy, Docker containers
+- **Components**: Next.js App Router, PostgreSQL (Supabase), Caddy reverse proxy, Docker containers
 - **Integration Points**: Dokploy will orchestrate all existing containers plus add monitoring layer
-- **Data Flows**: User requests → Nginx → Docker containers → PostgreSQL
+- **Data Flows**: User requests → Caddy → Docker containers → PostgreSQL
 - **Constraints**: Single VPS architecture, must maintain <$50/mo total cost
 
 ### Tech Stack (from tech-stack.md)
@@ -70,7 +70,7 @@
 
 ### Decision 2: Zero-downtime migration strategy
 
-- **Decision**: Install Dokploy in parallel, validate, then cutover Nginx
+- **Decision**: Install Dokploy in parallel, validate, then cutover Caddy routing
 - **Rationale**: Minimizes risk by keeping current deployment running during setup
 - **Alternatives**:
   - **Direct migration**: Higher risk, requires downtime window
@@ -120,7 +120,7 @@
 - **Alternatives**:
   - **Port-based access**: http://VPS_IP:3000 less secure, unprofessional
   - **VPN-only access**: Too complex for solo developer
-- **Source**: spec.md FR-002, Nginx subdomain configuration pattern
+- **Source**: spec.md FR-002, Caddy subdomain configuration pattern
 
 ### Decision 8: 7-day rollback window with docker-compose backup
 
@@ -139,8 +139,8 @@
 - **docker-compose.prod.yml** (lines 1-78): Production Docker Compose config, health checks, resource limits, logging
 - **deploy.sh** (lines 1-68): Deployment script pattern (git pull, npm install, build, PM2 restart) - logic will move to Dokploy
 - **.github/workflows/deploy-production.yml** (lines 1-55): CI/CD pipeline structure - adapt for Dokploy webhook
-- **Nginx reverse proxy**: Existing Nginx setup (inferred from deployment-strategy.md) - add Dokploy subdomain rule
-- **Let's Encrypt SSL**: Existing SSL setup (from deployment-strategy.md) - reuse for deploy.marcusgoll.com
+- **Caddy reverse proxy**: Existing Caddy setup (inferred from deployment-strategy.md) - add Dokploy subdomain rule
+- **Automatic HTTPS**: Existing Caddy automatic HTTPS (from deployment-strategy.md) - automatic for deploy.marcusgoll.com
 - **Health check endpoint**: `/api/health` (from docker-compose.prod.yml line 38) - reuse for Dokploy monitoring
 - **Environment variable schema**: DATABASE_URL, NEXT_PUBLIC_*, RESEND_API_KEY (from deploy-production.yml lines 32-37) - migrate to Dokploy UI
 
@@ -151,7 +151,7 @@
 - **Dokploy installation script**: Official Dokploy installer, run on VPS to bootstrap platform
 - **Dokploy application configuration**: Import Next.js app, connect GitHub repo, configure build settings
 - **Dokploy database import**: Import existing PostgreSQL connection string, configure backup schedule
-- **Nginx subdomain configuration**: Add deploy.marcusgoll.com proxy rule to existing Nginx config
+- **Caddy subdomain configuration**: Add deploy.marcusgoll.com proxy rule to existing Caddyfile
 - **GitHub webhook**: Configure repository webhook to send push events to Dokploy
 - **Dokploy CLI configuration export**: Export Dokploy config as version-controlled YAML for disaster recovery
 

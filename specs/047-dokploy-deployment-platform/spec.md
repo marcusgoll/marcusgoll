@@ -209,7 +209,7 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 
 ## Context Strategy & Signal Design
 
-**System Prompt Altitude**: Implementation-focused (Docker, Nginx, database migration)
+**System Prompt Altitude**: Implementation-focused (Docker, Caddy, database migration)
 - Cue level: Detailed technical (SSH commands, Docker Compose, Dokploy API)
 - Rationale: Infrastructure setup requires precision, not high-level strategy
 
@@ -233,7 +233,7 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 
 **Retrieval Strategy**:
 - JIT (Just-In-Time): Fetch Dokploy docs during implementation
-- Upfront: Current VPS config (`docker-compose.prod.yml`, Nginx conf)
+- Upfront: Current VPS config (`docker-compose.prod.yml`, Caddyfile)
 - Identifiers: Dokploy version (latest stable), Ubuntu version (check VPS)
 
 **Memory Artifacts**:
@@ -348,19 +348,19 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 **Hetzner VPS**:
 - Docker installed (already present)
 - Docker Compose installed (already present)
-- Nginx installed (already present)
+- Caddy installed (already present, running in Docker)
 - Subdomain DNS record (deploy.marcusgoll.com → VPS IP)
 - Port 3000 available for Dokploy UI (currently unused)
 
 **New Requirements**:
 - Dokploy Docker container (installed via official script)
 - Dokploy data volume (persistent storage for configs/backups)
-- Let's Encrypt SSL cert for deploy.marcusgoll.com (via Dokploy or Nginx)
+- Let's Encrypt SSL cert for deploy.marcusgoll.com (via Caddy automatic HTTPS)
 
 **No Changes Required**:
 - Dockerfile (can reuse existing)
 - GitHub Actions (can keep or transition to Dokploy-managed)
-- Existing Nginx config (will add proxy rule for Dokploy subdomain)
+- Existing Caddyfile (will add proxy rule for Dokploy subdomain)
 
 ### Environment Variables
 
@@ -414,7 +414,7 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 
 **Reversibility**: Fully reversible
 - Keep old docker-compose.prod.yml for 7 days
-- Can revert Nginx config to point to old Docker setup
+- Can revert Caddyfile to point to old Docker setup
 - Dokploy is abstraction (can extract Docker configs if needed)
 - No data loss risk (database stays in place)
 
@@ -425,12 +425,12 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 **Dokploy-Specific Rollback**:
 - **Pre-Migration Rollback** (if issues during setup):
   - Stop Dokploy container
-  - Revert Nginx config
+  - Revert Caddyfile
   - Restart old docker-compose setup
   - Duration: < 10 minutes
 
 - **Post-Migration Rollback** (if issues after cutover):
-  - Update Nginx to point to old Docker setup
+  - Update Caddyfile to point to old Docker setup
   - Restart old docker-compose containers
   - Investigate Dokploy issue separately
   - Duration: < 15 minutes
@@ -457,7 +457,7 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 |-----------|------|--------|--------|--------|-------------------|
 | **Happiness** | Reduce deployment friction | Manual errors eliminated | Deployment error rate | < 5% (vs. current ~10% manual errors) | Deployment logs (success/failure ratio) |
 | **Engagement** | Increase deployment frequency | More frequent deploys | Deployments per week | 3-5 (vs. current 1-2/week) | Dokploy deployment history |
-| **Adoption** | Developer adopts Dokploy | Daily UI access | Dokploy UI logins/week | 5-7 (daily checks) | Nginx access logs for deploy.marcusgoll.com |
+| **Adoption** | Developer adopts Dokploy | Daily UI access | Dokploy UI logins/week | 5-7 (daily checks) | Caddy access logs for deploy.marcusgoll.com |
 | **Retention** | Continued Dokploy use | No reversion to manual | Weeks using Dokploy | 8+ weeks without reverting | NOTES.md tracking |
 | **Task Success** | Successful deployments | Deploy completes | Deployment success rate | 95%+ successful deploys | Deployment logs |
 
@@ -473,7 +473,7 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 ## Measurement Plan
 
 > **Purpose**: Define how success will be measured using Claude Code-accessible sources.
-> **Sources**: Deployment logs, VPS metrics (via Dokploy API or SSH), Nginx logs, time tracking.
+> **Sources**: Deployment logs, VPS metrics (via Dokploy API or SSH), Caddy logs, time tracking.
 
 ### Data Collection
 
@@ -492,8 +492,8 @@ Ship US1-US5 first (core deployment platform), validate in production for 2 week
 - Track via: Dokploy monitoring dashboard export or Prometheus metrics
 - Collect: CPU usage (%), memory usage (MB), disk usage (GB), network I/O (MB/s)
 
-**UI Access Metrics** (Nginx access logs):
-- Track via: `grep "deploy.marcusgoll.com" /var/log/nginx/access.log`
+**UI Access Metrics** (Caddy access logs):
+- Track via: `docker logs proxy-caddy-1 | grep "deploy.marcusgoll.com"`
 - Collect: Login events, page views, timestamp
 
 ### Measurement Queries
@@ -527,10 +527,11 @@ dokploy deployments list --format json | jq -r '
 '
 ```
 
-**UI Access Frequency** (via Nginx logs):
+**UI Access Frequency** (via Caddy logs):
 ```bash
 # Count unique login sessions per week
-grep "deploy.marcusgoll.com" /var/log/nginx/access.log.1 | \
+docker logs proxy-caddy-1 --since 7d | \
+  grep "deploy.marcusgoll.com" | \
   grep "POST /api/login" | \
   wc -l
 ```
@@ -578,7 +579,7 @@ echo "scale=2; ($errors * 100) / $total" | bc
 - [x] No implementation details (no specific Dokploy versions, Docker commands in spec)
 
 ### Conditional: Success Metrics (Infrastructure improvement)
-- [x] HEART metrics defined with Claude Code-measurable sources (deployment logs, Dokploy API, Nginx logs)
+- [x] HEART metrics defined with Claude Code-measurable sources (deployment logs, Dokploy API, Caddy logs)
 - [x] Hypothesis stated (Problem → Solution → Prediction with magnitude)
 
 ### Conditional: UI Features (Skip - no end-user UI)
@@ -660,7 +661,7 @@ The following features are explicitly excluded from the initial implementation:
 - [ ] Import PostgreSQL to Dokploy management
 - [ ] Migrate environment variables to Dokploy UI
 - [ ] Test deployment via Dokploy (test subdomain)
-- [ ] Update Nginx to route marcusgoll.com to Dokploy
+- [ ] Update Caddyfile to route marcusgoll.com to Dokploy
 - [ ] Monitor for 24 hours
 
 **Post-Migration** (validation):
@@ -685,9 +686,9 @@ docker stop dokploy
 
 **If Dokploy fails after cutover** (production affected):
 ```bash
-# Revert Nginx config
-sudo cp /etc/nginx/sites-available/marcusgoll.backup /etc/nginx/sites-available/marcusgoll
-sudo nginx -t && sudo systemctl reload nginx
+# Revert Caddyfile in Docker
+docker exec proxy-caddy-1 sh -c 'cp /etc/caddy/Caddyfile.backup /etc/caddy/Caddyfile'
+docker exec proxy-caddy-1 caddy reload --config /etc/caddy/Caddyfile
 
 # Restart old docker-compose
 cd /opt/marcusgoll
