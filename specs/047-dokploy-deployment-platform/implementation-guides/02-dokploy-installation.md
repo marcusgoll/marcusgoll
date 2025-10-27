@@ -113,7 +113,7 @@ netstat -tuln | grep :3000
 sudo lsof -i :3000
 
 # If it's your current Next.js app, that's OK
-# Dokploy will be accessed via Nginx reverse proxy (next task)
+# Dokploy will be accessed via Caddy reverse proxy (next task)
 # OR: Reconfigure Dokploy to different port
 docker stop dokploy
 docker rm dokploy
@@ -164,12 +164,12 @@ sudo usermod -aG docker $USER
 - [ ] Dokploy installed successfully
 - [ ] Container running and healthy
 - [ ] Credentials saved securely
-- [ ] Ready for Nginx configuration
+- [ ] Ready for Caddy configuration
 ```
 
 ---
 
-## T006: Create Nginx Configuration for Dokploy Subdomain
+## T006: Configure Caddy for Dokploy Subdomain
 
 **Purpose**: Enable HTTPS access to Dokploy UI via deploy.marcusgoll.com
 
@@ -180,272 +180,185 @@ sudo usermod -aG docker $USER
    ssh root@178.156.129.179
    ```
 
-2. Create Nginx server block for Dokploy
+2. Edit Caddyfile in Caddy container
    ```bash
-   nano /etc/nginx/sites-available/dokploy
+   # Option A: Edit in Docker
+   docker exec proxy-caddy-1 vi /etc/caddy/Caddyfile
+
+   # Option B: Copy file locally, edit, and copy back
+   docker cp proxy-caddy-1:/etc/caddy/Caddyfile /tmp/Caddyfile
+   nano /tmp/Caddyfile
+   docker cp /tmp/Caddyfile proxy-caddy-1:/etc/caddy/Caddyfile
    ```
 
-3. Paste the following configuration:
+3. Add Dokploy subdomain entry (Caddyfile format):
 
-```nginx
+```caddyfile
 # Dokploy UI - Reverse Proxy Configuration
 # Subdomain: deploy.marcusgoll.com
 # Backend: localhost:3000 (Dokploy container)
 
-server {
-    listen 80;
-    listen [::]:80;
-    server_name deploy.marcusgoll.com;
-
-    # Redirect HTTP to HTTPS (will be configured by Certbot in T007)
-    # return 301 https://$server_name$request_uri;
-
-    # Temporary: Allow HTTP until SSL configured
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-
-        # WebSocket support (required for Dokploy real-time features)
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-
-        # Standard proxy headers
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # Timeouts (longer for deployment operations)
-        proxy_connect_timeout 300;
-        proxy_send_timeout 300;
-        proxy_read_timeout 300;
-    }
-
-    # Security headers (basic)
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-
-    # Logging
-    access_log /var/log/nginx/dokploy_access.log;
-    error_log /var/log/nginx/dokploy_error.log;
+deploy.marcusgoll.com {
+    reverse_proxy localhost:3000
 }
 ```
 
-4. Save file (Ctrl+O, Enter, Ctrl+X in nano)
+**Note**: Caddy automatically:
+- Provisions SSL via Let's Encrypt (automatic on first request)
+- Redirects HTTP → HTTPS
+- Handles WebSocket upgrades
+- Sets security headers
+- Logs access/errors
 
-5. Enable site by creating symlink
+4. Reload Caddy configuration (applies changes without downtime)
    ```bash
-   ln -s /etc/nginx/sites-available/dokploy /etc/nginx/sites-enabled/dokploy
-   ```
-
-6. Verify symlink created
-   ```bash
-   ls -la /etc/nginx/sites-enabled/ | grep dokploy
-   # Should show: dokploy -> /etc/nginx/sites-available/dokploy
-   ```
-
-7. Test Nginx configuration
-   ```bash
-   nginx -t
+   docker exec proxy-caddy-1 caddy reload
 
    # Expected output:
-   # nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
-   # nginx: configuration file /etc/nginx/nginx.conf test is successful
+   # {"level":"info","ts":1234567890,"msg":"reloaded config"}
    ```
 
-8. If test successful, reload Nginx
+5. Verify reload succeeded
    ```bash
-   systemctl reload nginx
-   ```
-
-9. Verify Nginx reloaded without errors
-   ```bash
-   systemctl status nginx
-   # Should show "active (running)" and recent reload timestamp
-   ```
-
-10. Test HTTP access (from local machine)
-   ```powershell
-   # Windows PowerShell
-   curl http://deploy.marcusgoll.com
-   # Should return HTML (Dokploy login page)
-   ```
-
-**Validation Checklist**:
-- [ ] Nginx config file created: /etc/nginx/sites-available/dokploy
-- [ ] Symlink created: /etc/nginx/sites-enabled/dokploy
-- [ ] nginx -t passes without errors
-- [ ] Nginx reloaded successfully
-- [ ] http://deploy.marcusgoll.com accessible (login page loads)
-
-**Configuration Backup**:
-```bash
-# Save Nginx config to feature directory
-cat /etc/nginx/sites-available/dokploy > /tmp/nginx-dokploy-subdomain.conf
-
-# Download to local machine (Windows PowerShell)
-scp root@178.156.129.179:/tmp/nginx-dokploy-subdomain.conf D:\Coding\marcusgoll\specs\047-dokploy-deployment-platform\configs\nginx-dokploy-subdomain.conf
-```
-
-**Troubleshooting**:
-
-**Error: nginx -t fails with "duplicate server"**:
-```bash
-# Check if deploy.marcusgoll.com already configured elsewhere
-grep -r "deploy.marcusgoll.com" /etc/nginx/sites-enabled/
-# If found, remove duplicate or rename server_name
-```
-
-**Error: Port 80 already in use**:
-```bash
-# Check what's using port 80
-sudo lsof -i :80
-# Likely your existing marcusgoll.com site - that's OK
-# Nginx supports multiple server blocks on same port (different server_names)
-```
-
-**Error: Nginx won't reload**:
-```bash
-# Check error logs
-tail -50 /var/log/nginx/error.log
-# Fix issues and retry
-```
-
-**Documentation** (add to NOTES.md):
-```markdown
-## Nginx Subdomain Configuration (T006)
-
-**Date**: 2025-10-26
-**Config File**: /etc/nginx/sites-available/dokploy
-
-### Configuration Details
-- Server Name: deploy.marcusgoll.com
-- Listen Ports: 80 (HTTP, temporary until SSL)
-- Proxy Target: localhost:3000
-- WebSocket: Enabled (Upgrade headers)
-- Timeouts: 300s (for long deployments)
-
-### Validation
-```bash
-$ nginx -t
-# nginx: configuration file test is successful
-
-$ systemctl status nginx
-# active (running)
-
-$ curl -I http://deploy.marcusgoll.com
-# HTTP/1.1 200 OK
-```
-
-### Status
-- [ ] Configuration created and enabled
-- [ ] Nginx test passed
-- [ ] HTTP access working
-- [ ] Ready for SSL certificate provisioning
-```
-
----
-
-## T007: Provision SSL Certificate for deploy.marcusgoll.com
-
-**Purpose**: Enable HTTPS access with Let's Encrypt certificate
-
-**Prerequisites**:
-- DNS fully propagated (deploy.marcusgoll.com → 178.156.129.179)
-- Nginx config from T006 working
-- Port 80 accessible from internet (for ACME challenge)
-
-**Execution Steps**:
-
-1. SSH to VPS
-   ```bash
-   ssh root@178.156.129.179
-   ```
-
-2. Run Certbot with Nginx plugin
-   ```bash
-   certbot --nginx -d deploy.marcusgoll.com
-   ```
-
-3. Answer Certbot prompts:
-   ```
-   Enter email address (for renewal notices): marcus@marcusgoll.com
-   Accept Terms of Service: (Y)es
-   Share email with EFF: (N)o (optional)
-   ```
-
-4. Certbot will:
-   - Verify DNS points to this server (ACME challenge)
-   - Issue certificate from Let's Encrypt
-   - Automatically update Nginx config with SSL settings
-   - Add HTTP → HTTPS redirect
-
-   Expected output:
-   ```
-   Successfully received certificate.
-   Certificate is saved at: /etc/letsencrypt/live/deploy.marcusgoll.com/fullchain.pem
-   Key is saved at:         /etc/letsencrypt/live/deploy.marcusgoll.com/privkey.pem
-   Deploying certificate...
-   Successfully deployed certificate for deploy.marcusgoll.com
-
-   IMPORTANT NOTES:
-   - Certificate will expire on 2026-01-24
-   - Certbot will automatically renew
-   ```
-
-5. Verify SSL certificate installed
-   ```bash
-   # Check Nginx config updated by Certbot
-   cat /etc/nginx/sites-available/dokploy | grep -A 5 "listen 443"
-
-   # Expected: Should see ssl_certificate lines added
+   docker logs proxy-caddy-1 --tail 10
+   # Look for: "reloaded config" or similar success message
    ```
 
 6. Test HTTPS access (from local machine)
    ```powershell
    # Windows PowerShell
    curl https://deploy.marcusgoll.com
-   # Should return HTML with valid SSL (no warnings)
-   ```
-
-7. Test SSL quality (from browser or online tool)
-   - Open: https://deploy.marcusgoll.com in browser
-   - Check: Green padlock icon appears
-   - Optional: Run SSL Labs test: https://www.ssllabs.com/ssltest/
-   - Target: A or A+ rating
-
-8. Verify auto-renewal configured
-   ```bash
-   # Check Certbot renewal timer
-   systemctl status certbot.timer
-   # Should show "active (waiting)"
-
-   # Test renewal (dry-run)
-   certbot renew --dry-run
-   # Should complete without errors
+   # Should return HTML (Dokploy login page) with valid SSL certificate
    ```
 
 **Validation Checklist**:
-- [ ] Certbot completed successfully
-- [ ] Certificate files exist in /etc/letsencrypt/live/deploy.marcusgoll.com/
-- [ ] Nginx config updated with SSL settings
-- [ ] https://deploy.marcusgoll.com accessible with valid SSL
-- [ ] HTTP redirects to HTTPS automatically
-- [ ] SSL Labs rating A or A+ (target per spec NFR-005)
-- [ ] Certbot auto-renewal configured
+- [ ] Caddyfile entry added for deploy.marcusgoll.com
+- [ ] Caddy reload successful (no errors in logs)
+- [ ] SSL certificate provisioned (verify with curl -v)
+- [ ] https://deploy.marcusgoll.com accessible (login page loads)
+- [ ] SSL certificate valid (check with: echo | openssl s_client -servername deploy.marcusgoll.com -connect deploy.marcusgoll.com:443)
+
+**Configuration Backup**:
+```bash
+# Save Caddyfile to feature directory
+docker cp proxy-caddy-1:/etc/caddy/Caddyfile /tmp/Caddyfile.backup
+docker exec proxy-caddy-1 cat /etc/caddy/Caddyfile > /tmp/Caddyfile
+
+# Download to local machine (Windows PowerShell)
+scp root@178.156.129.179:/tmp/Caddyfile D:\Coding\marcusgoll\specs\047-dokploy-deployment-platform\configs\Caddyfile
+```
 
 **Troubleshooting**:
 
-**Error: DNS validation failed**:
+**Error: caddy reload fails with "duplicate route"**:
 ```bash
-# Verify DNS actually resolves
-nslookup deploy.marcusgoll.com
-# If not resolving: Wait longer for DNS propagation (can take 24h)
-# If resolves to wrong IP: Fix DNS record in provider dashboard
+# Check if deploy.marcusgoll.com already configured
+docker exec proxy-caddy-1 grep -n "deploy.marcusgoll.com" /etc/caddy/Caddyfile
+# If multiple entries, remove duplicates
 ```
 
-**Error: Port 80 not accessible**:
+**Error: Caddy reload fails**:
+```bash
+# Check Caddy logs
+docker logs proxy-caddy-1 --tail 20
+# Look for error messages
+
+# Verify Caddyfile syntax
+docker exec proxy-caddy-1 caddy validate --config /etc/caddy/Caddyfile
+```
+
+**Documentation** (add to NOTES.md):
+```markdown
+## Caddy Subdomain Configuration (T006)
+
+**Date**: 2025-10-26
+**Config File**: Caddyfile (in proxy-caddy-1 container)
+
+### Configuration Details
+- Server Name: deploy.marcusgoll.com
+- Proxy Target: localhost:3000
+- SSL: Auto-provisioned via Let's Encrypt
+- WebSocket: Automatic (Caddy default)
+
+### Validation
+```bash
+$ docker logs proxy-caddy-1 --tail 10
+# Should show reloaded config message
+
+$ curl -I https://deploy.marcusgoll.com
+# HTTP/2 200 OK with valid SSL certificate
+```
+
+### Status
+- [ ] Caddyfile entry added
+- [ ] Caddy reload successful
+- [ ] HTTPS access working
+- [ ] SSL certificate provisioned
+- [ ] Ready for admin access configuration
+```
+
+---
+
+## T007: Verify SSL Certificate for deploy.marcusgoll.com
+
+**Purpose**: Confirm HTTPS access works and SSL certificate is valid
+
+**Execution Steps**:
+
+1. Test HTTPS access (from local machine)
+   ```powershell
+   # Windows PowerShell
+   curl https://deploy.marcusgoll.com
+   # Should return HTML (Dokploy login page) with valid SSL (no warnings)
+   ```
+
+2. Verify SSL certificate details
+   ```powershell
+   # Check certificate info
+   echo | openssl s_client -servername deploy.marcusgoll.com -connect deploy.marcusgoll.com:443 2>/dev/null | openssl x509 -noout -text | grep -E "Subject:|Issuer:|Not Before|Not After"
+
+   # Expected:
+   # Issuer: C=US, O=Let's Encrypt...
+   # Not Before: [today's date]
+   # Not After: [date in ~90 days]
+   ```
+
+3. Test SSL quality (from browser or online tool)
+   - Open: https://deploy.marcusgoll.com in browser
+   - Check: Green padlock icon appears
+   - Optional: Run SSL Labs test: https://www.ssllabs.com/ssltest/analyze.html?d=deploy.marcusgoll.com
+   - Target: A or A+ rating
+
+4. Verify SSL auto-renewal (Caddy handles this automatically)
+   ```bash
+   # Check Caddy logs for certificate details
+   docker logs proxy-caddy-1 | grep -i "certificate"
+
+   # Caddy automatically renews certificates before expiration
+   ```
+
+**Validation Checklist**:
+- [ ] https://deploy.marcusgoll.com accessible without SSL warnings
+- [ ] SSL certificate issued by Let's Encrypt
+- [ ] Certificate valid for deploy.marcusgoll.com
+- [ ] HTTP redirects to HTTPS automatically
+- [ ] SSL Labs rating A or A+ (target per spec NFR-005)
+- [ ] Certificate auto-renewal configured (Caddy default)
+
+**Troubleshooting**:
+
+**Error: SSL certificate not provisioned**:
+```bash
+# Check if Caddy needs to reload again
+docker logs proxy-caddy-1 --tail 20
+# Look for errors or warnings
+
+# Verify DNS resolves correctly
+nslookup deploy.marcusgoll.com
+# Should resolve to 178.156.129.179
+```
+
+**Error: Port 80/443 not accessible**:
 ```bash
 # Check firewall
 sudo ufw status
@@ -454,34 +367,27 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 ```
 
-**Error: Certificate already exists**:
-```bash
-# If retrying, force renewal:
-certbot --nginx -d deploy.marcusgoll.com --force-renewal
-```
-
 **Documentation** (add to NOTES.md):
 ```markdown
-## SSL Certificate Provisioning (T007)
+## SSL Certificate Verification (T007)
 
 **Date**: 2025-10-26
 **Domain**: deploy.marcusgoll.com
-**Certificate Authority**: Let's Encrypt
+**Provider**: Let's Encrypt (auto-managed by Caddy)
 
 ### Certificate Details
-- Issued: [date from certbot output]
-- Expires: [date from certbot output]
-- Files:
-  - Cert: /etc/letsencrypt/live/deploy.marcusgoll.com/fullchain.pem
-  - Key: /etc/letsencrypt/live/deploy.marcusgoll.com/privkey.pem
+- Auto-provisioned on first request to deploy.marcusgoll.com
+- Issuer: Let's Encrypt
+- Auto-renewal: Enabled by default in Caddy
 
 ### Validation
 ```bash
 $ curl -I https://deploy.marcusgoll.com
 # HTTP/2 200 OK
 
-$ openssl s_client -connect deploy.marcusgoll.com:443 -servername deploy.marcusgoll.com < /dev/null 2>&1 | grep "Verify return code"
-# Verify return code: 0 (ok)
+$ echo | openssl s_client -servername deploy.marcusgoll.com -connect deploy.marcusgoll.com:443 2>/dev/null | openssl x509 -noout -dates
+# notBefore=[date]
+# notAfter=[date in ~90 days]
 ```
 
 ### SSL Labs Test
@@ -489,17 +395,14 @@ $ openssl s_client -connect deploy.marcusgoll.com:443 -servername deploy.marcusg
 - Rating: [A/A+]
 
 ### Auto-Renewal
-```bash
-$ systemctl status certbot.timer
-# active (waiting)
-# Next run: [date]
-```
+- Caddy: Automatic (no manual action needed)
+- Renewal happens in background ~30 days before expiration
 
 ### Status
-- [ ] SSL certificate issued and installed
+- [ ] SSL certificate issued and valid
 - [ ] HTTPS access working
 - [ ] HTTP → HTTPS redirect functional
-- [ ] Auto-renewal configured
+- [ ] Auto-renewal enabled
 - [ ] Ready for admin access configuration
 ```
 
@@ -530,7 +433,7 @@ $ systemctl status certbot.timer
    - Change password to strong custom password
    - Update password manager with new password
 
-5. (Optional) Configure IP restriction in Nginx
+5. (Optional) Configure IP restriction in Caddy
 
    If you want to restrict Dokploy access to your IP only:
 
@@ -538,18 +441,20 @@ $ systemctl status certbot.timer
    # SSH to VPS
    ssh root@178.156.129.179
 
-   # Edit Nginx config
-   nano /etc/nginx/sites-available/dokploy
+   # Edit Caddyfile
+   docker exec proxy-caddy-1 vi /etc/caddy/Caddyfile
 
-   # Add inside location / block (before proxy_pass):
+   # Find the deploy.marcusgoll.com block and add IP restriction:
    # Replace YOUR_IP with your public IP (find at: https://whatismyip.com)
 
-   allow YOUR_IP;  # Example: allow 203.0.113.45;
-   deny all;
+   deploy.marcusgoll.com {
+       @denied not remote_ip YOUR_IP
+       respond @denied 403
+       reverse_proxy localhost:3000
+   }
 
-   # Save and test
-   nginx -t
-   systemctl reload nginx
+   # Reload Caddy
+   docker exec proxy-caddy-1 caddy reload
    ```
 
 6. Document admin access procedure

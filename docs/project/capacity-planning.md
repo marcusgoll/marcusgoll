@@ -22,7 +22,7 @@
 - VPS: Hetzner CX21 (2 vCPU, 4GB RAM, 40GB SSD)
 - Next.js: Single Docker container (port 3000)
 - Supabase: Docker container (PostgreSQL + Auth)
-- Nginx: Reverse proxy + SSL termination
+- Caddy: Reverse proxy + automatic SSL/TLS with Let's Encrypt
 - No CDN (yet)
 
 **Constraints**:

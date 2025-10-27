@@ -265,19 +265,19 @@
 
 ### Web Server
 
-**Choice**: Nginx (reverse proxy)
+**Choice**: Caddy (reverse proxy)
 **Version**: Latest stable
 **Rationale**:
-- Industry-standard reverse proxy
-- Handles SSL/TLS termination (Let's Encrypt)
-- Static file serving (if needed)
-- Load balancing (if multi-container later)
-- Excellent performance
+- Automatic SSL/TLS via Let's Encrypt (zero manual configuration)
+- Simple, readable Caddyfile format (vs complex Nginx config)
+- Hot reload (Docker-based, auto-updates without downtime)
+- Full HTTP/2 and HTTP/3 support out of box
+- Excellent for single VPS deployment (minimal overhead)
 
 **Alternatives Rejected**:
-- Caddy: Easier SSL but less widespread, prefer industry standard
-- Apache: Older, heavier, nginx more performant
-- Traefik: Overkill for single VPS
+- Nginx: More complex config, manual SSL management, requires reload
+- Apache: Older, heavier performance profile
+- Traefik: Overkill for single VPS, targets containerized infrastructure
 
 ### CI/CD
 
