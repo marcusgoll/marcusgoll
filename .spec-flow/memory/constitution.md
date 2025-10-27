@@ -750,7 +750,6 @@ All features MUST align with project architecture:
 - **Setup Summary**: `docs/SETUP_SUMMARY.md`
 - **Website Strategy**: `docs/WEBSITE_STRATEGY_ANALYSIS.md`
 - **Quick Start**: `docs/QUICKSTART.md`
-- **Ghost/Next.js Implementation**: `docs/GHOST_NEXTJS_IMPLEMENTATION.md`
 
 ---
 

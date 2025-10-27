@@ -8,8 +8,8 @@ Scanned: D:\Coding\marcusgoll\**\*.{yml,sh,conf,json,md}
 - ✅ docker-compose.prod.yml (D:\Coding\marcusgoll\docker-compose.prod.yml) - Production orchestration
 - ✅ deploy.sh (D:\Coding\marcusgoll\deploy.sh) - Deployment workflow pattern
 - ✅ GitHub Actions CI (D:\Coding\marcusgoll\.github\workflows\deploy-production.yml) - Build verification
-- ✅ Nginx reverse proxy (/etc/nginx/sites-available/marcusgoll on VPS) - SSL termination, routing
-- ✅ Let's Encrypt SSL (Certbot on VPS) - Certificate management
+- ✅ Caddy reverse proxy (docker-based on VPS) - Automatic SSL/TLS, routing
+- ✅ Let's Encrypt SSL (Caddy auto-managed) - Automatic certificate provisioning
 - ✅ Health check endpoint (/api/health) - Container health monitoring
 - ✅ Environment variable schema (deploy-production.yml:32-37) - Current secrets structure
 
@@ -17,7 +17,7 @@ Scanned: D:\Coding\marcusgoll\**\*.{yml,sh,conf,json,md}
 - 🆕 Dokploy Docker container (self-hosted platform)
 - 🆕 Dokploy application configuration (Next.js import)
 - 🆕 Dokploy database management (PostgreSQL import)
-- 🆕 Nginx subdomain config (deploy.marcusgoll.com)
+- 🆕 Caddy subdomain config (deploy.marcusgoll.com)
 - 🆕 GitHub webhook integration
 - 🆕 Dokploy CLI config export (disaster recovery)
 
@@ -39,7 +39,7 @@ Migration phase order:
 ## [IMPLEMENTATION STRATEGY]
 **Migration Approach**: Blue-Green infrastructure deployment
 **Testing Strategy**: Subdomain validation before production cutover
-**Rollback Strategy**: VPS snapshot + Nginx config revert (<15 min)
+**Rollback Strategy**: VPS snapshot + Caddy config revert (<15 min)
 **No TDD Required**: Infrastructure migration, validation via integration tests
 
 ---
@@ -64,8 +64,7 @@ Migration phase order:
 - [ ] T003 [P] Verify VPS prerequisites and document current state
   - Check: Docker >=20.10 (`docker --version`)
   - Check: Docker Compose >=2.0 (`docker-compose --version`)
-  - Check: Nginx installed (`nginx -v`)
-  - Check: Certbot installed (`certbot --version`)
+  - Check: Caddy running (`docker ps | grep caddy`)
   - Check: Disk space >5GB free (`df -h`)
   - Check: Port 3000 available or current app port (`sudo netstat -tuln | grep 3000`)
   - Document: Output in NOTES.md VPS Prerequisites section
@@ -93,28 +92,27 @@ Migration phase order:
   - Save: Admin credentials to secure password manager (DO NOT commit)
   - From: plan.md [ARCHITECTURE DECISIONS], spec.md US1
 
-- [ ] T006 Create Nginx configuration for deploy.marcusgoll.com subdomain
-  - File: /etc/nginx/sites-available/dokploy
+- [ ] T006 Configure Caddy for deploy.marcusgoll.com subdomain
+  - Location: Caddy config in docker container (/etc/caddy/Caddyfile)
   - Config: Reverse proxy to localhost:3000 (Dokploy UI)
-  - WebSocket support: proxy_set_header Upgrade, Connection "upgrade"
-  - Pattern: D:\Coding\marcusgoll\specs\047-dokploy-deployment-platform\configs\nginx-dokploy-subdomain.conf (from plan.md:339-356)
-  - Enable: `sudo ln -s /etc/nginx/sites-available/dokploy /etc/nginx/sites-enabled/`
-  - Test: `sudo nginx -t`
-  - Reload: `sudo systemctl reload nginx`
+  - Caddy handles: Automatic SSL/TLS, HTTP/2, compression
+  - Edit: `docker exec proxy-caddy-1 vi /etc/caddy/Caddyfile` (or use docker cp to edit locally)
+  - Caddyfile entry: `deploy.marcusgoll.com { reverse_proxy localhost:3000 }`
+  - Reload: `docker exec proxy-caddy-1 caddy reload`
+  - Test: `curl https://deploy.marcusgoll.com` returns Dokploy login page
   - From: plan.md [NEW INFRASTRUCTURE - CREATE], spec.md FR-002
 
-- [ ] T007 Provision SSL certificate for deploy.marcusgoll.com
-  - Command: `sudo certbot --nginx -d deploy.marcusgoll.com`
-  - Expected: Let's Encrypt certificate installed
-  - Validation: `curl https://deploy.marcusgoll.com` returns Dokploy login page
-  - SSL test: https://www.ssllabs.com/ssltest/ → Target A+ rating (per NFR-005)
-  - REUSE: Certbot SSL provisioning pattern (existing certs for marcusgoll.com)
+- [ ] T007 Verify SSL certificate for deploy.marcusgoll.com
+  - Caddy auto-provisions: Let's Encrypt certificate (automatic on first request)
+  - Verification: `curl https://deploy.marcusgoll.com` returns Dokploy login page with valid SSL
+  - SSL test: https://www.ssllabs.com/ssltest/analyze.html?d=deploy.marcusgoll.com → Target A+ rating (per NFR-005)
+  - Certificate auto-renewal: Caddy handles renewal automatically (no manual intervention needed)
   - From: plan.md [EXISTING INFRASTRUCTURE - REUSE], spec.md US1
 
 - [ ] T008 Configure Dokploy admin access and security
   - Action: Login to https://deploy.marcusgoll.com with saved credentials
   - Verify: Dashboard loads successfully
-  - Optional: Configure IP restriction in Nginx (allow/deny rules) per spec.md FR-004
+  - Optional: Configure IP restriction in Caddy (via Caddyfile matchers) per spec.md FR-004
   - Document: Admin login process in NOTES.md
   - From: plan.md [SECURITY], spec.md US1
 
@@ -263,9 +261,9 @@ Migration phase order:
 
 **Goal**: Switch marcusgoll.com traffic to Dokploy-managed application
 
-- [ ] T024 Backup current Nginx configuration
-  - Command: `sudo cp /etc/nginx/sites-available/marcusgoll /etc/nginx/sites-available/marcusgoll.backup`
-  - Validation: Backup file exists
+- [ ] T024 Backup current Caddy configuration
+  - Command: `docker exec proxy-caddy-1 cat /etc/caddy/Caddyfile > /tmp/Caddyfile.backup`
+  - Validation: Backup file exists with current Caddyfile content
   - Purpose: Quick rollback if needed
   - From: plan.md [DEPLOYMENT ACCEPTANCE], spec.md Rollback Plan
 
@@ -276,13 +274,12 @@ Migration phase order:
   - Keep: test.marcusgoll.com active for comparison
   - From: spec.md FR-007, plan.md [NEW INFRASTRUCTURE - CREATE]
 
-- [ ] T026 Update Nginx to route marcusgoll.com to Dokploy-managed container
-  - Option A: Update proxy_pass in /etc/nginx/sites-available/marcusgoll to point to Dokploy container port
-  - Option B: Remove Nginx proxy, let Dokploy handle routing directly (simpler)
-  - Recommended: Option B (Dokploy manages SSL + routing)
-  - Test: `sudo nginx -t`
-  - Apply: `sudo systemctl reload nginx`
-  - REUSE: /etc/nginx/sites-available/marcusgoll pattern
+- [ ] T026 Update Caddy to route marcusgoll.com to Dokploy-managed container
+  - Edit Caddyfile: `docker exec proxy-caddy-1 vi /etc/caddy/Caddyfile` (or docker cp locally)
+  - Update entry: Change from `marcusgoll.com { reverse_proxy ghost:2368 }` to `marcusgoll.com { reverse_proxy localhost:3000 }`
+  - Reload: `docker exec proxy-caddy-1 caddy reload`
+  - Test: `curl https://marcusgoll.com` returns Next.js app homepage
+  - Verify: No errors in `docker logs proxy-caddy-1`
   - From: plan.md [EXISTING INFRASTRUCTURE - REUSE], spec.md Deployment Considerations
 
 - [ ] T027 Verify production cutover successful

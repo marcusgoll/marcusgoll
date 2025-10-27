@@ -5,9 +5,9 @@
 See: `research.md` for full research findings
 
 **Summary**:
-- Stack: Dokploy (self-hosted deployment platform), reuse existing Docker + Nginx
-- Components to reuse: 8 (Dockerfile, docker-compose.prod.yml, deploy.sh logic, Nginx, SSL, health checks, env schema, CI/CD structure)
-- New components needed: 6 (Dokploy install, app config, database import, Nginx subdomain, GitHub webhook, CLI export)
+- Stack: Dokploy (self-hosted deployment platform), reuse existing Docker + Caddy
+- Components to reuse: 8 (Dockerfile, docker-compose.prod.yml, deploy.sh logic, Caddy, SSL, health checks, env schema, CI/CD structure)
+- New components needed: 6 (Dokploy install, app config, database import, Caddy subdomain, GitHub webhook, CLI export)
 - Project docs: Fully integrated with all 8 docs from `docs/project/`
 
 ---
@@ -24,7 +24,7 @@ See: `research.md` for full research findings
 
 **Infrastructure** (unchanged):
 - **VPS**: Hetzner (178.156.129.179), 4-8GB RAM, 2-4 vCPUs, Docker + Docker Compose
-- **Web Server**: Nginx (reverse proxy for Dokploy subdomain + application)
+- **Web Server**: Caddy (reverse proxy, automatic SSL/TLS, hot reload)
 - **Application**: Next.js 15.5.6, Node 20, Docker containerized
 - **Database**: PostgreSQL 15+ via Supabase (self-hosted)
 - **CI/CD**: GitHub Actions (verify build) + Dokploy webhooks (deploy)
@@ -33,9 +33,9 @@ See: `research.md` for full research findings
 
 **Zero-Downtime Migration**:
 - **Pattern**: Blue-Green deployment at infrastructure level
-- **Description**: Install Dokploy in parallel (port 3000), configure and test on subdomain, cutover Nginx routing
+- **Description**: Install Dokploy in parallel (port 3000), configure and test on subdomain, cutover Caddy routing
 - **Rationale**: Current production stays untouched during Dokploy setup, minimizes risk
-- **Rollback**: Revert Nginx config, restart old docker-compose (< 10 minutes)
+- **Rollback**: Revert Caddy config, restart old docker-compose (< 10 minutes)
 
 **Configuration as Code**:
 - **Pattern**: Export Dokploy config as version-controlled YAML
@@ -62,8 +62,7 @@ See: `research.md` for full research findings
 **VPS Dependencies** (verify):
 - Docker >= 20.10
 - Docker Compose >= 2.0
-- Nginx >= 1.18
-- Certbot (Let's Encrypt CLI)
+- Caddy (reverse proxy, running in Docker)
 
 **External Services** (unchanged):
 - Supabase PostgreSQL (existing DATABASE_URL)
@@ -89,7 +88,7 @@ marcusgoll/
 │   ├── contracts/                        # Empty (no API contracts)
 │   └── configs/
 │       ├── dokploy-config.yaml           # Exported Dokploy config (US8)
-│       ├── nginx-dokploy-subdomain.conf  # Nginx config for deploy.marcusgoll.com
+│       ├── Caddyfile                     # Caddy config for deploy.marcusgoll.com
 │       └── pre-migration-backup/
 │           ├── docker-compose.prod.yml.backup
 │           ├── deploy.sh.backup
@@ -104,10 +103,6 @@ marcusgoll/
 **VPS File System** (changes):
 
 ```
-/etc/nginx/sites-available/
-├── marcusgoll                   # Existing (update proxy_pass to Dokploy)
-└── dokploy                      # New (subdomain for Dokploy UI)
-
 /opt/dokploy/                    # Dokploy installation directory
 ├── docker-compose.yml           # Dokploy's own compose file
 ├── data/                        # Dokploy internal database (SQLite)
@@ -122,7 +117,7 @@ marcusgoll/
 - **Dokploy Container**: Orchestrates application deployment, self-contained
 - **Next.js Application**: Managed by Dokploy, Docker-based (reuse existing Dockerfile)
 - **PostgreSQL Database**: External (Supabase), connection managed by Dokploy
-- **Nginx**: Routes traffic (marcusgoll.com → Dokploy app, deploy.marcusgoll.com → Dokploy UI)
+- **Caddy**: Routes traffic (marcusgoll.com → Dokploy app, deploy.marcusgoll.com → Dokploy UI)
 
 ---
 
@@ -169,8 +164,8 @@ See: `data-model.md` for complete entity definitions
 
 **Dokploy Admin Access**:
 - Method: Username/password authentication (generated during installation)
-- Protected: HTTPS only (Let's Encrypt SSL for deploy.marcusgoll.com)
-- IP Restriction (optional): Configure Nginx allow/deny rules for specific IPs
+- Protected: HTTPS only (Caddy auto-manages Let's Encrypt SSL for deploy.marcusgoll.com)
+- IP Restriction (optional): Configure Caddy matchers for specific IPs
 - MFA: Not available in Dokploy (use strong password, 16+ characters)
 
 **Application Authentication**:
@@ -253,19 +248,19 @@ See: `data-model.md` for complete entity definitions
 
 ### Infrastructure & Networking
 
-**Reuse: Nginx reverse proxy** (inferred from deployment-strategy.md)
-- **Purpose**: Routes traffic, SSL termination, load balancing
-- **Current**: Proxies marcusgoll.com to localhost:3000 (Docker container)
-- **Integration**: Add new upstream for deploy.marcusgoll.com (Dokploy UI on port 3000)
-- **Change**: Update marcusgoll.com proxy_pass to Dokploy-managed container (different port)
-- **REUSE: /etc/nginx/sites-available/marcusgoll - Existing reverse proxy setup**
+**Reuse: Caddy reverse proxy** (existing on VPS)
+- **Purpose**: Routes traffic, automatic SSL/TLS termination
+- **Current**: Proxies marcusgoll.com to localhost:3000 (Docker container), handles SSL
+- **Integration**: Add new route for deploy.marcusgoll.com (Dokploy UI on port 3000)
+- **Change**: Update marcusgoll.com reverse_proxy to Dokploy-managed container (keep port 3000)
+- **REUSE: Caddyfile configuration pattern**
 
-**Reuse: Let's Encrypt SSL** (managed via Certbot)
+**Reuse: Let's Encrypt SSL** (auto-managed by Caddy)
 - **Purpose**: HTTPS certificates for domains
-- **Current**: SSL for marcusgoll.com and www.marcusgoll.com
-- **Integration**: Run certbot for deploy.marcusgoll.com (new subdomain)
-- **Pattern**: `sudo certbot --nginx -d deploy.marcusgoll.com`
-- **REUSE: Certbot SSL provisioning pattern**
+- **Current**: SSL for marcusgoll.com (auto-renewed)
+- **Integration**: Caddy auto-provisions for deploy.marcusgoll.com (automatic on first request)
+- **Pattern**: No manual commands needed, Caddy handles renewal automatically
+- **REUSE: Caddy SSL provisioning pattern**
 
 ### Monitoring & Health
 
@@ -330,32 +325,20 @@ See: `data-model.md` for complete entity definitions
 - **Result**: Automated backups, backup restore UI, connection monitoring
 - **NEW: Dokploy database management configuration**
 
-### Nginx Subdomain
+### Caddy Subdomain
 
-**New: Nginx configuration for deploy.marcusgoll.com**
+**New: Caddy configuration for deploy.marcusgoll.com**
 - **Purpose**: Expose Dokploy UI securely via subdomain
-- **File**: `/etc/nginx/sites-available/dokploy`
+- **File**: Caddyfile (in docker container at `/etc/caddy/Caddyfile`)
 - **Configuration**:
-  ```nginx
-  server {
-      listen 80;
-      listen [::]:80;
-      server_name deploy.marcusgoll.com;
-
-      location / {
-          proxy_pass http://localhost:3000;
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-          proxy_http_version 1.1;
-          proxy_set_header Upgrade $http_upgrade;
-          proxy_set_header Connection "upgrade";
-      }
+  ```
+  deploy.marcusgoll.com {
+      reverse_proxy localhost:3000
   }
   ```
-- **SSL**: Let's Encrypt via Certbot (`sudo certbot --nginx -d deploy.marcusgoll.com`)
-- **NEW: specs/047-dokploy-deployment-platform/configs/nginx-dokploy-subdomain.conf**
+- **SSL**: Automatic via Caddy (Let's Encrypt auto-provisioning on first request)
+- **Reload**: `docker exec proxy-caddy-1 caddy reload` (hot reload, no downtime)
+- **NEW: specs/047-dokploy-deployment-platform/configs/Caddyfile**
 
 ### CI/CD Integration
 
@@ -446,7 +429,7 @@ See: `data-model.md` for complete entity definitions
 **No RLS Policy Changes**: Database access patterns unchanged
 
 **Reversibility**: Fully reversible
-- **Method**: Revert Nginx config, restart old docker-compose setup
+- **Method**: Revert Caddy config, restart old docker-compose setup
 - **Duration**: < 15 minutes
 - **Data Loss**: None (database stays in place, application code unchanged)
 - **Backup Strategy**: VPS snapshot before Dokploy installation, keep old docker-compose for 7 days
@@ -502,9 +485,9 @@ pm2 restart marcusgoll
 - Manages Docker containers for applications
 - **Risk Mitigation**: Can extract Docker configs from Dokploy if needed to abandon
 
-**Nginx**: Configuration update
-- Add subdomain proxy rule for deploy.marcusgoll.com
-- Update marcusgoll.com proxy to point to Dokploy-managed container
+**Caddy**: Configuration update
+- Add subdomain proxy rule for deploy.marcusgoll.com (edit Caddyfile)
+- Update marcusgoll.com proxy to point to Dokploy-managed container (change reverse_proxy target)
 
 **GitHub**: Webhook dependency added
 - Push events trigger Dokploy deployments
@@ -569,7 +552,7 @@ Then site loads without errors
 **Post-Migration Rollback** (if issues after cutover):
 - **Trigger**: Site broken, performance degradation, critical bugs
 - **Action**:
-  1. Revert Nginx config: `sudo cp /etc/nginx/sites-available/marcusgoll.backup /etc/nginx/sites-available/marcusgoll && sudo systemctl reload nginx`
+  1. Revert Caddy config: `docker exec proxy-caddy-1 sh -c 'cp /tmp/Caddyfile.backup /etc/caddy/Caddyfile && caddy reload'`
   2. Restart old docker-compose: `cd /opt/marcusgoll && docker-compose -f docker-compose.prod.yml up -d`
   3. Verify site: `curl https://marcusgoll.com`
 - **Duration**: < 15 minutes
@@ -648,8 +631,8 @@ See: `quickstart.md` for complete integration scenarios
 
 **Phase 1: Dokploy Installation** (test subdomain):
 1. Install Dokploy: Run official script, save admin credentials
-2. Configure Nginx for deploy.marcusgoll.com
-3. Install SSL: `sudo certbot --nginx -d deploy.marcusgoll.com`
+2. Configure Caddy for deploy.marcusgoll.com (edit Caddyfile: add reverse_proxy localhost:3000)
+3. Reload Caddy: `docker exec proxy-caddy-1 caddy reload` (SSL auto-provisioned)
 4. Validate: Access UI, login succeeds, dashboard loads
 
 **Phase 2: Application Configuration** (test subdomain):
@@ -666,11 +649,10 @@ See: `quickstart.md` for complete integration scenarios
 4. Validate: Application reads from database (posts visible)
 
 **Phase 4: Production Cutover**:
-1. Update Nginx to point marcusgoll.com to Dokploy
-2. OR configure marcusgoll.com domain in Dokploy UI (alternative)
-3. Reload Nginx: `sudo systemctl reload nginx`
-4. Validate: Production domain loads, all functionality works
-5. Monitor for 24-48 hours (GA4, Dokploy logs, resource usage)
+1. Update Caddy to point marcusgoll.com to Dokploy (edit Caddyfile)
+2. Reload Caddy: `docker exec proxy-caddy-1 caddy reload`
+3. Validate: Production domain loads, all functionality works
+4. Monitor for 24-48 hours (GA4, Dokploy logs, resource usage)
 
 ### Post-Deployment Testing
 
@@ -732,7 +714,7 @@ docker stats dokploy --no-stream
 
 **Production Rollback Drill** (after 7 days):
 1. Note current deployment ID (commit SHA)
-2. Revert Nginx config: Test rollback to old docker-compose
+2. Revert Caddy config: Test rollback to old docker-compose
 3. Verify old setup works
 4. Switch back to Dokploy
 5. Document rollback duration in NOTES.md
@@ -749,7 +731,7 @@ docker stats dokploy --no-stream
 | CPU usage | Dokploy metrics | > 80% for 5 min | Investigate load, consider VPS upgrade |
 | Memory usage | Dokploy metrics | > 3GB (VPS has 4-8GB) | Check memory leaks, restart container |
 | Disk usage | Dokploy metrics | > 80% | Clean old Docker images, logs |
-| Request rate | Nginx logs | > 1000 req/min | Check for DoS, enable rate limiting |
+| Request rate | Caddy logs or Dokploy metrics | > 1000 req/min | Check for DoS, enable rate limiting |
 | Error rate | Application logs | > 5% of requests | Investigate errors, rollback if critical |
 
 **Deployment Metrics** (via Dokploy UI):
@@ -800,10 +782,10 @@ docker stats dokploy --no-stream
 - Useful for: Debugging Dokploy platform issues
 - Retention: Docker default (json-file driver, 10MB max per log)
 
-**Nginx Logs** (VPS):
-- Access log: `/var/log/nginx/access.log`
-- Error log: `/var/log/nginx/error.log`
-- Useful for: Debugging routing, SSL, rate limiting
+**Caddy Logs** (Docker logs):
+- Access: `docker logs proxy-caddy-1`
+- Useful for: Debugging routing, SSL certificate issues, rate limiting
+- Retention: Docker default (json-file driver)
 
 ---
 
@@ -903,7 +885,7 @@ docker stats dokploy --no-stream
 | Deployment Frequency | 1-2/week | 3-5/week | Dokploy history |
 | Deployment Error Rate | ~10% (manual typos) | <5% | Dokploy success rate |
 | Time on Deployment Tasks | 2-3 hours/mo | <1 hour/mo | Time tracking |
-| Dokploy UI Access | N/A | 5-7 logins/week | Nginx access logs |
+| Dokploy UI Access | N/A | 5-7 logins/week | Caddy or Dokploy logs |
 
 **Performance Targets** (no regression):
 - Site Lighthouse: ≥85 (pre and post)

@@ -453,7 +453,7 @@ jobs:
 **Duration**: 30-45 minutes
 **CRITICAL PHASE - Production traffic switches to Dokploy**
 
-### T024: Backup Current Nginx Configuration
+### T024: Backup Current Caddy Configuration
 
 **Purpose**: Quick rollback capability if cutover fails
 
@@ -464,34 +464,32 @@ jobs:
    ssh root@178.156.129.179
    ```
 
-2. Backup current production Nginx config:
+2. Backup current Caddyfile:
    ```bash
-   sudo cp /etc/nginx/sites-available/marcusgoll /etc/nginx/sites-available/marcusgoll.backup-pre-dokploy
+   docker exec proxy-caddy-1 cat /etc/caddy/Caddyfile > /tmp/Caddyfile.backup-pre-dokploy
    ```
 
 3. Verify backup created:
    ```bash
-   ls -lh /etc/nginx/sites-available/marcusgoll.backup-pre-dokploy
+   ls -lh /tmp/Caddyfile.backup-pre-dokploy
    # Should show file with today's timestamp
    ```
 
 4. Download backup locally (optional):
    ```powershell
    # Windows PowerShell
-   scp root@178.156.129.179:/etc/nginx/sites-available/marcusgoll.backup-pre-dokploy D:\Coding\marcusgoll\specs\047-dokploy-deployment-platform\configs\
+   scp root@178.156.129.179:/tmp/Caddyfile.backup-pre-dokploy D:\Coding\marcusgoll\specs\047-dokploy-deployment-platform\configs\
    ```
 
 **Validation**:
-- [ ] Nginx backup file created on VPS
+- [ ] Caddyfile backup created on VPS
 - [ ] Backup file downloaded locally (optional)
 - [ ] Ready for rollback if needed
 
 **Rollback command** (for reference):
 ```bash
 # If cutover fails, restore backup:
-sudo cp /etc/nginx/sites-available/marcusgoll.backup-pre-dokploy /etc/nginx/sites-available/marcusgoll
-sudo nginx -t
-sudo systemctl reload nginx
+docker exec proxy-caddy-1 sh -c 'cat > /etc/caddy/Caddyfile < /tmp/Caddyfile.backup-pre-dokploy && caddy reload'
 ```
 
 ---
@@ -511,7 +509,7 @@ sudo systemctl reload nginx
    - Save
 
 3. Dokploy will:
-   - Configure Nginx routing for marcusgoll.com
+   - Configure Caddy routing for marcusgoll.com (via Caddyfile update)
    - Provision SSL certificate (may take 1-5 minutes)
    - Set up HTTP → HTTPS redirect
 
@@ -531,70 +529,57 @@ sudo systemctl reload nginx
 
 ---
 
-### T026: Update Nginx to Route marcusgoll.com to Dokploy
+### T026: Update Caddy to Route marcusgoll.com to Dokploy
 
 **Purpose**: Switch production traffic from old Docker setup to Dokploy-managed container
 
 **Execution Steps**:
 
-**Option A: Let Dokploy Manage Routing (Recommended)**
+**Option A: Let Dokploy + Caddy Manage Routing (Recommended)**
 
-Dokploy automatically configures Nginx when you add a domain (T025). Verify it worked:
+Dokploy automatically updates Caddy when you add a domain (T025). Verify it worked:
 
 1. SSH to VPS:
    ```bash
    ssh root@178.156.129.179
    ```
 
-2. Check Dokploy-generated Nginx config:
+2. Check Caddy config includes marcusgoll.com:
    ```bash
-   # Dokploy creates configs in /etc/nginx/conf.d/ or similar
-   ls -la /etc/nginx/conf.d/ | grep dokploy
-   # OR
-   ls -la /etc/nginx/sites-enabled/ | grep dokploy
+   docker exec proxy-caddy-1 grep -n "marcusgoll.com" /etc/caddy/Caddyfile
+   # Should show entries for marcusgoll.com (and old ghost:2368 entry if still there)
    ```
 
-3. If Dokploy created config for marcusgoll.com:
-   - Verify config points to Dokploy container
-   - You may need to disable old config:
-     ```bash
-     sudo rm /etc/nginx/sites-enabled/marcusgoll
-     sudo nginx -t
-     sudo systemctl reload nginx
-     ```
+3. If Caddy config doesn't have marcusgoll.com properly configured:
+   - Edit manually (see Option B below)
 
-**Option B: Manual Nginx Update (If Dokploy didn't auto-configure)**
+**Option B: Manual Caddy Update (If needed)**
 
-1. Edit existing Nginx config:
+1. Edit Caddyfile:
    ```bash
-   sudo nano /etc/nginx/sites-available/marcusgoll
+   docker exec proxy-caddy-1 vi /etc/caddy/Caddyfile
+   # OR copy locally, edit, copy back:
+   docker cp proxy-caddy-1:/etc/caddy/Caddyfile /tmp/Caddyfile
+   nano /tmp/Caddyfile
+   docker cp /tmp/Caddyfile proxy-caddy-1:/etc/caddy/Caddyfile
    ```
 
-2. Update proxy_pass to point to Dokploy container:
-   ```nginx
-   # Find the location / block
-   location / {
-       # OLD: proxy_pass http://localhost:3000;  # Old Docker Compose app
-       # NEW: proxy_pass to Dokploy container port
-
-       # Get Dokploy container port:
-       # docker ps | grep marcusgoll-nextjs
-       # Look for port mapping like: 0.0.0.0:XXXXX->3000/tcp
-
-       proxy_pass http://localhost:XXXXX;  # Replace XXXXX with actual port
-
-       # Keep existing headers
-       proxy_set_header Host $host;
-       proxy_set_header X-Real-IP $remote_addr;
-       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-       proxy_set_header X-Forwarded-Proto $scheme;
+2. Update marcusgoll.com entry to point to Dokploy container:
+   ```caddyfile
+   # Find marcusgoll.com block and update:
+   marcusgoll.com www.marcusgoll.com {
+       # OLD: reverse_proxy ghost:2368
+       # NEW: Point to Dokploy-managed container (usually port 3000)
+       reverse_proxy localhost:3000
    }
    ```
 
-3. Test and reload:
+3. Reload Caddy (applies changes without downtime):
    ```bash
-   sudo nginx -t
-   sudo systemctl reload nginx
+   docker exec proxy-caddy-1 caddy reload
+
+   # Verify reload succeeded
+   docker logs proxy-caddy-1 --tail 5 | grep -i "reload"
    ```
 
 **Validation Command**:
@@ -605,9 +590,8 @@ curl -I https://marcusgoll.com
 ```
 
 **Validation**:
-- [ ] Nginx configuration updated
-- [ ] nginx -t passes
-- [ ] Nginx reloaded successfully
+- [ ] Caddyfile updated with marcusgoll.com → localhost:3000
+- [ ] Caddy reload successful
 - [ ] marcusgoll.com routes to Dokploy container
 
 ---

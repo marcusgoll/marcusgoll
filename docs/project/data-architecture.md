@@ -259,6 +259,44 @@ erDiagram
 - Growth (50-200 posts): Migrate to headless CMS (Contentful) or DB
 - Scale (200+ posts): Database-first with API-based authoring
 
+### Shared Supabase Instance (Multi-Project)
+
+**Architecture**: Single self-hosted Supabase instance on Hetzner VPS shared across marcusgoll.com and other projects
+
+**Setup**:
+- **Instance**: PostgreSQL + Supabase stack running on VPS (docker-compose)
+- **Port**: 54321 (local VPS access) or api.marcusgoll.com (if proxied via Caddy)
+- **Projects using it**: marcusgoll.com (blog + newsletter), plus other projects
+- **Isolation**: Schema-level isolation (separate schema per project, or use `project_id` column)
+
+**Schema Organization**:
+```
+marcusgoll_schema/
+  ├── users (site admin)
+  ├── newsletter_subscribers (marcusgoll.com subscribers)
+  ├── newsletter_preferences
+  └── [future tables]
+
+other_project_schema/
+  ├── [project-specific tables]
+```
+
+**Benefits**:
+- Single instance reduces VPS overhead (~500MB vs multiple instances)
+- Lower operational complexity (one backup, one monitoring setup)
+- Shared authentication if needed
+- Cost-effective for low-usage projects
+
+**Connection Details**:
+- Connection string: `postgresql://supabase_user:password@localhost:5432/postgres`
+- Environment: `NEXT_PUBLIC_SUPABASE_URL` points to local instance or proxied domain
+- Pooling: Supabase Supavisor manages connection pooling
+
+**Backup Strategy**:
+- Automated daily backups (managed by Supabase)
+- All projects' data backed up together
+- Cross-project schema isolation minimizes blast radius
+
 ### Blob Storage
 
 **Type**: Filesystem (currently) or CDN (future)

@@ -286,7 +286,7 @@ graph TB
     end
 
     subgraph Hetzner VPS
-        Nginx[Nginx Reverse Proxy]
+        Caddy[Caddy Reverse Proxy]
         Docker[Docker Engine]
 
         subgraph Docker Containers
@@ -301,8 +301,8 @@ graph TB
         GA4[Google Analytics]
     end
 
-    User -->|HTTPS :443| Nginx
-    Nginx -->|Proxy| NextJS
+    User -->|HTTPS :443| Caddy
+    Caddy -->|Proxy| NextJS
     NextJS -->|Prisma| Supabase
     NextJS -->|API| Resend
     NextJS -->|Events| GA4
@@ -354,8 +354,8 @@ sequenceDiagram
 - No sensitive user data stored (email only for newsletter)
 
 **In Transit**:
-- TLS 1.3 minimum (Nginx managed)
-- Certificates: Let's Encrypt (auto-renewal via certbot)
+- TLS 1.3 minimum (Caddy auto-managed)
+- Certificates: Let's Encrypt (auto-renewal, auto-provisioning via Caddy)
 
 ---
 
@@ -379,7 +379,7 @@ sequenceDiagram
 
 **Logging**:
 - Application logs: Docker container logs (stdout)
-- Nginx logs: Access and error logs
+- Caddy logs: Access and error logs (docker logs caddy)
 - Retention: 30 days
 
 **Metrics**:
