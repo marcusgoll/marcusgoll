@@ -45,7 +45,7 @@ interface TrackNewsletterSuccessParams {
 /**
  * Check if gtag is available (client-side only, GA4 loaded)
  */
-const isGtagAvailable = (): window is Window & { gtag: NonNullable<typeof window.gtag> } => {
+const isGtagAvailable = (): boolean => {
   return typeof window !== 'undefined' && typeof window.gtag === 'function';
 };
 
@@ -59,7 +59,7 @@ export const trackContentTrackClick = ({
 }: TrackContentClickParams): void => {
   if (!isGtagAvailable()) return;
 
-  window.gtag('event', 'content_track_click', {
+  window.gtag!('event', 'content_track_click', {
     content_track: track,
     location: location,
     event_category: 'engagement',
@@ -79,7 +79,7 @@ export const trackNewsletterSignup = ({
 }: TrackNewsletterSignupParams): void => {
   if (!isGtagAvailable()) return;
 
-  window.gtag('event', 'newsletter_signup', {
+  window.gtag!('event', 'newsletter_signup', {
     location: location,
     content_track: track || 'unknown',
     event_category: 'conversion',
@@ -100,7 +100,7 @@ export const trackNewsletterView = ({
 }: TrackNewsletterViewParams): void => {
   if (!isGtagAvailable()) return;
 
-  window.gtag('event', 'newsletter_view', {
+  window.gtag!('event', 'newsletter_view', {
     location: location,
     content_track: track || 'general',
     event_category: 'newsletter',
@@ -122,7 +122,7 @@ export const trackNewsletterSubmit = ({
 }: TrackNewsletterSubmitParams): void => {
   if (!isGtagAvailable()) return;
 
-  window.gtag('event', 'newsletter_submit', {
+  window.gtag!('event', 'newsletter_submit', {
     location: location,
     content_track: track || 'general',
     event_category: 'newsletter',
@@ -146,7 +146,7 @@ export const trackNewsletterSuccess = ({
 }: TrackNewsletterSuccessParams): void => {
   if (!isGtagAvailable()) return;
 
-  window.gtag('event', 'newsletter_success', {
+  window.gtag!('event', 'newsletter_success', {
     location: location,
     content_track: track || 'general',
     source: source || 'unknown',
@@ -168,7 +168,7 @@ export const trackExternalLinkClick = ({
 }: TrackExternalLinkParams): void => {
   if (!isGtagAvailable()) return;
 
-  window.gtag('event', 'external_link_click', {
+  window.gtag!('event', 'external_link_click', {
     destination: destination,
     location: location,
     event_category: 'outbound',
@@ -185,7 +185,7 @@ export const trackExternalLinkClick = ({
 export const trackPageView = ({ path, track }: TrackPageViewParams): void => {
   if (!isGtagAvailable()) return;
 
-  window.gtag('event', 'page_view', {
+  window.gtag!('event', 'page_view', {
     page_path: path,
     content_track: track || 'general',
   });
