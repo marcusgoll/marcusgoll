@@ -1,24 +1,16 @@
-name: Deploy to Production
+name: Build and Test
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      feature:
-        description: 'Feature slug being deployed'
-        required: false
-        type: string
-      deployment_type:
-        description: 'Deployment type (production)'
-        required: false
-        type: string
-        default: 'production'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
-    name: Deploy to Vercel Production
+  build:
+    name: Build and Test Application
     runs-on: ubuntu-latest
 
     steps:
@@ -37,38 +29,26 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          # Optional environment variables - add as GitHub secrets if needed
+          # Optional environment variables for build
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel Production
-        id: deploy
+      - name: Build Summary
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
-          echo "Deployed to: $DEPLOYMENT_URL"
-
-      - name: Deployment Summary
-        run: |
-          echo "## Production Deployment Complete ✅" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Complete ✅" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Production URL**: ${{ steps.deploy.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
           echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-
-          if [ -n "${{ inputs.feature }}" ]; then
-            echo "**Feature**: ${{ inputs.feature }}" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "To deploy to VPS, SSH into your server and run:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "cd /path/to/marcusgoll" >> $GITHUB_STEP_SUMMARY
+          echo "./deploy.sh" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Server**: http://178.156.129.179:3000" >> $GITHUB_STEP_SUMMARY
