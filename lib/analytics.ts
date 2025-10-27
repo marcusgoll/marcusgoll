@@ -45,7 +45,7 @@ interface TrackNewsletterSuccessParams {
 /**
  * Check if gtag is available (client-side only, GA4 loaded)
  */
-const isGtagAvailable = (): boolean => {
+const isGtagAvailable = (): window is Window & { gtag: NonNullable<typeof window.gtag> } => {
   return typeof window !== 'undefined' && typeof window.gtag === 'function';
 };
 
