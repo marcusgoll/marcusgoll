@@ -96,7 +96,7 @@ marcusgoll.com is a personal blog and portfolio that showcases Marcus Gollahon's
   - Next.js 15 App Router with React 19
   - Self-hosted on Hetzner VPS with Docker
   - PostgreSQL via self-hosted Supabase
-  - Newsletter integration (Resend/Mailgun)
+  - Multi-track newsletter system (Resend/Mailgun) - users subscribe to aviation, dev/startup, education, or all posts
   - Analytics (Google Analytics 4)
 
 - **User Experience**:
@@ -110,6 +110,7 @@ marcusgoll.com is a personal blog and portfolio that showcases Marcus Gollahon's
   - Code syntax highlighting
   - Reading progress indicators
   - Tag filtering and search
+  - Newsletter preference management (users choose which content tracks to receive)
 
 ### Out of Scope (what we are NOT building)
 

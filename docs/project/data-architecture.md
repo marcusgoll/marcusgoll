@@ -14,6 +14,7 @@ erDiagram
     TAG ||--o{ POST : categorizes
     USER ||--o{ NEWSLETTER_SUBSCRIBER : manages
     POST ||--o{ ANALYTICS_EVENT : tracks
+    NEWSLETTER_SUBSCRIBER ||--o{ NEWSLETTER_PREFERENCE : has
 
     USER {
         uuid id PK
@@ -44,6 +45,16 @@ erDiagram
         string email UK
         boolean active
         timestamp subscribed_at
+        timestamp unsubscribed_at
+        string unsubscribe_token UK
+    }
+
+    NEWSLETTER_PREFERENCE {
+        uuid id PK
+        uuid subscriber_id FK
+        string newsletter_type
+        boolean subscribed
+        timestamp updated_at
     }
 
     ANALYTICS_EVENT {
@@ -155,7 +166,7 @@ erDiagram
 
 ### Entity: Newsletter Subscriber (Future)
 
-**Purpose**: Email subscribers for newsletter
+**Purpose**: Email subscribers for multi-track newsletter system
 
 **Future Schema**:
 
@@ -163,21 +174,69 @@ erDiagram
 |-------|------|-------------|---------|
 | `id` | String (CUID) | PK | Unique identifier |
 | `email` | String (255) | UNIQUE, NOT NULL | Subscriber email |
-| `active` | Boolean | NOT NULL, DEFAULT true | Subscription status |
-| `subscribed_at` | Timestamp | NOT NULL, DEFAULT NOW() | Signup date |
-| `unsubscribed_at` | Timestamp | NULLABLE | Unsubscribe date |
-| `source` | String (50) | NULLABLE | Signup source (footer, popup, etc.) |
+| `active` | Boolean | NOT NULL, DEFAULT true | Global subscription status |
+| `subscribed_at` | Timestamp | NOT NULL, DEFAULT NOW() | Initial signup date |
+| `unsubscribed_at` | Timestamp | NULLABLE | Full unsubscribe date (all newsletters) |
+| `unsubscribe_token` | String (64) | UNIQUE, NOT NULL | Secure token for one-click unsubscribe |
+| `source` | String (50) | NULLABLE | Signup source (footer, popup, post CTA) |
 
 **Relationships**:
-- None (standalone)
+- Has many: Newsletter Preferences (tracks which newsletters they want)
 
 **Validation Rules**:
-- Email must be valid format
+- Email must be valid format (RFC 5322)
 - Email must be unique
+- Unsubscribe token must be cryptographically random (32 bytes, hex-encoded)
+- If `active = false`, must have `unsubscribed_at` timestamp
 
 **Indexes**:
-- `newsletter_email_idx` ON (email) - Unique constraint
+- `newsletter_email_idx` ON (email) - Unique constraint, fast lookup
 - `newsletter_active_idx` ON (active) - Active subscribers query
+- `newsletter_token_idx` ON (unsubscribe_token) - One-click unsubscribe lookup
+
+**Business Rules**:
+- When subscriber unsubscribes from all newsletters → `active = false`, set `unsubscribed_at`
+- When subscriber re-subscribes to any newsletter → `active = true`, clear `unsubscribed_at`
+- Unsubscribe token generated on first subscription, never changes (permanent link)
+
+---
+
+### Entity: Newsletter Preference (Future)
+
+**Purpose**: Track which newsletters each subscriber wants (aviation, dev, education, all)
+
+**Future Schema**:
+
+| Field | Type | Constraints | Purpose |
+|-------|------|-------------|---------|
+| `id` | String (CUID) | PK | Unique identifier |
+| `subscriber_id` | String (CUID) | FK → newsletter_subscribers(id), NOT NULL | Subscriber reference |
+| `newsletter_type` | ENUM | NOT NULL | Type: 'aviation', 'dev-startup', 'education', 'all' |
+| `subscribed` | Boolean | NOT NULL, DEFAULT true | Opted in/out for this newsletter |
+| `updated_at` | Timestamp | NOT NULL, AUTO-UPDATE | Last preference change |
+
+**Relationships**:
+- Belongs to: Newsletter Subscriber
+
+**Validation Rules**:
+- `newsletter_type` must be one of: 'aviation', 'dev-startup', 'education', 'all'
+- UNIQUE constraint on `(subscriber_id, newsletter_type)` - one preference per type per subscriber
+
+**Indexes**:
+- `newsletter_pref_subscriber_idx` ON (subscriber_id) - Get all preferences for a subscriber
+- `newsletter_pref_type_idx` ON (newsletter_type, subscribed) - Get all subscribers for a newsletter type
+
+**Business Rules**:
+- **Default on signup**: Create preferences for all 4 types with `subscribed = true` (user can opt-out later)
+- **Alternative default**: Only create preference for user's selected newsletter(s) on signup
+- **"All" behavior**: If subscribed to 'all', receives every post regardless of other preferences
+- **Unsubscribe from all**: Set all 4 preferences to `subscribed = false` + mark parent subscriber `active = false`
+
+**Newsletter Types Explained**:
+- `aviation` - Posts tagged with aviation content (flight training, CFI, pilot career)
+- `dev-startup` - Posts about development, coding, startup building
+- `education` - Posts about teaching, learning, education systems
+- `all` - Comprehensive newsletter, includes all posts regardless of category
 
 ---
 
@@ -252,14 +311,66 @@ erDiagram
   5. CI/CD triggers rebuild + deploy
 
 **Pattern: Newsletter Signup (Future)**
-- **Operation**: INSERT into newsletter_subscribers
+- **Operation**: INSERT into newsletter_subscribers + newsletter_preferences
 - **Frequency**: ~5-10 per week (estimated)
+- **Consistency**: Strong (ACID transaction - both tables updated atomically)
+- **Example**:
+  ```sql
+  -- Transaction: Create subscriber + preferences
+  BEGIN;
+
+  INSERT INTO newsletter_subscribers (email, source, unsubscribe_token, subscribed_at)
+  VALUES ($1, $2, gen_random_bytes(32)::text, NOW())
+  ON CONFLICT (email)
+  DO UPDATE SET active = true, unsubscribed_at = NULL
+  RETURNING id;
+
+  -- Create preferences for selected newsletter types
+  -- If user selected "aviation" and "dev-startup":
+  INSERT INTO newsletter_preferences (subscriber_id, newsletter_type, subscribed)
+  VALUES
+    ($subscriber_id, 'aviation', true),
+    ($subscriber_id, 'dev-startup', true)
+  ON CONFLICT (subscriber_id, newsletter_type)
+  DO UPDATE SET subscribed = true, updated_at = NOW();
+
+  COMMIT;
+  ```
+
+**Pattern: Update Newsletter Preferences (Future)**
+- **Operation**: UPDATE newsletter_preferences
+- **Frequency**: Occasional (user changes preferences via email link)
 - **Consistency**: Strong (ACID transaction)
 - **Example**:
   ```sql
-  INSERT INTO newsletter_subscribers (email, source, subscribed_at)
-  VALUES ($1, $2, NOW())
-  ON CONFLICT (email) DO UPDATE SET active = true;
+  -- User unchecks "aviation", keeps "dev-startup"
+  UPDATE newsletter_preferences
+  SET subscribed = false, updated_at = NOW()
+  WHERE subscriber_id = $1 AND newsletter_type = 'aviation';
+  ```
+
+**Pattern: Unsubscribe from All (Future)**
+- **Operation**: UPDATE newsletter_subscribers + newsletter_preferences
+- **Frequency**: ~1-2 per month (low churn expected)
+- **Consistency**: Strong (ACID transaction)
+- **Example**:
+  ```sql
+  -- Transaction: Unsubscribe from everything
+  BEGIN;
+
+  -- Mark subscriber inactive
+  UPDATE newsletter_subscribers
+  SET active = false, unsubscribed_at = NOW()
+  WHERE unsubscribe_token = $1;
+
+  -- Unsubscribe from all newsletter types
+  UPDATE newsletter_preferences
+  SET subscribed = false, updated_at = NOW()
+  WHERE subscriber_id = (
+    SELECT id FROM newsletter_subscribers WHERE unsubscribe_token = $1
+  );
+
+  COMMIT;
   ```
 
 ---
@@ -271,7 +382,8 @@ erDiagram
 | Data Type | Retention Period | Archive Strategy | Delete Strategy |
 |-----------|------------------|------------------|----------------|
 | Blog posts | Indefinite | Git history | Never (content is permanent) |
-| Newsletter subscribers | Indefinite (while active) | N/A | Hard delete on unsubscribe request (GDPR) |
+| Newsletter subscribers | Indefinite (while active) | N/A | Hard delete on unsubscribe request (GDPR - CASCADE to preferences) |
+| Newsletter preferences | Tied to subscriber | N/A | CASCADE delete when subscriber deleted |
 | Analytics events | 13 months | Export to CSV after 13 months | Delete older than 13 months |
 | User sessions | N/A (no auth) | N/A | N/A |
 
@@ -348,7 +460,17 @@ erDiagram
 **Entity: Newsletter Subscriber (Future)**
 **Constraints**:
 - `UNIQUE(email)` - No duplicate subscribers
+- `UNIQUE(unsubscribe_token)` - Unique unsubscribe links
 - `CHECK(active IN (true, false))` - Boolean constraint
+- `CHECK(unsubscribe_token ~ '^[a-f0-9]{64}$')` - Valid hex token format
+- `CHECK(active = false OR unsubscribed_at IS NULL)` - If active, no unsubscribe date
+
+**Entity: Newsletter Preference (Future)**
+**Constraints**:
+- `UNIQUE(subscriber_id, newsletter_type)` - One preference per type per subscriber
+- `CHECK(newsletter_type IN ('aviation', 'dev-startup', 'education', 'all'))` - Valid types
+- `CHECK(subscribed IN (true, false))` - Boolean constraint
+- `FOREIGN KEY(subscriber_id) REFERENCES newsletter_subscribers(id) ON DELETE CASCADE` - Delete preferences when subscriber deleted
 
 ### Referential Integrity
 
@@ -356,6 +478,8 @@ erDiagram
 - Delete user → CASCADE delete authored posts (rare, admin only)
 - Delete post → CASCADE delete post-tag associations
 - Delete tag → SET NULL on posts (tags soft-delete, posts keep slug reference)
+- Delete newsletter_subscriber → CASCADE delete newsletter_preferences (GDPR compliance)
+- Update subscriber email → CASCADE update preference references (via FK)
 
 ---
 
@@ -463,7 +587,14 @@ erDiagram
 **Entity: Newsletter Subscriber (Future)**
 **Indexes**:
 - `(email)` - UNIQUE, signup/unsubscribe lookups
+- `(unsubscribe_token)` - UNIQUE, one-click unsubscribe links
 - `(active)` - Filter active subscribers for email sends
+
+**Entity: Newsletter Preference (Future)**
+**Indexes**:
+- `(subscriber_id)` - Get all preferences for a subscriber (preference management page)
+- `(newsletter_type, subscribed)` - Get all subscribers for a specific newsletter (e.g., all "aviation" subscribers)
+- `(subscriber_id, newsletter_type)` - UNIQUE composite, fast preference lookups
 
 ---
 
@@ -494,3 +625,4 @@ erDiagram
 |------|--------|--------|--------|
 | 2025-10-26 | Initial data architecture documented | Project initialization | Baseline for future migrations |
 | 2025-10-26 | Hybrid storage strategy (MDX + DB) | Simple MVP, scalable future | Fast development, easy migration path |
+| 2025-10-26 | Multi-newsletter subscription system | User request: granular newsletter preferences | Added NEWSLETTER_PREFERENCE entity, unsubscribe tokens, 4 newsletter types |
