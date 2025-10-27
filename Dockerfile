@@ -66,6 +66,7 @@ RUN npm ci --only=production
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/lib ./lib
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs
