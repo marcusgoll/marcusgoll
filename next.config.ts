@@ -1,12 +1,12 @@
 import type { NextConfig } from "next";
-import { validateEnvironmentVariables } from "./lib/validate-env";
 import createMDX from '@next/mdx';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 
-// Validate environment variables at startup (fail-fast)
-// This runs before the app accepts any requests
-validateEnvironmentVariables();
+// Note: Environment variable validation moved to API routes and middleware
+// to avoid blocking Docker build process. Build-time validation is not needed
+// since NEXT_PUBLIC_* variables are available at build time, and runtime
+// variables are validated when the app starts.
 
 const nextConfig: NextConfig = {
   /* config options here */
