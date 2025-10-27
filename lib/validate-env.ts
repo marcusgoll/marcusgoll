@@ -24,7 +24,7 @@ export function validateEnvironmentVariables(): void {
   const startTime = performance.now()
   const errors: ValidationError[] = []
 
-  // Required variables with descriptions and examples
+  // Core required variables (always needed)
   const requiredVars: Record<string, { description: string; example: string }> = {
     PUBLIC_URL: {
       description: 'Base URL for the application',
@@ -34,29 +34,33 @@ export function validateEnvironmentVariables(): void {
       description: 'Environment mode',
       example: 'development | production | test',
     },
+  }
+
+  // Optional feature variables (only required when features are implemented)
+  const optionalVars: Record<string, { description: string; example: string }> = {
     DATABASE_URL: {
-      description: 'PostgreSQL connection string',
+      description: 'PostgreSQL connection string (required for database features)',
       example: 'postgresql://user:password@localhost:5432/marcusgoll',
     },
     NEXT_PUBLIC_SUPABASE_URL: {
-      description: 'Supabase API URL (client-side accessible)',
+      description: 'Supabase API URL (required for auth/storage features)',
       example: 'http://localhost:54321 (dev) or https://api.marcusgoll.com (prod)',
     },
     NEXT_PUBLIC_SUPABASE_ANON_KEY: {
-      description: 'Supabase anonymous key (public)',
+      description: 'Supabase anonymous key (required for auth features)',
       example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     },
     SUPABASE_SERVICE_ROLE_KEY: {
-      description: 'Supabase service role key (server-side only)',
+      description: 'Supabase service role key (required for admin features)',
       example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     },
     NEWSLETTER_FROM_EMAIL: {
-      description: 'Verified sender email address for newsletters',
+      description: 'Verified sender email address (required for newsletter features)',
       example: 'newsletter@marcusgoll.com',
     },
   }
 
-  // Validate presence of required variables
+  // Validate core required variables
   for (const [varName, { description, example }] of Object.entries(requiredVars)) {
     if (!process.env[varName] || process.env[varName]?.trim() === '') {
       errors.push({
@@ -67,40 +71,31 @@ export function validateEnvironmentVariables(): void {
     }
   }
 
-  // At least one newsletter service API key required
-  const hasNewsletterKey = process.env.RESEND_API_KEY || process.env.MAILGUN_API_KEY
-  if (!hasNewsletterKey) {
-    errors.push({
-      variable: 'RESEND_API_KEY or MAILGUN_API_KEY',
-      description: 'API key for newsletter/email service (at least one required)',
-      example: 're_xxxx (Resend) or key-xxxx (Mailgun)',
-    })
-  }
-
-  // Optional: Maintenance mode validation (warn if misconfigured)
-  const maintenanceMode = process.env.MAINTENANCE_MODE?.toLowerCase()
-  if (maintenanceMode === 'true') {
-    const maintenanceToken = process.env.MAINTENANCE_BYPASS_TOKEN
-    if (!maintenanceToken || maintenanceToken.trim() === '') {
-      console.warn(
-        '\n⚠️  WARNING: MAINTENANCE_MODE is enabled but MAINTENANCE_BYPASS_TOKEN is not set.\n' +
-        '   Developers will not be able to bypass maintenance mode.\n' +
-        '   Generate token: openssl rand -hex 32\n'
-      )
-    } else if (maintenanceToken.length < 32) {
-      console.warn(
-        '\n⚠️  WARNING: MAINTENANCE_BYPASS_TOKEN is too short (< 32 characters).\n' +
-        '   Recommended: 64-character hex string for 256-bit entropy.\n' +
-        '   Generate token: openssl rand -hex 32\n'
-      )
+  // Check optional variables and log warnings (not errors)
+  const missingOptional: string[] = []
+  for (const [varName] of Object.entries(optionalVars)) {
+    if (!process.env[varName] || process.env[varName]?.trim() === '') {
+      missingOptional.push(varName)
     }
   }
 
-  // Format validation for URLs
+  // Warn about missing optional features
+  if (missingOptional.length > 0 && process.env.NODE_ENV === 'development') {
+    console.log(`ℹ️  Optional features not configured: ${missingOptional.join(', ')}`)
+  }
+
+  // Check newsletter service API key (optional)
+  const hasNewsletterKey = process.env.RESEND_API_KEY || process.env.MAILGUN_API_KEY
+  if (!hasNewsletterKey && process.env.NODE_ENV === 'development') {
+    console.log(`ℹ️  Newsletter service not configured (RESEND_API_KEY or MAILGUN_API_KEY)`)
+  }
+
+  // Format validation for URLs (only validate if set)
   const urlVars = ['PUBLIC_URL', 'NEXT_PUBLIC_SUPABASE_URL']
   for (const varName of urlVars) {
     const value = process.env[varName]
-    if (value && !value.match(/^https?:\/\//)) {
+    // Only validate format if variable is set and not empty
+    if (value && value.trim() !== '' && !value.match(/^https?:\/\//)) {
       errors.push({
         variable: varName,
         description: 'Must be a valid HTTP/HTTPS URL',
@@ -160,7 +155,6 @@ export function checkEnvironmentVariables(): {
   duration: number
 } {
   const startTime = performance.now()
-  const errors: ValidationError[] = []
 
   try {
     validateEnvironmentVariables()
@@ -169,7 +163,7 @@ export function checkEnvironmentVariables(): {
       errors: [],
       duration: performance.now() - startTime,
     }
-  } catch (error) {
+  } catch {
     // Parse errors from validation exception
     // (This is a simplified implementation - in production you'd want proper error parsing)
     return {

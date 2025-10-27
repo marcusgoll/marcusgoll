@@ -1,55 +1,46 @@
-export default function Home() {
+import { Metadata } from 'next';
+import { Suspense } from 'react';
+import Hero from '@/components/home/Hero';
+import HomePageClient from '@/components/home/HomePageClient';
+import PageViewTracker from '@/components/analytics/PageViewTracker';
+import { getAllPosts } from '@/lib/posts';
+
+// Enable ISR with 60-second revalidation
+export const revalidate = 60;
+
+// Static metadata
+export const metadata: Metadata = {
+  title: 'Marcus Gollahon | Aviation & Software Development',
+  description:
+    'Teaching systematic thinking from 30,000 feet. Aviation career guidance and software development insights.',
+};
+
+/**
+ * Homepage - M2 Design (Sidebar Enhanced + Magazine Masonry)
+ *
+ * Features:
+ * - Sidebar with track filters and post counts
+ * - Magazine masonry layout with CSS columns
+ * - Featured post hero
+ * - Mobile responsive with menu overlay
+ * - Keyboard shortcuts
+ */
+export default async function Home() {
+  // Fetch all posts
+  const allPosts = await getAllPosts();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <main className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-            Marcus Gollahon
-          </h1>
+    <div className="min-h-screen">
+      {/* Analytics Page View Tracking */}
+      <PageViewTracker track="general" />
 
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Welcome to my personal blog covering aviation, software development, education, and startups.
-          </p>
+      {/* Hero Section */}
+      <Hero />
 
-          <div className="grid md:grid-cols-2 gap-6 mt-12">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">
-                Aviation
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Insights and experiences from the world of flight.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">
-                Development
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Web development, coding tutorials, and tech insights.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">
-                Education
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Teaching, learning, and educational technology.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">
-                Startups
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Entrepreneurship, innovation, and building businesses.
-              </p>
-            </div>
-          </div>
-        </div>
-      </main>
+      {/* M2 Layout (Sidebar + Magazine Masonry) */}
+      <Suspense fallback={<div className="min-h-screen" />}>
+        <HomePageClient allPosts={allPosts} />
+      </Suspense>
     </div>
   );
 }

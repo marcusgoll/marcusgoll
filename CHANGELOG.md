@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to marcusgoll.com will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -14,9 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.1.0] - 2025-10-27
+## [1.2.0] - 2025-10-27
 
 ### Added
+
 - **Maintenance Mode with Secret Bypass** - Infrastructure feature enabling zero-downtime site switching
   - Edge Middleware implementation for global request interception
   - Server-rendered maintenance page with professional branding
@@ -27,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Type-safe environment variable configuration
   - Comprehensive unit test suite (100% coverage, 36 tests)
 
-### Technical Details
+### Technical Details (Maintenance Mode)
 - **Files**: middleware.ts, app/maintenance/page.tsx, lib/maintenance-utils.ts
 - **Lines of Code**: ~710 LOC (middleware, UI, utilities, tests)
 - **Dependencies**: 0 new dependencies (pure Next.js 15)
@@ -35,128 +36,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security**: 256-bit token entropy, constant-time comparison, zero vulnerabilities
 - **Quality**: 100% TypeScript coverage, ESLint compliant, 36/36 tests passing
 
-### Features
-1. **Maintenance Mode Toggle** - Enable/disable via `MAINTENANCE_MODE` environment variable
-2. **Developer Bypass** - Cryptographically secure token (`?bypass=TOKEN`) with persistent cookie
-3. **Professional UI** - Navy 900 background, Emerald 600 accents, responsive design
-4. **Security** - HttpOnly cookies, SameSite=Strict, no code injection vectors
-5. **Accessibility** - WCAG 2.1 AAA: semantic HTML, keyboard navigation, 15.8:1 contrast
-6. **Zero Deployment** - Toggle without code redeploy (environment variable only)
-7. **Edge Performance** - Synchronous middleware, no async overhead, <10ms response
-
-### Environment Variables
-- `MAINTENANCE_MODE`: Enable/disable maintenance mode ("true"/"false")
-- `MAINTENANCE_BYPASS_TOKEN`: 64-character hex token for developer bypass
-
-### Breaking Changes
-None. Feature is fully backward compatible.
-
-### Migration Guide
-Not applicable. Feature is opt-in via environment variable.
-
-### Known Issues
-None identified.
-
 ---
 
-## [1.0.0] - 2025-10-20
+## [1.1.0] - 2025-10-22
 
 ### Added
-- Initial Next.js 15 project setup
-- Environment management infrastructure
-- Tailwind CSS 4 styling system
-- TypeScript strict mode configuration
-- ESLint and code quality standards
-- PostgreSQL/Prisma database integration
-- Supabase authentication setup
-- API health check endpoint
-- Development and production build scripts
+
+- **Individual Post Page Enhancements** (Feature 003)
+  - Related posts component with tag-based recommendation algorithm
+  - Table of contents with scroll spy and smooth navigation
+  - Social sharing buttons (Twitter, LinkedIn, Copy Link) with Web Share API support
+  - Previous/Next chronological post navigation
+  - Breadcrumb navigation with BreadcrumbList Schema.org markup
+  - BlogPosting structured data (Schema.org JSON-LD) for rich snippets
+  - Enhanced MDX image component with featured image support
+  - Post utilities library for related posts algorithm and heading extraction
+
+### Changed
+
+- Blog post pages now include comprehensive navigation and discovery features
+- Improved SEO with Schema.org BlogPosting structured data
+- Enhanced accessibility with WCAG 2.1 AA compliant components
 
 ### Technical Details
-- **Framework**: Next.js 15.5.6 with App Router
-- **Runtime**: React 19.2.0 with Server Components
-- **Styling**: Tailwind CSS 4.1.15
-- **Type Safety**: TypeScript 5.9.3 (strict mode)
-- **Database**: Prisma 6.17.1 + PostgreSQL
-- **Authentication**: Supabase
-- **Linting**: ESLint with Next.js config
-- **Environment**: 12-factor app with validated env vars
 
-### Features
-- Professional Next.js project structure
-- Environment variable validation at startup
-- Health check endpoint at `/api/health`
-- Tailwind CSS with custom design tokens
-- TypeScript strict mode throughout
-- Pre-commit hooks for quality gates
-- Development server with hot reload
-- Production build optimization
+- 8 new reusable blog components
+- 25/25 tasks completed with 100% acceptance criteria validation
+- Zero critical issues, WCAG 2.1 AA compliant
+- All optimization checks passed (build, security, accessibility, performance, code review)
 
----
+## [1.0.0] - 2025-10-22
 
-## Version History
+### Added
 
-| Version | Date | Status | Features |
-|---------|------|--------|----------|
-| 1.1.0 | 2025-10-27 | Released | Maintenance Mode with Secret Bypass |
-| 1.0.0 | 2025-10-20 | Released | Initial Project Setup |
+- MDX file-based content management system
+- Three content tracks: Aviation, Dev/Startup, and Cross-pollination
+- Sample blog posts demonstrating dual-track content strategy
+- Reading time calculation for blog posts
+- Tag-based content organization
+- ISR (Incremental Static Regeneration) with 60-second revalidation
+- PM2 process management for production deployment
+- Environment variable validation with optional feature flags
 
----
+### Changed
 
-## Deployment Workflow
+- **BREAKING**: Migrated from Ghost CMS to MDX file-based content
+  - Removed Ghost CMS dependencies (@tryghost/content-api)
+  - Content now managed as `.mdx` files in `content/posts/`
+  - No external CMS required
+- Simplified environment configuration (only PUBLIC_URL and NODE_ENV required)
+- Made database, Supabase, and newsletter environment variables optional
 
-**Spec-Flow Version**: 2.0.0
-**Deployment Model**: direct-prod (Vercel)
-**Last Deployment**: 2025-10-27
+### Fixed
 
-### Phases Completed
-1. ✅ Specification & Planning
-2. ✅ Task Breakdown
-3. ✅ Implementation
-4. ✅ Optimization (156/156 checks)
-5. ✅ Preview Testing (6/6 scenarios)
-6. ✅ Production Deployment
-7. ✅ Finalization
+- TypeScript type error in Button component (added 'general' to ContentTrack type)
+- ESLint errors on Prisma generated files (added .eslintignore)
+- Environment validation blocking builds when optional services not configured
 
----
+### Removed
 
-## How to Deploy
+- Ghost CMS integration
+- Ghost API client
+- Ghost-related environment variables from required list
 
-### For Feature Releases
-```bash
-# Create feature branch
-git checkout -b feature/[issue-number]-[slug]
+## [0.1.0] - 2025-10-21
 
-# Implement and test
-npm run dev
-npm test
+### Added
 
-# When ready, run unified deployment
-/ship
-```
-
-### Quick Reference
-- **Specification**: `/spec` - Create feature spec
-- **Planning**: `/plan` - Design architecture
-- **Tasks**: `/tasks` - Break down implementation
-- **Implementation**: `/implement` - Write code and tests
-- **Optimization**: `/optimize` - Quality gates and review
-- **Preview**: `/preview` - Manual UI/UX testing
-- **Deploy Staging**: `/ship-staging` - Deploy to staging
-- **Production**: `/ship-prod` - Deploy to production
-- **Finalize**: `/finalize` - Update documentation
+- Initial project setup with Next.js 15.5.6
+- Environment variable management system
+- Basic project structure
+- Prisma ORM integration
+- Tailwind CSS configuration
 
 ---
 
-## Support
+**Note**: This project was deployed to production at http://178.156.129.179:3000
 
-For issues or feature requests, please use GitHub Issues with appropriate labels:
-- `type:feature` - New feature request
-- `type:bug` - Bug report
-- `type:enhancement` - Improvement to existing feature
-- `area:frontend` or `area:backend` - Component area
-
----
-
-**Last Updated**: 2025-10-27
-**Maintained By**: Marcus Gollahon
+[1.0.0]: https://github.com/marcusgoll/marcusgoll/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/marcusgoll/marcusgoll/releases/tag/v0.1.0

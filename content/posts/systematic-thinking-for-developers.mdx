@@ -1,0 +1,101 @@
+---
+slug: "systematic-thinking-for-developers"
+title: "Systematic Thinking for Developers: Lessons from the Cockpit"
+excerpt: "How pilots approach complex problems - and how these principles apply to software development."
+date: "2024-01-20T08:00:00Z"
+author: "Marcus Gollahon"
+featuredImage: "/images/dev/coding-desk.jpg"
+tags:
+  - dev-startup
+  - systematic-thinking
+featured: true
+---
+
+## Why Pilots Think Systematically
+
+In aviation, there's no room for guesswork. Every problem is approached methodically:
+
+1. **Identify** the problem
+2. **Analyze** the situation
+3. **Decide** on a course of action
+4. **Execute** the solution
+5. **Monitor** the results
+
+Sound familiar? It should - because great developers think the same way.
+
+## The Checklist Mindset
+
+Pilots live by checklists. Not because we can't remember things, but because **checklists eliminate variables**.
+
+In code, this translates to:
+
+```typescript
+// Good: Systematic error handling
+function processPayment(amount: number) {
+  // 1. Validate inputs
+  if (!isValidAmount(amount)) {
+    throw new Error('Invalid amount');
+  }
+
+  // 2. Check prerequisites
+  if (!isUserAuthenticated()) {
+    throw new Error('User not authenticated');
+  }
+
+  // 3. Execute operation
+  const result = chargeCard(amount);
+
+  // 4. Verify success
+  if (!result.success) {
+    handleFailure(result.error);
+    return;
+  }
+
+  // 5. Update state
+  updateBalance(amount);
+}
+```
+
+## Decision-Making Under Pressure
+
+When things go wrong at 10,000 feet, you don't have time to panic. You follow **decision trees**.
+
+The same applies to production incidents:
+
+### The DECIDE Model
+
+- **D**etect: Monitor alerts, logs, metrics
+- **E**stimate: Assess severity and impact
+- **C**hoose: Select mitigation strategy
+- **I**dentify: Find root cause
+- **D**o: Execute the fix
+- **E**valuate: Verify resolution
+
+## Building Systems That Scale
+
+Aircraft systems are designed with **redundancy** and **fail-safes**. Your code should be too:
+
+- **Circuit breakers** for external APIs
+- **Fallback mechanisms** for critical operations
+- **Health checks** for dependencies
+- **Graceful degradation** when services fail
+
+## The Pre-Flight Mindset
+
+Before every flight, pilots do a thorough **preflight inspection**. Before every deploy, you should too:
+
+- [ ] All tests passing
+- [ ] Code reviewed
+- [ ] Staging validated
+- [ ] Rollback plan ready
+- [ ] Monitoring in place
+
+## Continuous Learning
+
+In aviation, we say: "A good landing is one you walk away from. A great landing is one where you can use the airplane again."
+
+In software: **Ship working code, but always improve your process.**
+
+---
+
+*Marcus Gollahon teaches systematic thinking principles from aviation to help developers build better software.*

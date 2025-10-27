@@ -1,16 +1,26 @@
-# Engineering Constitution
+# Marcus Gollahon - Engineering & Brand Constitution
 
-**Version**: 1.1.0
-**Last Updated**: 2025-10-16
+**Version**: 2.0.0
+**Last Updated**: 2025-10-21
 **Status**: Active
+**Project**: Personal Website/Blog - Aviation, Education, Dev Projects, Startups
 
-> This document defines the core engineering principles that govern all feature development in this project. Every specification, plan, and implementation must align with these principles.
+> This document defines the core engineering principles AND personal brand standards that govern all feature development. Every specification, plan, and implementation must align with these principles and brand identity.
 
 ---
 
 ## Purpose
 
-The Engineering Constitution serves as the Single Source of Truth (SSOT) for engineering standards and decision-making. When in doubt, refer to these principles. When principles conflict with convenience, principles win.
+This constitution serves as the Single Source of Truth (SSOT) for:
+1. **Engineering standards** - Code quality, testing, deployment practices
+2. **Brand standards** - Visual identity, tone, content principles
+3. **Decision-making framework** - When trade-offs arise between features/design/content
+
+**Brand Mission**: "I help pilots advance their aviation careers and teach developers to build with systematic thinking—bringing discipline, clarity, and proven teaching methods to everything I create."
+
+**Brand Essence**: "Systematic Mastery" - The disciplined approach of aviation applied to development and teaching.
+
+When in doubt, refer to these principles. When principles conflict with convenience, principles win.
 
 ---
 
@@ -254,7 +264,7 @@ Each feature in roadmap must have:
 
 **Checks**:
 - ✅ Deployment IDs extracted from staging logs
-- ✅ Rollback test executed (actual Vercel alias change)
+- ✅ Rollback test executed (git revert or PM2 restart with previous version)
 - ✅ Previous deployment verified live
 - ✅ Roll-forward to current deployment verified
 
@@ -315,24 +325,24 @@ Each feature in roadmap must have:
 
 ### Deployment ID Tracking
 
-**What**: Unique identifiers for each deployment (Vercel URLs, Docker images, Railway IDs)
+**What**: Unique identifiers for each deployment (git commit SHAs, PM2 process IDs, Docker images)
 
 **Storage**:
 - `specs/NNN-slug/deployment-metadata.json` - Human-readable
-- `specs/NNN-slug/workflow-state.json` - Machine-readable state
+- `specs/NNN-slug/workflow-state.yaml` - Machine-readable state
 
-**Extraction**: Automatic from GitHub Actions workflow logs
+**Extraction**: Automatic from GitHub Actions workflow logs or deployment scripts
 
 ### Rollback Testing (staging-prod only)
 
 **When**: During `/validate-staging` phase
 
 **Process**:
-1. Load previous deployment ID from state
-2. Execute: `vercel alias set <previous-id> <staging-url>`
-3. Wait for DNS propagation (15 seconds)
-4. Verify previous deployment is live (check HTTP headers)
-5. Roll forward: `vercel alias set <current-id> <staging-url>`
+1. Load previous deployment ID (git commit SHA) from state
+2. Execute: `git revert <current-commit>` or `pm2 restart <app> --update-env`
+3. Wait for application restart (15 seconds)
+4. Verify previous deployment is live (check HTTP headers and version)
+5. Roll forward: `git revert <revert-commit>` or restore current version
 6. Verify current deployment is live again
 
 **Blocking**: If rollback test fails, production deployment is blocked
@@ -347,22 +357,151 @@ Each feature in roadmap must have:
 
 **How to rollback**:
 ```bash
-# For Vercel deployments
-vercel alias set <previous-deployment-id> <production-url> --token=$VERCEL_TOKEN
-
-# For Railway/other platforms
-# Use platform's UI or CLI rollback feature
-
-# For manual git revert
+# For Hetzner VPS with PM2
+ssh hetzner
+cd /path/to/marcusgoll
 git revert <commit-sha>
-git push
+./deploy.sh
+
+# Or for quick PM2 restart with previous version
+pm2 stop marcusgoll
+git checkout <previous-commit-sha>
+npm install
+npm run build
+pm2 start npm --name "marcusgoll" -- start
+pm2 save
 ```
 
 **Deployment IDs**: Found in ship reports (`*-ship-report.md`) or `deployment-metadata.json`
 
 ---
 
-## Core Principles
+## Personal Brand Principles
+
+These principles govern all content, design, and user experience decisions to maintain brand consistency.
+
+### 1. Systematic Clarity
+
+**Principle**: Every feature, every article, every design element should reflect systematic thinking and clear communication.
+
+**Why**: Brand archetype is "The Sage Explorer" - combining structured teaching with authentic transparency.
+
+**Implementation**:
+- Aviation checklists inspire UI/UX patterns (systematic, repeatable)
+- Teaching background drives content structure (clear explanations, step-by-step)
+- Code examples include comments explaining "why", not just "what"
+- Complex topics broken into digestible sections
+- Reference `/docs/MARCUS_BRAND_PROFILE.md` for tone and messaging
+
+**Violations**:
+- ❌ Overly complex navigation or information architecture
+- ❌ Jargon without explanation
+- ❌ Missing context or background for technical topics
+
+---
+
+### 2. Visual Brand Consistency
+
+**Principle**: All visual elements must adhere to the defined brand identity system.
+
+**Why**: Professional, cohesive visual identity builds trust and recognition.
+
+**Implementation**:
+- **Colors**: Navy 900 `#0F172A` (primary), Emerald 600 `#059669` (secondary)
+- **Typography**: Work Sans (headings/body), JetBrains Mono (code)
+- **Spacing**: 8px base unit, consistent across all components
+- **Accessibility**: WCAG 2.1 AA minimum (4.5:1 text contrast, keyboard nav)
+- Reference `/docs/VISUAL_BRAND_GUIDE.md` for complete style guide
+
+**Violations**:
+- ❌ Using colors outside the defined palette
+- ❌ Inconsistent font weights or sizes
+- ❌ Random spacing values (must use 8px increments)
+- ❌ Low-contrast text or missing focus states
+
+---
+
+### 3. Multi-Passionate Integration
+
+**Principle**: Content strategy balances aviation, development, and teaching without forcing artificial separation.
+
+**Why**: Brand uniqueness comes from cross-domain expertise - "Systematic Cross-Domain Thinking".
+
+**Implementation**:
+- **Content mix**: 40% aviation, 40% dev/startup, 20% cross-pollination
+- **Cross-pollination examples**: "Code Review Like a Flight Instructor", "Pre-Deployment Checklists"
+- Tag system differentiates tracks: Aviation (Sky Blue accent), Dev (Emerald), Hybrid (both)
+- Navigation allows filtering by interest area
+- Bio/about clearly communicates triple background (pilot + teacher + dev)
+
+**Violations**:
+- ❌ Forcing artificial "choose one passion" narrative
+- ❌ Hiding one domain to appeal to another audience
+- ❌ Missing opportunities to connect aviation → development principles
+
+---
+
+### 4. Authentic Building in Public
+
+**Principle**: Share the journey transparently - wins, failures, lessons learned from building CFIPros.com and other projects.
+
+**Why**: Builds trust, creates accountability, helps others avoid mistakes.
+
+**Implementation**:
+- Monthly progress updates on startup projects
+- Transparent metrics (traffic, revenue, user feedback)
+- Document pivots and failures, not just successes
+- Code examples from real projects, not toy demos
+- Time management insights (full-time pilot + side hustle)
+
+**Violations**:
+- ❌ Only sharing polished, perfect outcomes
+- ❌ Vague progress updates without specifics
+- ❌ Hiding business metrics or challenges
+
+---
+
+### 5. Teaching-First Content
+
+**Principle**: Leverage 10 years of teaching experience to make content genuinely educational, not just informative.
+
+**Why**: Differentiation comes from proven teaching methodology, not just domain knowledge.
+
+**Implementation**:
+- Every tutorial includes learning objectives
+- Use analogies and real-world examples (aviation → dev)
+- Provide checklists, frameworks, and downloadable resources
+- Anticipate common misconceptions and address them
+- Interactive elements where possible (quizzes, code playgrounds)
+
+**Violations**:
+- ❌ Assuming prior knowledge without explanation
+- ❌ Listing facts without context or application
+- ❌ No clear takeaways or action items
+
+---
+
+### 6. Documentation Standards for Brand Assets
+
+**Principle**: Maintain comprehensive documentation for all brand decisions, visual assets, and content frameworks.
+
+**Why**: Consistency over time requires documented standards, especially when working with collaborators or revisiting projects.
+
+**Implementation**:
+- All brand assets documented in `/docs/` folder
+- Visual decisions reference `VISUAL_BRAND_GUIDE.md`
+- Content strategy references `MARCUS_BRAND_PROFILE.md`
+- Design decisions logged in feature `NOTES.md`
+- Templates for social media, blog posts, and email maintained in codebase
+
+**Violations**:
+- ❌ Undocumented design decisions
+- ❌ Brand assets scattered across drives without version control
+- ❌ Inconsistent messaging without reference docs
+
+---
+
+## Core Engineering Principles
 
 ### 1. Specification First
 
@@ -525,8 +664,9 @@ git push
 
 ## Conflict Resolution
 
-When principles conflict (e.g., "ship fast" vs "test thoroughly"), prioritize in this order:
+When principles conflict (e.g., "ship fast" vs "test thoroughly", or "brand consistency" vs "quick iteration"), prioritize in this order:
 
+### Engineering vs Engineering
 1. **Security** - Never compromise on security
 2. **Accessibility** - Legal and ethical obligation
 3. **Testing** - Prevents regressions, enables velocity
@@ -535,6 +675,17 @@ When principles conflict (e.g., "ship fast" vs "test thoroughly"), prioritize in
 6. **Code Quality** - Long-term maintainability
 7. **Documentation** - Preserves context
 8. **Simplicity** - Avoid premature optimization
+
+### Brand vs Engineering
+- **Brand consistency > Feature velocity** - Wait to implement correctly with brand guidelines
+- **Teaching quality > Content quantity** - One excellent tutorial > five mediocre posts
+- **Visual standards > Quick shipping** - Use defined colors/fonts, even if it takes longer
+- **Authentic transparency > Perfect polish** - Share real progress, not just wins
+
+### Brand vs Brand
+- **Systematic clarity > Clever creativity** - Clear teaching beats clever wordplay
+- **Multi-passionate integration > Niche appeal** - Don't hide domains to appeal to one audience
+- **Documentation > Memory** - Write it down, don't rely on recall
 
 ---
 
@@ -554,12 +705,28 @@ This constitution evolves with the project. To propose changes:
 
 ## References
 
+### Engineering & Workflow
 - **Spec-Flow Commands**: `.claude/commands/`
 - **Templates**: `.spec-flow/templates/`
 - **Roadmap**: `.spec-flow/memory/roadmap.md`
 - **Design Inspirations**: `.spec-flow/memory/design-inspirations.md`
 
+### Brand & Content Strategy
+- **Brand Profile**: `docs/MARCUS_BRAND_PROFILE.md` - Mission, values, content pillars, target audiences
+- **Visual Brand Guide**: `docs/VISUAL_BRAND_GUIDE.md` - Colors, typography, spacing, imagery
+- **Brand Strategy Framework**: `docs/BRAND_STRATEGY_FRAMEWORK.md` - Golden Circle, archetype, positioning
+- **Competitive Analysis**: `docs/COMPETITIVE_ANALYSIS.md` - Blue Ocean strategy, market positioning
+- **Content Framework**: `docs/CONTENT_FRAMEWORK_INTEGRATION.md` - Content creation workflow
+- **Brand Consistency Checklist**: `docs/BRAND_CONSISTENCY_CHECKLIST.md` - Pre-publish validation
+
+### Project Documentation
+- **Setup Summary**: `docs/SETUP_SUMMARY.md`
+- **Website Strategy**: `docs/WEBSITE_STRATEGY_ANALYSIS.md`
+- **Quick Start**: `docs/QUICKSTART.md`
+- **Ghost/Next.js Implementation**: `docs/GHOST_NEXTJS_IMPLEMENTATION.md`
+
 ---
 
-**Maintained by**: Engineering Team + Claude Code
+**Maintained by**: Marcus Gollahon + Claude Code
 **Review Cycle**: Quarterly or after major project milestones
+**Project Context**: Personal website/blog for aviation, education, dev projects, and startups

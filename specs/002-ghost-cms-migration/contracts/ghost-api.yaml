@@ -1,0 +1,255 @@
+# Ghost Content API Contract
+# External API provided by Ghost CMS - Read-only access
+
+openapi: 3.0.0
+info:
+  title: Ghost Content API
+  version: v5.0
+  description: External Ghost CMS Content API for fetching blog posts, tags, and authors
+
+servers:
+  - url: https://ghost.marcusgoll.com/ghost/api/v5.0/content
+    description: Ghost CMS instance
+
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: key
+      description: Ghost Content API key from environment variable GHOST_CONTENT_API_KEY
+
+  schemas:
+    GhostPost:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique post identifier
+        uuid:
+          type: string
+          description: UUID
+        title:
+          type: string
+          description: Post title
+        slug:
+          type: string
+          description: URL-friendly slug
+        html:
+          type: string
+          description: Post content HTML
+        excerpt:
+          type: string
+          description: Post excerpt/summary
+        feature_image:
+          type: string
+          nullable: true
+          description: Featured image URL from Ghost CDN
+        featured:
+          type: boolean
+          description: Whether post is featured
+        published_at:
+          type: string
+          format: date-time
+          description: Publication timestamp
+        reading_time:
+          type: number
+          description: Estimated reading time in minutes
+        primary_author:
+          $ref: '#/components/schemas/GhostAuthor'
+        primary_tag:
+          $ref: '#/components/schemas/GhostTag'
+          nullable: true
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/GhostTag'
+          description: All tags including track and category tags
+
+    GhostTag:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: Display name
+        slug:
+          type: string
+          description: URL-friendly slug (e.g., 'aviation', 'dev-startup')
+        description:
+          type: string
+          nullable: true
+        feature_image:
+          type: string
+          nullable: true
+        visibility:
+          type: string
+          enum: [public, internal]
+
+    GhostAuthor:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: Author name
+        slug:
+          type: string
+        profile_image:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        website:
+          type: string
+          nullable: true
+
+    PostsResponse:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GhostPost'
+        meta:
+          type: object
+          properties:
+            pagination:
+              type: object
+              properties:
+                page:
+                  type: number
+                limit:
+                  type: number
+                pages:
+                  type: number
+                total:
+                  type: number
+                next:
+                  type: number
+                  nullable: true
+                prev:
+                  type: number
+                  nullable: true
+
+    SinglePostResponse:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GhostPost'
+          minItems: 1
+          maxItems: 1
+
+    TagsResponse:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/GhostTag'
+
+paths:
+  /posts:
+    get:
+      summary: Browse posts
+      description: Fetch multiple posts with optional filtering and pagination
+      parameters:
+        - name: filter
+          in: query
+          description: Filter expression (e.g., 'tag:aviation', 'tag:dev-startup')
+          schema:
+            type: string
+          example: tag:aviation
+        - name: limit
+          in: query
+          description: Number of posts to return (default 15, max 'all')
+          schema:
+            type: string
+          example: 15
+        - name: include
+          in: query
+          description: Comma-separated list of resources to include (tags, authors)
+          schema:
+            type: string
+          example: tags,authors
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostsResponse'
+        400:
+          description: Bad request (invalid filter syntax)
+        401:
+          description: Unauthorized (invalid API key)
+        500:
+          description: Server error
+
+  /posts/slug/{slug}:
+    get:
+      summary: Read post by slug
+      description: Fetch a single post by its slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Post slug
+          schema:
+            type: string
+          example: systematic-thinking-aviation
+        - name: include
+          in: query
+          description: Comma-separated list of resources to include
+          schema:
+            type: string
+          example: tags,authors
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SinglePostResponse'
+        404:
+          description: Post not found
+        401:
+          description: Unauthorized (invalid API key)
+        500:
+          description: Server error
+
+  /tags:
+    get:
+      summary: Browse tags
+      description: Fetch all tags
+      parameters:
+        - name: limit
+          in: query
+          description: Number of tags to return (default 15, max 'all')
+          schema:
+            type: string
+          example: all
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagsResponse'
+        401:
+          description: Unauthorized (invalid API key)
+        500:
+          description: Server error
+
+# Example Usage:
+# GET /posts?filter=tag:aviation&limit=10&include=tags,authors
+# GET /posts/slug/systematic-thinking-aviation?include=tags,authors
+# GET /tags?limit=all

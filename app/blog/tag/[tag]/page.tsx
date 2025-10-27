@@ -1,0 +1,96 @@
+/**
+ * Tag archive page
+ * Shows all blog posts filtered by a specific tag
+ * FR-014, US5
+ */
+
+import { getAllTags, getPostsByTag } from '@/lib/mdx';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { PostCard } from '@/components/blog/post-card';
+
+interface TagArchivePageProps {
+  params: Promise<{
+    tag: string;
+  }>;
+}
+
+/**
+ * Generate static params for all tags at build time
+ * FR-014: Pre-render all tag pages
+ */
+export async function generateStaticParams() {
+  const tags = await getAllTags();
+  return tags.map((tag) => ({
+    tag: tag.slug,
+  }));
+}
+
+/**
+ * Generate metadata for tag archive pages
+ */
+export async function generateMetadata({ params }: TagArchivePageProps): Promise<Metadata> {
+  const { tag } = await params;
+  const posts = await getPostsByTag(tag);
+
+  if (posts.length === 0) {
+    return {
+      title: 'Tag Not Found',
+    };
+  }
+
+  const displayName = posts[0].frontmatter.tags.find(
+    (t) => t.toLowerCase().replace(/\s+/g, '-') === tag
+  ) || tag;
+
+  return {
+    title: `${displayName} | Blog`,
+    description: `Articles tagged with ${displayName}. ${posts.length} post${posts.length !== 1 ? 's' : ''} found.`,
+  };
+}
+
+/**
+ * Tag archive page component
+ */
+export default async function TagArchivePage({ params }: TagArchivePageProps) {
+  const { tag } = await params;
+  const posts = await getPostsByTag(tag);
+
+  // Return 404 if no posts found for tag
+  if (posts.length === 0) {
+    notFound();
+  }
+
+  // Get display name from first post's tags
+  const displayName = posts[0].frontmatter.tags.find(
+    (t) => t.toLowerCase().replace(/\s+/g, '-') === tag
+  ) || tag;
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-12">
+      <header className="mb-12">
+        <div className="mb-4">
+          <Link
+            href="/blog"
+            className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-2"
+          >
+            ← Back to all posts
+          </Link>
+        </div>
+        <h1 className="text-4xl font-bold tracking-tight mb-4">
+          Tagged: <span className="text-blue-600 dark:text-blue-400">{displayName}</span>
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          {posts.length} post{posts.length !== 1 ? 's' : ''} found
+        </p>
+      </header>
+
+      <div className="space-y-8">
+        {posts.map((post) => (
+          <PostCard key={post.slug} post={post} />
+        ))}
+      </div>
+    </div>
+  );
+}

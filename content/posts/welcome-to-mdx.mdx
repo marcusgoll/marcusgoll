@@ -1,0 +1,84 @@
+---
+title: "Welcome to MDX Blog"
+slug: "welcome-to-mdx"
+date: "2025-10-21T12:00:00Z"
+excerpt: "Our blog has migrated from Ghost CMS to MDX. Learn about the new features and capabilities of MDX-powered content."
+author: "Marcus Gollahon"
+tags: ["announcements", "dev", "mdx"]
+draft: false
+---
+
+# Welcome to Our MDX-Powered Blog
+
+We're excited to announce that our blog has migrated from Ghost CMS to **MDX** (Markdown + JSX), bringing new capabilities and better developer experience.
+
+## What is MDX?
+
+MDX combines the simplicity of Markdown with the power of React components. This allows us to:
+
+- Write content in familiar Markdown syntax
+- Embed interactive React components
+- Version control our content with Git
+- Eliminate external CMS dependencies
+
+## New Features
+
+### 1. Syntax Highlighting
+
+Code blocks now have beautiful syntax highlighting powered by rehype-highlight:
+
+```typescript
+// TypeScript example with automatic highlighting
+interface BlogPost {
+  title: string;
+  slug: string;
+  date: string;
+  tags: string[];
+}
+
+const post: BlogPost = {
+  title: "Welcome to MDX Blog",
+  slug: "welcome-to-mdx",
+  date: "2025-10-21",
+  tags: ["announcements", "dev", "mdx"],
+};
+```
+
+### 2. Interactive Components
+
+We can now embed interactive React components directly in our content:
+
+<Callout type="info" title="Try it out!">
+  This is a Callout component embedded in MDX. It supports different types: info, warning, error, and success.
+</Callout>
+
+### 3. GitHub Flavored Markdown
+
+Full support for tables, task lists, and more:
+
+| Feature | Ghost CMS | MDX |
+|---------|-----------|-----|
+| Version Control | ❌ | ✅ |
+| React Components | ❌ | ✅ |
+| Build-time Validation | ❌ | ✅ |
+| Zero External Deps | ❌ | ✅ |
+
+Task list example:
+- [x] Migrate from Ghost to MDX
+- [x] Setup content directory
+- [x] Create sample posts
+- [ ] Import historical posts
+
+### 4. Optimized Images
+
+Images are automatically optimized using Next.js Image component for better performance.
+
+## What's Next?
+
+We're excited about the possibilities MDX brings. Expect more interactive content, better performance, and richer experiences.
+
+Stay tuned for more updates!
+
+<Callout type="success">
+  Migration complete! All future posts will be written in MDX format.
+</Callout>
