@@ -4,6 +4,22 @@
 **Type**: Infrastructure Migration (Zero-Downtime)
 **Total Tasks**: 39 (34 MVP + 3 optional + 2 future)
 **Estimated Duration**: 13-19 hours total
+**VPS IP**: 178.156.129.179
+
+---
+
+## ⚠️ IMPORTANT: DNS Setup Required
+
+**BEFORE starting Phase 1**, read the DNS setup guide:
+→ **[00-DNS-SETUP-PREREQUISITE.md](./00-DNS-SETUP-PREREQUISITE.md)**
+
+This guide covers:
+- Setting up marcusgoll.com → 178.156.129.179 (main domain)
+- Setting up deploy.marcusgoll.com → 178.156.129.179 (Dokploy UI)
+- DNS provider-specific instructions (Cloudflare, Namecheap, GoDaddy, etc.)
+- Verification steps before starting migration
+
+**Why this matters**: DNS propagation can take 5-60 minutes. Configuring DNS before Phase 1 ensures no delays during migration.
 
 ---
 
