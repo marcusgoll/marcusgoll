@@ -31,8 +31,6 @@ export default function DualTrackShowcase({
             <Button
               variant="outline"
               size="default"
-              track="aviation"
-              analyticsLocation="homepage"
             >
               View All Aviation Posts
             </Button>
@@ -62,8 +60,6 @@ export default function DualTrackShowcase({
             <Button
               variant="outline"
               size="default"
-              track="dev-startup"
-              analyticsLocation="homepage"
             >
               View All Dev/Startup Posts
             </Button>
