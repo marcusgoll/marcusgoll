@@ -82,7 +82,7 @@ export const mdxComponents: MDXComponents = {
     return <img src={src} alt={alt} className="rounded-lg my-6" {...props} />;
   },
 
-  // Code blocks with syntax highlighting (handled by rehype-highlight)
+  // Code blocks with syntax highlighting (handled by rehype-shiki with dual themes)
   code: ({ children, className, ...props }) => {
     // Inline code
     if (!className) {
@@ -93,7 +93,7 @@ export const mdxComponents: MDXComponents = {
       );
     }
 
-    // Block code (syntax highlighting applied by rehype-highlight)
+    // Block code (syntax highlighting applied by rehype-shiki)
     return (
       <code className={className} {...props}>
         {children}

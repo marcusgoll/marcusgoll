@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import Hero from '@/components/home/Hero';
 import HomePageClient from '@/components/home/HomePageClient';
 import PageViewTracker from '@/components/analytics/PageViewTracker';
@@ -37,7 +38,9 @@ export default async function Home() {
       <Hero />
 
       {/* M2 Layout (Sidebar + Magazine Masonry) */}
-      <HomePageClient allPosts={allPosts} />
+      <Suspense fallback={<div className="min-h-screen" />}>
+        <HomePageClient allPosts={allPosts} />
+      </Suspense>
     </div>
   );
 }

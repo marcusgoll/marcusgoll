@@ -27,11 +27,29 @@ interface CodeBlockProps {
 export function CodeBlock({ children, language, filename, showLineNumbers = false }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    const code = typeof children === 'string' ? children : extractTextContent(children);
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      const code = typeof children === 'string' ? children : extractTextContent(children);
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy code:', error);
+      // Fallback: Create temporary textarea for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = typeof children === 'string' ? children : extractTextContent(children);
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (fallbackError) {
+        console.error('Fallback copy also failed:', fallbackError);
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
   };
 
   return (
@@ -47,7 +65,7 @@ export function CodeBlock({ children, language, filename, showLineNumbers = fals
           </div>
           <button
             onClick={handleCopy}
-            className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+            className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 min-w-[44px] min-h-[44px] px-2"
             aria-label="Copy code"
           >
             {copied ? (
@@ -77,7 +95,7 @@ export function CodeBlock({ children, language, filename, showLineNumbers = fals
         {!filename && !language && (
           <button
             onClick={handleCopy}
-            className="absolute top-2 right-2 text-xs text-gray-400 hover:text-white transition-colors bg-gray-800 px-2 py-1 rounded"
+            className="absolute top-2 right-2 text-xs text-gray-400 hover:text-white transition-colors bg-gray-800 px-3 py-2 rounded min-w-[44px] min-h-[44px]"
             aria-label="Copy code"
           >
             {copied ? '✓ Copied' : '📋 Copy'}

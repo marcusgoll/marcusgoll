@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Post } from '@/lib/posts';
 import PostGrid from '@/components/blog/PostGrid';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface DualTrackShowcaseProps {
   aviationPosts: Post[];
@@ -30,9 +30,7 @@ export default function DualTrackShowcase({
           <Link href="/aviation">
             <Button
               variant="outline"
-              size="md"
-              track="aviation"
-              analyticsLocation="homepage"
+              size="default"
             >
               View All Aviation Posts
             </Button>
@@ -61,9 +59,7 @@ export default function DualTrackShowcase({
           <Link href="/dev-startup">
             <Button
               variant="outline"
-              size="md"
-              track="dev-startup"
-              analyticsLocation="homepage"
+              size="default"
             >
               View All Dev/Startup Posts
             </Button>

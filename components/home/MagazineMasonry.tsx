@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Post } from '@/lib/posts';
 import { getPrimaryTrack } from '@/lib/utils/content';
 import TrackBadge from '@/components/blog/TrackBadge';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface MagazineMasonryProps {
   posts: Post[];

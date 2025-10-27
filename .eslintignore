@@ -12,7 +12,7 @@ app/generated/
 .vercel/
 
 # Mock/prototype files (design artifacts, not production code)
-app/mock/
+app/_mock/
 
 # Configuration
 .env
