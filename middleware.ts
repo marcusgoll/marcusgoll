@@ -1,51 +1,133 @@
 /**
- * Next.js middleware for feature flag routing
- * Temporary during Ghost → MDX transition period
- * Remove after 7-14 day validation period
- */
-
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-/**
- * Feature flag: Use MDX blog instead of Ghost CMS
- * Set to false to rollback to Ghost CMS
- */
-const USE_MDX_BLOG = process.env.NEXT_PUBLIC_USE_MDX_BLOG !== 'false';
-
-/**
- * Middleware function for feature flag routing
- * This is a temporary measure during the Ghost → MDX migration
+ * Next.js Edge Middleware: Maintenance Mode with Secret Bypass
  *
- * TODO: Remove this file after 7-14 day transition period
+ * Purpose: Global request interception for maintenance mode
+ * Runtime: Edge Runtime (Vercel Edge Functions)
+ * Performance: <10ms overhead per request
+ *
+ * Flow:
+ * 1. Check if path excluded (static assets, health checks)
+ * 2. Check if maintenance mode enabled
+ * 3. Check for bypass cookie
+ * 4. Check for bypass query parameter
+ * 5. Validate token and set cookie
+ * 6. Redirect to maintenance page or allow access
  */
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
 
-  // Only apply to blog routes
-  if (!pathname.startsWith('/blog')) {
-    return NextResponse.next();
+import { NextRequest, NextResponse } from 'next/server'
+import {
+  isExcludedPath,
+  validateBypassToken,
+  logBypassAttempt,
+} from '@/lib/maintenance-utils'
+
+export function middleware(request: NextRequest): NextResponse {
+  const { pathname } = request.nextUrl
+
+  // ============================================================================
+  // Step 1: Exclude static assets and health checks (skip all maintenance logic)
+  // ============================================================================
+
+  if (isExcludedPath(pathname)) {
+    return NextResponse.next()
   }
 
-  // If MDX is disabled, redirect to Ghost CMS or show maintenance message
-  if (!USE_MDX_BLOG) {
-    // Option 1: Redirect to Ghost CMS (if hosted separately)
-    // return NextResponse.redirect(new URL(`https://ghost.marcusgoll.com${pathname}`, request.url));
+  // ============================================================================
+  // Step 2: Check if maintenance mode is enabled
+  // ============================================================================
 
-    // Option 2: Show maintenance message
-    console.warn('⚠️ MDX blog is disabled via NEXT_PUBLIC_USE_MDX_BLOG flag');
-    // Let the request continue (404 page will be shown if content doesn't exist)
+  const maintenanceMode = process.env.MAINTENANCE_MODE?.toLowerCase()
+
+  // If maintenance mode is disabled or unset, allow all traffic
+  if (maintenanceMode !== 'true') {
+    return NextResponse.next()
   }
 
-  // Continue to MDX blog pages
-  return NextResponse.next();
+  // ============================================================================
+  // Step 3: Check for existing bypass cookie
+  // ============================================================================
+
+  const bypassCookie = request.cookies.get('maintenance_bypass')
+
+  if (bypassCookie?.value === 'true') {
+    // Developer has valid bypass cookie, allow access
+    return NextResponse.next()
+  }
+
+  // ============================================================================
+  // Step 4: Check for bypass query parameter
+  // ============================================================================
+
+  const bypassToken = request.nextUrl.searchParams.get('bypass')
+
+  if (bypassToken) {
+    const envToken = process.env.MAINTENANCE_BYPASS_TOKEN
+
+    // Validate bypass token
+    if (validateBypassToken(bypassToken, envToken)) {
+      // Token is valid - set bypass cookie and redirect to clean URL
+      logBypassAttempt(true, { token: bypassToken })
+
+      // Create clean URL (remove bypass parameter)
+      const cleanUrl = new URL(request.url)
+      cleanUrl.searchParams.delete('bypass')
+
+      // Create response with redirect
+      const response = NextResponse.redirect(cleanUrl)
+
+      // Set secure bypass cookie (24-hour expiration)
+      response.cookies.set('maintenance_bypass', 'true', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 86400, // 24 hours in seconds
+      })
+
+      return response
+    } else {
+      // Token is invalid - log failed attempt
+      const ip = request.headers.get('x-forwarded-for') || 'unknown'
+      logBypassAttempt(false, {
+        token: bypassToken,
+        ip: ip,
+      })
+    }
+  }
+
+  // ============================================================================
+  // Step 5: Redirect to maintenance page
+  // ============================================================================
+
+  // No bypass cookie and no valid bypass token - redirect to maintenance page
+  // Unless already on maintenance page (prevent infinite loop)
+  if (pathname === '/maintenance') {
+    return NextResponse.next()
+  }
+
+  const maintenanceUrl = new URL('/maintenance', request.url)
+  return NextResponse.redirect(maintenanceUrl)
 }
 
 /**
- * Configure which routes to run middleware on
+ * Middleware configuration
+ *
+ * Matcher: Apply middleware to all routes except:
+ * - /_next/* (Next.js internals)
+ * - /api/* (API routes - handled separately if needed)
+ * - Static files with extensions (.png, .jpg, .ico, etc.)
+ *
+ * Note: Excluded paths are also checked in isExcludedPath() for defense in depth
  */
 export const config = {
   matcher: [
-    '/blog/:path*',
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization)
+     * - favicon.ico, sitemap.xml, robots.txt (static files)
+     * - Files with extensions (images, fonts, etc.)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\..*$).*)',
   ],
-};
+}

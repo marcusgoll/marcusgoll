@@ -7,7 +7,7 @@ import { getPrimaryTrack } from '@/lib/utils/content';
 import PostGrid from '@/components/blog/PostGrid';
 import DualTrackShowcase from './DualTrackShowcase';
 import LoadMoreButton from './LoadMoreButton';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface UnifiedPostFeedProps {
   allPosts: Post[];
@@ -126,17 +126,17 @@ export default function UnifiedPostFeed({
         {/* View Toggle */}
         <div className="flex justify-end gap-4">
           <Button
-            variant={viewMode === 'dual-track' ? 'default' : 'outline'}
+            variant={(viewMode as 'dual-track' | 'unified') === 'dual-track' ? 'default' : 'outline'}
             onClick={() => handleViewToggle('dual-track')}
-            aria-pressed={viewMode === 'dual-track'}
+            aria-pressed={(viewMode as 'dual-track' | 'unified') === 'dual-track'}
             aria-label="Switch to dual-track view"
           >
             Dual-Track View
           </Button>
           <Button
-            variant={viewMode === 'unified' ? 'default' : 'outline'}
+            variant={(viewMode as 'dual-track' | 'unified') === 'unified' ? 'default' : 'outline'}
             onClick={() => handleViewToggle('unified')}
-            aria-pressed={viewMode === 'unified'}
+            aria-pressed={(viewMode as 'dual-track' | 'unified') === 'unified'}
             aria-label="Switch to unified view"
           >
             All Posts
@@ -157,17 +157,17 @@ export default function UnifiedPostFeed({
       {/* View Toggle */}
       <div className="flex justify-end gap-4">
         <Button
-          variant={viewMode === 'dual-track' ? 'default' : 'outline'}
+          variant={(viewMode as 'dual-track' | 'unified') === 'dual-track' ? 'default' : 'outline'}
           onClick={() => handleViewToggle('dual-track')}
-          aria-pressed={viewMode === 'dual-track'}
+          aria-pressed={(viewMode as 'dual-track' | 'unified') === 'dual-track'}
           aria-label="Switch to dual-track view"
         >
           Dual-Track View
         </Button>
         <Button
-          variant={viewMode === 'unified' ? 'default' : 'outline'}
+          variant={(viewMode as 'dual-track' | 'unified') === 'unified' ? 'default' : 'outline'}
           onClick={() => handleViewToggle('unified')}
-          aria-pressed={viewMode === 'unified'}
+          aria-pressed={(viewMode as 'dual-track' | 'unified') === 'unified'}
           aria-label="Switch to unified view"
         >
           All Posts

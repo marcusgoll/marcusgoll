@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 import createMDX from '@next/mdx';
-import rehypeHighlight from 'rehype-highlight';
+import rehypeShiki from './lib/rehype-shiki';
 import remarkGfm from 'remark-gfm';
 
 // Note: Environment variable validation moved to API routes and middleware
@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
 const withMDX = createMDX({
   options: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypeHighlight],
+    rehypePlugins: [rehypeShiki],
   },
 });
 
