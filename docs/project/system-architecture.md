@@ -123,7 +123,14 @@ lib/
 ```
 app/api/
 ├── newsletter/
-│   └── route.ts                 # POST /api/newsletter (signup)
+│   ├── subscribe/
+│   │   └── route.ts             # POST /api/newsletter/subscribe (multi-track)
+│   ├── preferences/
+│   │   ├── [token]/
+│   │   │   └── route.ts         # GET /api/newsletter/preferences/:token
+│   │   └── route.ts             # PATCH /api/newsletter/preferences
+│   └── unsubscribe/
+│       └── route.ts             # DELETE /api/newsletter/unsubscribe
 │
 └── (future endpoints)
     ├── analytics/               # Custom analytics queries
@@ -131,7 +138,7 @@ app/api/
 ```
 
 **Key Services**:
-- **Newsletter API**: Handles email subscriptions via Resend/Mailgun
+- **Newsletter API**: Multi-track subscription management with preferences (4 types: aviation, dev-startup, education, all)
 - **MDX Processing**: Server-side rendering of MDX content with gray-matter and reading-time
 - **Prisma Client**: Database access layer (currently minimal usage, future expansion)
 
@@ -161,22 +168,56 @@ sequenceDiagram
     Browser-->>Reader: Display blog post
 ```
 
-### Newsletter Signup Flow
+### Newsletter Signup Flow (Multi-Track)
 
 ```mermaid
 sequenceDiagram
     actor Reader
     participant Form as Newsletter Form
-    participant API as /api/newsletter
+    participant API as POST /api/newsletter/subscribe
+    participant DB as PostgreSQL
     participant Resend as Resend API
 
-    Reader->>Form: Enter email, click Subscribe
-    Form->>API: POST /api/newsletter {email}
-    API->>API: Validate email format
-    API->>Resend: Add subscriber
-    Resend-->>API: Success response
-    API-->>Form: 200 OK
-    Form-->>Reader: "Successfully subscribed!" message
+    Reader->>Form: Enter email, select newsletters (aviation, dev-startup, etc.)
+    Form->>API: POST {email, newsletterTypes: ['aviation', 'dev-startup']}
+    API->>API: Validate email & types (Zod)
+    API->>DB: Check if subscriber exists
+    alt New Subscriber
+        API->>DB: INSERT newsletter_subscriber + preferences
+    else Existing Subscriber
+        API->>DB: UPDATE preferences (upsert)
+    end
+    DB-->>API: Return unsubscribe_token
+    API->>Resend: Send welcome email with preference link
+    Resend-->>API: Success
+    API-->>Form: 200 OK + {unsubscribeToken}
+    Form-->>Reader: "Subscribed to Aviation and Dev/Startup!"
+```
+
+### Newsletter Preference Management Flow
+
+```mermaid
+sequenceDiagram
+    actor Reader
+    participant Email as Newsletter Email
+    participant Page as Preference Page
+    participant GetAPI as GET /api/newsletter/preferences/:token
+    participant PatchAPI as PATCH /api/newsletter/preferences
+    participant DB as PostgreSQL
+
+    Email->>Reader: Email with "Manage Preferences" link
+    Reader->>Page: Click link with token
+    Page->>GetAPI: GET /preferences/:token
+    GetAPI->>DB: SELECT subscriber + preferences by token
+    DB-->>GetAPI: Return {email, preferences}
+    GetAPI-->>Page: Display current preferences
+    Page-->>Reader: Show checkboxes (aviation ✓, dev ✓, education ✗)
+    Reader->>Page: Uncheck "aviation", keep "dev"
+    Page->>PatchAPI: PATCH {token, preferences: {aviation: false}}
+    PatchAPI->>DB: UPDATE newsletter_preferences
+    DB-->>PatchAPI: Success
+    PatchAPI-->>Page: 200 OK
+    Page-->>Reader: "Preferences updated!"
 ```
 
 ### Background Processes
@@ -202,9 +243,12 @@ sequenceDiagram
 **Authentication**: None (public content site)
 **Error Handling**: Standard HTTP status codes, user-friendly error pages
 
-**Example**:
-- Newsletter signup: `POST /api/newsletter` with `{email: string}`
-- Response: `{success: boolean, message: string}`
+**Examples**:
+- Newsletter signup: `POST /api/newsletter/subscribe` with `{email: string, newsletterTypes: string[]}`
+- Get preferences: `GET /api/newsletter/preferences/:token`
+- Update preferences: `PATCH /api/newsletter/preferences` with `{token: string, preferences: {...}}`
+- Unsubscribe: `DELETE /api/newsletter/unsubscribe?token=...`
+- Response format: `{success: boolean, message: string, data?: {...}}`
 
 ### Backend ↔ External Services
 

@@ -23,38 +23,233 @@
 
 ### Category: Newsletter Management
 
-**Purpose**: Newsletter subscription management
+**Purpose**: Multi-track newsletter subscription management
 **Base Path**: `/api/newsletter`
-**Authentication**: None (public endpoint)
+**Authentication**: None (public endpoints, token-based for preference management)
 **Rate Limiting**: 5 requests per minute per IP (prevent spam)
 
-**Endpoints**:
+**Newsletter Types**:
+- `aviation` - Aviation content (flight training, CFI, pilot career)
+- `dev-startup` - Development, coding, startup building
+- `education` - Teaching, learning, education systems
+- `all` - Comprehensive newsletter (all posts, regardless of category)
 
-**POST /api/newsletter/subscribe**
-- **Purpose**: Subscribe to newsletter
-- **Body**: `{ email: string }`
-- **Response**: `{ success: boolean, message: string }`
-- **Validation**: Email format (Zod schema)
-- **Status Codes**:
-  - `200 OK`: Subscription successful
-  - `400 Bad Request`: Invalid email format
-  - `429 Too Many Requests`: Rate limit exceeded
-  - `500 Internal Server Error`: Resend/Mailgun API failure
+---
+
+#### POST /api/newsletter/subscribe
+
+**Purpose**: Subscribe to one or more newsletters
+
+**Request Body**:
+```typescript
+{
+  email: string;                                    // Required
+  newsletterTypes: ('aviation' | 'dev-startup' | 'education' | 'all')[]; // Required, at least 1
+  source?: string;                                  // Optional (e.g., 'footer', 'popup', 'post-cta')
+}
+```
+
+**Response**: `{ success: boolean, message: string, unsubscribeToken?: string }`
+
+**Validation** (Zod schema):
+- Email: Valid format (RFC 5322)
+- Newsletter types: At least 1, valid enum values
+- Source: Max 50 characters
+
+**Status Codes**:
+- `200 OK`: Subscription successful
+- `400 Bad Request`: Invalid email or newsletter types
+- `429 Too Many Requests`: Rate limit exceeded
+- `500 Internal Server Error`: Database or email service failure
 
 **Example Request**:
 ```bash
 curl -X POST https://marcusgoll.com/api/newsletter/subscribe \
   -H "Content-Type: application/json" \
-  -d '{"email": "reader@example.com"}'
+  -d '{
+    "email": "reader@example.com",
+    "newsletterTypes": ["aviation", "dev-startup"],
+    "source": "footer"
+  }'
 ```
 
 **Example Response**:
 ```json
 {
   "success": true,
-  "message": "Successfully subscribed to newsletter!"
+  "message": "Successfully subscribed to Aviation and Dev/Startup newsletters!",
+  "unsubscribeToken": "a3f5b8c... (64-char hex)"
 }
 ```
+
+**Business Logic**:
+1. Check if email already exists in `newsletter_subscribers`
+   - If exists & active: Update preferences (upsert)
+   - If exists & inactive: Reactivate + update preferences
+   - If new: Create subscriber + preferences
+2. Generate unsubscribe token (32 random bytes, hex-encoded) on first signup
+3. Create `newsletter_preferences` rows for each selected type
+4. Send welcome email with preference management link
+5. Return success + unsubscribe token (stored for future use)
+
+---
+
+#### GET /api/newsletter/preferences/:token
+
+**Purpose**: Get current newsletter preferences (for preference management page)
+
+**URL Parameter**: `token` - Unsubscribe token (64-char hex string)
+
+**Response**:
+```typescript
+{
+  success: boolean;
+  email: string;
+  preferences: {
+    aviation: boolean;
+    "dev-startup": boolean;
+    education: boolean;
+    all: boolean;
+  };
+  subscribedAt: string; // ISO 8601 timestamp
+}
+```
+
+**Status Codes**:
+- `200 OK`: Preferences retrieved
+- `404 Not Found`: Invalid token or subscriber not found
+- `429 Too Many Requests`: Rate limit exceeded
+
+**Example Request**:
+```bash
+curl https://marcusgoll.com/api/newsletter/preferences/a3f5b8c...
+```
+
+**Example Response**:
+```json
+{
+  "success": true,
+  "email": "reader@example.com",
+  "preferences": {
+    "aviation": true,
+    "dev-startup": true,
+    "education": false,
+    "all": false
+  },
+  "subscribedAt": "2025-10-26T14:30:00Z"
+}
+```
+
+---
+
+#### PATCH /api/newsletter/preferences
+
+**Purpose**: Update newsletter preferences (which newsletters to receive)
+
+**Request Body**:
+```typescript
+{
+  token: string;  // Unsubscribe token (64-char hex)
+  preferences: {
+    aviation?: boolean;
+    "dev-startup"?: boolean;
+    education?: boolean;
+    all?: boolean;
+  };
+}
+```
+
+**Response**: `{ success: boolean, message: string }`
+
+**Validation**:
+- Token: Must be valid hex string (64 chars)
+- Preferences: At least 1 field provided
+- Boolean values only
+
+**Status Codes**:
+- `200 OK`: Preferences updated
+- `400 Bad Request`: Invalid token or preferences
+- `404 Not Found`: Subscriber not found
+- `429 Too Many Requests`: Rate limit exceeded
+
+**Example Request**:
+```bash
+curl -X PATCH https://marcusgoll.com/api/newsletter/preferences \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "a3f5b8c...",
+    "preferences": {
+      "aviation": false,
+      "dev-startup": true
+    }
+  }'
+```
+
+**Example Response**:
+```json
+{
+  "success": true,
+  "message": "Preferences updated successfully!"
+}
+```
+
+**Business Logic**:
+1. Find subscriber by token
+2. Update `newsletter_preferences` rows for provided types
+3. If all preferences set to false → mark subscriber `active = false`
+4. If any preference set to true → mark subscriber `active = true`
+5. Send confirmation email
+
+---
+
+#### DELETE /api/newsletter/unsubscribe
+
+**Purpose**: Unsubscribe from all newsletters (one-click unsubscribe)
+
+**Request Body** (or query param):
+```typescript
+{
+  token: string;  // Unsubscribe token (64-char hex)
+}
+```
+
+**Response**: `{ success: boolean, message: string }`
+
+**Status Codes**:
+- `200 OK`: Unsubscribed successfully
+- `400 Bad Request`: Invalid token
+- `404 Not Found`: Subscriber not found
+- `429 Too Many Requests`: Rate limit exceeded
+
+**Example Request**:
+```bash
+curl -X DELETE https://marcusgoll.com/api/newsletter/unsubscribe \
+  -H "Content-Type: application/json" \
+  -d '{"token": "a3f5b8c..."}'
+
+# Or as query param for one-click email links:
+curl -X DELETE "https://marcusgoll.com/api/newsletter/unsubscribe?token=a3f5b8c..."
+```
+
+**Example Response**:
+```json
+{
+  "success": true,
+  "message": "You've been unsubscribed from all newsletters. Sorry to see you go!"
+}
+```
+
+**Business Logic**:
+1. Find subscriber by token
+2. Set `active = false`, `unsubscribed_at = NOW()`
+3. Set all `newsletter_preferences.subscribed = false`
+4. Send goodbye email (optional: feedback survey link)
+5. Comply with GDPR: Offer hard delete option ("Delete my data")
+
+**GDPR Compliance**:
+- Unsubscribe = soft delete (retains email for audit, prevents re-subscription spam)
+- Hard delete available via "Delete my data" link in goodbye email
+- Hard delete → `DELETE FROM newsletter_subscribers WHERE id = $1` (CASCADE to preferences)
 
 ---
 
@@ -168,13 +363,16 @@ async function requireAdmin(req: NextRequest) {
 - Reject unknown fields
 - Type coercion where safe (string "123" → int 123)
 
-**Example (Newsletter Signup)**:
+**Example (Multi-Newsletter Signup)**:
 ```typescript
 import { z } from 'zod'
 
+const newsletterTypeSchema = z.enum(['aviation', 'dev-startup', 'education', 'all'])
+
 const subscribeSchema = z.object({
   email: z.string().email('Invalid email format'),
-  source: z.enum(['footer', 'popup', 'post']).optional(),
+  newsletterTypes: z.array(newsletterTypeSchema).min(1, 'Select at least one newsletter'),
+  source: z.enum(['footer', 'popup', 'post-cta']).optional(),
 })
 
 // Usage
@@ -440,6 +638,9 @@ export function middleware(req: NextRequest) {
 | Endpoint | P50 Target | P95 Target | P99 Target |
 |----------|------------|------------|------------|
 | POST /api/newsletter/subscribe | < 200ms | < 500ms | < 1s |
+| GET /api/newsletter/preferences/:token | < 100ms | < 300ms | < 500ms |
+| PATCH /api/newsletter/preferences | < 200ms | < 500ms | < 1s |
+| DELETE /api/newsletter/unsubscribe | < 200ms | < 500ms | < 1s |
 | GET /api/analytics/* (future) | < 100ms | < 300ms | < 500ms |
 
 **How Measured**: Next.js built-in metrics, custom logging
@@ -520,3 +721,4 @@ export function middleware(req: NextRequest) {
 |------|--------|--------|--------|
 | 2025-10-26 | Initial API strategy documented | Project initialization | Baseline for API development |
 | 2025-10-26 | Newsletter API endpoint defined | MVP feature requirement | Clear spec for implementation |
+| 2025-10-26 | Multi-newsletter system added | User request: granular preferences | 4 new endpoints (subscribe, preferences GET/PATCH, unsubscribe), token-based unsubscribe |
