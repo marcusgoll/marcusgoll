@@ -1,4 +1,5 @@
-import { Post, getPrimaryTrack } from '@/lib/posts';
+import { Post } from '@/lib/posts';
+import { getPrimaryTrack } from '@/lib/utils/content';
 import PostCard from './PostCard';
 
 interface PostGridProps {
