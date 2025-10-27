@@ -132,6 +132,30 @@ export interface EnvironmentVariables {
    * @purpose Track page views and user interactions
    */
   GA4_MEASUREMENT_ID?: string
+
+  // ============================================================================
+  // Maintenance Mode (Optional)
+  // ============================================================================
+
+  /**
+   * Maintenance mode toggle
+   * @required No (optional, defaults to "false")
+   * @format "true" | "false"
+   * @example "false" (dev) | "true" (during maintenance)
+   * @purpose Enable/disable site-wide maintenance mode with bypass capability
+   */
+  MAINTENANCE_MODE?: 'true' | 'false'
+
+  /**
+   * Secret bypass token for maintenance mode
+   * @required No (optional, but required when MAINTENANCE_MODE="true")
+   * @format 64-character hex string (256-bit entropy)
+   * @example "7ce4b83f45c5d38063b5421d166cbbc57459d47b729ff3b5365c89cbc69e7048"
+   * @purpose Allows developers to bypass maintenance mode via ?bypass=TOKEN
+   * @security KEEP SECRET - anyone with this token can access the site during maintenance
+   * @generation openssl rand -hex 32
+   */
+  MAINTENANCE_BYPASS_TOKEN?: string
 }
 
 /**
@@ -163,6 +187,7 @@ export const ENV_CATEGORIES = {
   ],
   newsletter: ['RESEND_API_KEY', 'MAILGUN_API_KEY', 'NEWSLETTER_FROM_EMAIL'],
   thirdParty: ['GA4_MEASUREMENT_ID'],
+  maintenance: ['MAINTENANCE_MODE', 'MAINTENANCE_BYPASS_TOKEN'],
 } as const
 
 /**
@@ -182,6 +207,8 @@ export const ENV_REQUIREMENTS = {
   optional: [
     'DIRECT_DATABASE_URL',
     'GA4_MEASUREMENT_ID',
+    'MAINTENANCE_MODE',
+    'MAINTENANCE_BYPASS_TOKEN',
   ],
 } as const
 
@@ -208,9 +235,9 @@ export const ENV_ACCESS = {
  * Total variable count
  */
 export const ENV_METRICS = {
-  total: 10,
+  total: 12,
   required: 8, // 7 always required + 1 of (RESEND_API_KEY | MAILGUN_API_KEY)
-  optional: 2,
+  optional: 4,
   clientAccessible: 2,
-  serverOnly: 8,
+  serverOnly: 10,
 } as const
