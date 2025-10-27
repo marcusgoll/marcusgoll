@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import Container from "@/components/ui/Container";
 
 // ============================================================================

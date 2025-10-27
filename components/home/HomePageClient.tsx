@@ -6,7 +6,7 @@ import { Post } from '@/lib/posts';
 import Container from '@/components/ui/Container';
 import Sidebar from './Sidebar';
 import MagazineMasonry from './MagazineMasonry';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface HomePageClientProps {
   allPosts: Post[];

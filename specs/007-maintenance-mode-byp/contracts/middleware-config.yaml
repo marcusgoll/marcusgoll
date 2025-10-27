@@ -1,0 +1,617 @@
+# Maintenance Mode Middleware Configuration Contract
+
+## Overview
+This document defines the configuration contract for Next.js Edge Middleware that implements maintenance mode with secret bypass functionality.
+
+---
+
+## Middleware File Structure
+
+**File**: `middleware.ts` (project root)
+**Runtime**: Next.js Edge Runtime
+**Execution Order**: Before all route handlers (first in request pipeline)
+
+---
+
+## Configuration Schema
+
+### Middleware Matcher
+
+```yaml
+matcher:
+  description: |
+    Defines which routes the middleware intercepts.
+    Uses negative lookahead to exclude specific paths.
+
+  pattern: '/((?!_next|images|fonts|api/health|maintenance).*)'
+
+  excluded_paths:
+    - path: /_next/*
+      reason: Next.js internal assets (chunks, static files)
+
+    - path: /images/*
+      reason: Public image assets (logo, photos, etc.)
+
+    - path: /fonts/*
+      reason: Web font files (WOFF2, TTF, etc.)
+
+    - path: /api/health
+      reason: Health check endpoint (must always respond)
+
+    - path: /maintenance
+      reason: Maintenance page itself (prevents redirect loop)
+
+  included_paths:
+    - /*                    # All root pages
+    - /blog/*              # Blog pages
+    - /about               # About page
+    - /api/*               # API routes (except /api/health)
+```
+
+---
+
+## Environment Variables Contract
+
+### MAINTENANCE_MODE
+
+```yaml
+name: MAINTENANCE_MODE
+type: string
+required: false
+default: "false"
+
+values:
+  - value: "true"
+    description: Maintenance mode enabled (redirect to /maintenance)
+
+  - value: "false"
+    description: Maintenance mode disabled (normal operation)
+
+  - value: ""
+    description: Empty string treated as "false"
+
+validation:
+  - Case-insensitive comparison
+  - Truthy check: process.env.MAINTENANCE_MODE === "true" (lowercased)
+
+usage: |
+  Toggle maintenance mode without code deployment.
+  Change takes effect on next request (<1 minute).
+
+example:
+  development: MAINTENANCE_MODE="false"
+  staging: MAINTENANCE_MODE="true"
+  production: MAINTENANCE_MODE="false"
+```
+
+### MAINTENANCE_BYPASS_TOKEN
+
+```yaml
+name: MAINTENANCE_BYPASS_TOKEN
+type: string
+required: true (when MAINTENANCE_MODE="true")
+default: null
+
+format:
+  pattern: "[0-9a-f]{64}"
+  length: 64
+  encoding: hexadecimal
+  entropy: 256 bits
+
+generation:
+  command: openssl rand -hex 32
+  output: 64-character hex string
+  example: "a1b2c3d4e5f6...0123456789abcdef"
+
+validation:
+  - Exact string match (case-sensitive)
+  - No whitespace trimming
+  - No empty string allowed
+
+security:
+  - Store in environment variable only
+  - Never commit to git
+  - Never log in full (mask except last 4 chars)
+  - Rotate manually when compromised
+
+usage: |
+  Secret token for developer bypass.
+  Pass as query parameter: ?bypass=<TOKEN>
+
+example:
+  development: MAINTENANCE_BYPASS_TOKEN="dev_token_64_chars..."
+  staging: MAINTENANCE_BYPASS_TOKEN="staging_token_64_chars..."
+  production: MAINTENANCE_BYPASS_TOKEN="prod_token_64_chars..."
+```
+
+---
+
+## Request Processing Contract
+
+### Processing Flow
+
+```yaml
+steps:
+  1_path_check:
+    description: Check if request path is excluded
+    logic: |
+      if (pathname matches exclusion pattern) {
+        return NextResponse.next() // Skip maintenance logic
+      }
+    performance: <1ms
+    exit_early: true
+
+  2_maintenance_check:
+    description: Check if maintenance mode is enabled
+    logic: |
+      const isMaintenanceMode = process.env.MAINTENANCE_MODE?.toLowerCase() === 'true'
+      if (!isMaintenanceMode) {
+        return NextResponse.next() // Skip maintenance logic
+      }
+    performance: <1ms
+    exit_early: true
+
+  3_cookie_check:
+    description: Check for bypass cookie
+    logic: |
+      const bypassCookie = request.cookies.get('maintenance_bypass')
+      if (bypassCookie) {
+        return NextResponse.next() // Allow access
+      }
+    performance: <1ms
+    exit_early: true
+
+  4_token_check:
+    description: Check for bypass token in query parameter
+    logic: |
+      const bypassToken = request.nextUrl.searchParams.get('bypass')
+      if (!bypassToken) {
+        return redirectToMaintenance() // No bypass, redirect
+      }
+    performance: <1ms
+
+  5_token_validation:
+    description: Validate bypass token against environment variable
+    logic: |
+      const validToken = process.env.MAINTENANCE_BYPASS_TOKEN
+      if (bypassToken === validToken) {
+        // Set cookie, log success, redirect without query param
+        return setBypassCookieAndRedirect()
+      } else {
+        // Log failure, redirect to maintenance
+        return logFailureAndRedirect()
+      }
+    performance: <2ms
+
+total_overhead:
+  maintenance_off: <2ms
+  maintenance_on_with_bypass: <5ms
+  maintenance_on_without_bypass: <8ms
+  target: <10ms (from spec NFR-001)
+```
+
+---
+
+## Cookie Contract
+
+### maintenance_bypass Cookie
+
+```yaml
+name: maintenance_bypass
+value: "true"
+
+options:
+  httpOnly: true
+  secure: true
+  sameSite: strict
+  maxAge: 86400  # 24 hours in seconds
+  path: /
+
+security_flags:
+  httpOnly:
+    purpose: Prevent XSS attacks
+    behavior: JavaScript cannot access cookie via document.cookie
+
+  secure:
+    purpose: Prevent MITM attacks
+    behavior: Cookie only sent over HTTPS
+    exception: localhost (HTTP allowed in dev)
+
+  sameSite:
+    purpose: Prevent CSRF attacks
+    behavior: Cookie not sent on cross-site requests
+    value: strict (most restrictive)
+
+lifecycle:
+  created: After successful token validation
+  expires: 24 hours from creation (automatic)
+  renewed: No (user must re-authenticate after expiration)
+  deleted: Browser clears after expiration or manual clear
+
+size: ~20 bytes (minimal)
+```
+
+---
+
+## Response Contract
+
+### Redirect to Maintenance Page
+
+```yaml
+status_code: 302 (Temporary Redirect)
+location: /maintenance
+
+headers:
+  Location: /maintenance
+  Cache-Control: no-store, no-cache, must-revalidate
+
+logic: |
+  return NextResponse.redirect(new URL('/maintenance', request.url))
+
+when_used:
+  - Maintenance mode enabled
+  - No valid bypass cookie
+  - No valid bypass token in query
+```
+
+### Set Cookie and Redirect (Clean URL)
+
+```yaml
+status_code: 302 (Temporary Redirect)
+location: <original_path_without_query>
+
+headers:
+  Location: <original_url> (without ?bypass parameter)
+  Set-Cookie: maintenance_bypass=true; HttpOnly; Secure; SameSite=Strict; Max-Age=86400; Path=/
+
+logic: |
+  const url = new URL(request.url)
+  url.searchParams.delete('bypass') // Remove token from URL
+  const response = NextResponse.redirect(url)
+  response.cookies.set('maintenance_bypass', 'true', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 86400,
+    path: '/',
+  })
+  return response
+
+when_used:
+  - Maintenance mode enabled
+  - Valid bypass token in query
+  - Token matches environment variable
+
+purpose: |
+  Remove token from URL (prevent sharing bypass links)
+  Set persistent cookie for 24-hour access
+```
+
+### Allow Request (Normal Flow)
+
+```yaml
+status_code: Determined by route handler
+response: NextResponse.next()
+
+logic: |
+  return NextResponse.next()
+
+when_used:
+  - Maintenance mode disabled (MAINTENANCE_MODE=false or unset)
+  - Path is excluded (static assets, health check)
+  - Valid bypass cookie present
+```
+
+---
+
+## Logging Contract
+
+### Successful Bypass Log
+
+```yaml
+level: INFO
+format: "[Maintenance Bypass] Successful - Token: ***{last_4_chars} - IP: {ip} - Timestamp: {iso8601}"
+
+example: |
+  [INFO] [Maintenance Bypass] Successful - Token: ***cdef - IP: 192.168.1.1 - Timestamp: 2025-10-27T12:34:56.789Z
+
+when: Token validation succeeds
+
+fields:
+  last_4_chars: Last 4 characters of token (for debugging)
+  ip: Request IP address (x-forwarded-for or req.ip)
+  timestamp: ISO 8601 format
+
+output: console.log (captured by platform logs)
+```
+
+### Failed Bypass Log
+
+```yaml
+level: WARN
+format: "[Maintenance Bypass] Failed - Token: ***{last_4_chars} - IP: {ip} - Timestamp: {iso8601}"
+
+example: |
+  [WARN] [Maintenance Bypass] Failed - Token: ***9999 - IP: 192.168.1.100 - Timestamp: 2025-10-27T12:35:10.456Z
+
+when: Token validation fails (mismatch)
+
+fields:
+  last_4_chars: Last 4 characters of provided token (for debugging)
+  ip: Request IP address (for security monitoring)
+  timestamp: ISO 8601 format
+
+output: console.warn (captured by platform logs)
+
+purpose: Security audit trail, detect brute force attempts
+```
+
+---
+
+## Error Handling Contract
+
+### Missing Token Environment Variable
+
+```yaml
+condition: MAINTENANCE_MODE=true but MAINTENANCE_BYPASS_TOKEN is undefined
+
+behavior: |
+  Log error to console
+  Redirect to maintenance page (fail secure)
+  Do not expose configuration error to user
+
+log: |
+  [ERROR] [Maintenance Bypass] MAINTENANCE_BYPASS_TOKEN not configured
+```
+
+### Invalid Cookie Format
+
+```yaml
+condition: Cookie exists but value is malformed
+
+behavior: Treat as no cookie (require token re-validation)
+
+fallback: Redirect to maintenance page
+```
+
+### Middleware Execution Failure
+
+```yaml
+condition: Unexpected error during middleware execution
+
+behavior: |
+  Log error to console
+  Allow request to proceed (fail open for non-critical feature)
+  Alert platform monitoring
+
+log: |
+  [ERROR] [Maintenance Middleware] Unexpected error: {error.message}
+```
+
+---
+
+## Performance Contract
+
+### Execution Time Budgets
+
+```yaml
+path_exclusion_check: <1ms
+maintenance_mode_check: <1ms
+cookie_read: <1ms
+token_validation: <1ms
+cookie_write: <2ms
+redirect: <2ms
+
+total_per_request:
+  maintenance_off: <2ms (early exit after mode check)
+  maintenance_on_with_cookie: <3ms (early exit after cookie check)
+  maintenance_on_without_cookie: <8ms (full flow)
+
+target: <10ms (from spec NFR-001)
+measurement: Server-Timing header or platform logs
+```
+
+### Memory Usage
+
+```yaml
+per_request_state: <1 KB
+cookie_size: ~20 bytes
+log_entry_size: ~150 bytes
+
+total_memory_overhead: Negligible (<0.01% of request memory)
+```
+
+---
+
+## Security Contract
+
+### Token Security
+
+```yaml
+entropy: 256 bits (2^256 combinations)
+brute_force_resistance: Infeasible within 24-hour cookie lifetime
+transmission: HTTPS-only (Secure cookie flag)
+storage: Environment variable (never in code or database)
+logging: Masked except last 4 characters
+
+threat_mitigation:
+  brute_force: 2^256 entropy makes infeasible
+  token_leakage: URL cleaned after validation
+  xss: HttpOnly cookie prevents JS access
+  mitm: Secure flag requires HTTPS
+  csrf: SameSite=Strict prevents cross-site requests
+```
+
+### Cookie Security
+
+```yaml
+xss_protection: HttpOnly flag (no document.cookie access)
+mitm_protection: Secure flag (HTTPS-only)
+csrf_protection: SameSite=Strict (no cross-site cookies)
+expiration: 24 hours (automatic cleanup)
+
+cookie_attributes_required:
+  - httpOnly: true  # MUST
+  - secure: true    # MUST (except localhost dev)
+  - sameSite: strict # MUST
+  - maxAge: 86400    # MUST (24 hours)
+  - path: /          # MUST (site-wide)
+```
+
+---
+
+## Testing Contract
+
+### Unit Test Cases
+
+```yaml
+test_path_exclusion:
+  input: /_next/static/chunk.js
+  expected: NextResponse.next() (skip maintenance)
+
+test_maintenance_off:
+  env: MAINTENANCE_MODE=false
+  input: /blog
+  expected: NextResponse.next() (allow access)
+
+test_maintenance_on_no_bypass:
+  env: MAINTENANCE_MODE=true
+  input: /blog (no cookie, no token)
+  expected: Redirect to /maintenance
+
+test_valid_bypass_token:
+  env: MAINTENANCE_MODE=true, MAINTENANCE_BYPASS_TOKEN=abc123...
+  input: /blog?bypass=abc123...
+  expected: Set cookie, redirect to /blog (clean URL)
+
+test_invalid_bypass_token:
+  env: MAINTENANCE_MODE=true, MAINTENANCE_BYPASS_TOKEN=abc123...
+  input: /blog?bypass=wrong_token
+  expected: Log warning, redirect to /maintenance
+
+test_valid_bypass_cookie:
+  env: MAINTENANCE_MODE=true
+  input: /blog (cookie: maintenance_bypass=true)
+  expected: NextResponse.next() (allow access)
+```
+
+### Integration Test Cases
+
+```yaml
+test_end_to_end_bypass:
+  1_access_without_token:
+    request: GET /
+    expected: 302 → /maintenance
+
+  2_access_with_token:
+    request: GET /?bypass=<valid_token>
+    expected: 302 → / (cookie set, URL cleaned)
+
+  3_access_with_cookie:
+    request: GET / (cookie: maintenance_bypass=true)
+    expected: 200 OK (normal page)
+
+  4_navigate_with_cookie:
+    request: GET /blog (cookie: maintenance_bypass=true)
+    expected: 200 OK (bypass persists)
+```
+
+---
+
+## Deployment Contract
+
+### Environment Variable Setup
+
+```yaml
+platform: Vercel | Railway | Netlify | Dokploy
+
+setup_steps:
+  1_generate_token:
+    command: openssl rand -hex 32
+    output: 64-character hex string
+
+  2_set_env_vars:
+    MAINTENANCE_MODE: "false" (initial)
+    MAINTENANCE_BYPASS_TOKEN: <generated_token>
+
+  3_deploy_code:
+    files: [middleware.ts, app/maintenance/page.tsx]
+
+  4_enable_maintenance:
+    action: Update MAINTENANCE_MODE=true in platform UI
+    takes_effect: Next request (<1 minute)
+
+  5_disable_maintenance:
+    action: Update MAINTENANCE_MODE=false in platform UI
+    takes_effect: Next request (<1 minute)
+```
+
+### Rollback Contract
+
+```yaml
+emergency_disable:
+  method: Set MAINTENANCE_MODE=false in platform UI
+  takes_effect: <1 minute (next request)
+  no_code_deployment: true
+
+full_rollback:
+  method: git revert + deploy
+  removes: middleware.ts, app/maintenance/page.tsx
+  env_vars: Optional (can leave or remove)
+  cookies: Expire automatically after 24 hours
+```
+
+---
+
+## Compliance
+
+### WCAG 2.1 AA (Maintenance Page)
+- Contrast ratio: 4.5:1 (Navy 900 on white background)
+- Keyboard navigation: Not applicable (static page)
+- Screen reader support: Semantic HTML, ARIA landmarks
+
+### GDPR
+- No personal data collected
+- Cookie is functional (not tracking)
+- No consent banner required
+
+### Security Standards
+- OWASP: Input validation (token format check)
+- HTTPS enforcement (Secure cookie flag)
+- Defense in depth (multiple security layers)
+
+---
+
+## Monitoring
+
+### Metrics to Track
+
+```yaml
+bypass_attempts:
+  metric: Count of bypass attempts (success + failure)
+  alert: >10 failures per hour (potential brute force)
+
+maintenance_mode_duration:
+  metric: Time between MAINTENANCE_MODE=true and false
+  target: <24 hours (for DNS migration use case)
+
+middleware_performance:
+  metric: p50, p95, p99 execution time
+  target: p95 <10ms
+
+cookie_expiration_rate:
+  metric: Bypass re-authentications per day
+  expected: ~1 per developer per 24 hours
+```
+
+---
+
+## Summary
+
+**Configuration Surface**: 2 environment variables, 1 cookie, 1 middleware file
+**Performance Target**: <10ms overhead
+**Security Posture**: Defense in depth (token + cookie + HTTPS + SameSite)
+**Deployment Model**: Zero-downtime toggle via environment variable
+**Testing Coverage**: 10+ unit tests, 4+ integration tests
+
+This contract ensures consistent, secure, and performant maintenance mode implementation.
