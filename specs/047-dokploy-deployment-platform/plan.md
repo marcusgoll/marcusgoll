@@ -23,7 +23,7 @@ See: `research.md` for full research findings
 - **UI**: Web-based (deploy.marcusgoll.com), HTTPS via Let's Encrypt
 
 **Infrastructure** (unchanged):
-- **VPS**: Hetzner (€178.156.129.179), 4-8GB RAM, 2-4 vCPUs, Docker + Docker Compose
+- **VPS**: Hetzner (178.156.129.179), 4-8GB RAM, 2-4 vCPUs, Docker + Docker Compose
 - **Web Server**: Nginx (reverse proxy for Dokploy subdomain + application)
 - **Application**: Next.js 15.5.6, Node 20, Docker containerized
 - **Database**: PostgreSQL 15+ via Supabase (self-hosted)
