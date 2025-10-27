@@ -109,7 +109,7 @@ Plan identifies 8 components:
 2. docker-compose.prod.yml → T002 REUSE ✓
 3. deploy.sh logic → T002 REUSE ✓
 4. GitHub Actions CI → T022 REUSE ✓
-5. Nginx reverse proxy → T006 REUSE ✓
+5. Caddy reverse proxy → T006 REUSE ✓
 6. Let's Encrypt SSL → T007 REUSE ✓
 7. Health check endpoint (/api/health) → T028 REUSE ✓
 8. Environment variable schema → T012 REUSE (reference but not explicit REUSE marker)
@@ -148,8 +148,8 @@ Plan identifies 8 components:
 **VPS Prerequisites** (plan.md, tasks.md T003):
 - ✅ Docker >=20.10 verification included
 - ✅ Docker Compose >=2.0 check included
-- ✅ Nginx availability check included
-- ✅ Certbot check included
+- ✅ Caddy availability check included
+- ✅ Caddy automatic HTTPS configured
 - ✅ Disk space check (>5GB) included
 - ✅ Port availability check included
 
@@ -162,7 +162,7 @@ Plan identifies 8 components:
 
 **Rollback Plan Coverage**:
 - Pre-Migration Rollback: T001 (VPS snapshot), T003 (verification)
-- Post-Migration Rollback: T024 (Nginx backup), T026 (cutover), documented in plan.md Appendix B
+- Post-Migration Rollback: T024 (Caddyfile backup), T026 (cutover), documented in plan.md Appendix B
 - Rollback Testing: T030 (one-click rollback validation)
 
 **Rollback Documentation**:
@@ -209,13 +209,13 @@ Plan identifies 8 components:
 4. T012: REUSE Environment variable schema from deploy-production.yml:32-37
 5. T022: REUSE .github/workflows/deploy-production.yml:1-55 structure
 6. T028: REUSE /api/health endpoint
-7. T006: REUSE /etc/nginx/sites-available/marcusgoll pattern
+7. T006: REUSE Caddyfile marcusgoll.com configuration pattern
 
 **New Components Created** (plan.md [NEW INFRASTRUCTURE - CREATE]):
 1. Dokploy Docker container → T005
 2. Dokploy application configuration → T009-T014
 3. Dokploy database import → T016-T018
-4. Nginx subdomain config → T006
+4. Caddy subdomain config → T006
 5. GitHub webhook → T019-T021
 6. Dokploy CLI export → T031
 
@@ -471,7 +471,7 @@ Plan identifies 8 components:
 | Requirement | Plan Section | Task(s) | Status |
 |-------------|--------------|---------|--------|
 | FR-001 (Install Dokploy without disruption) | Zero-Downtime Migration | T003, T005 | ✓ Covered |
-| FR-002 (HTTPS subdomain) | Nginx Subdomain | T006, T007 | ✓ Covered |
+| FR-002 (HTTPS subdomain) | Caddy Subdomain | T006, T007 | ✓ Covered |
 | FR-006 (GitHub webhook) | GitHub webhook configuration | T020, T021 | ✓ Covered |
 | FR-011 (Automated backups) | Dokploy database import | T017 | ✓ Covered |
 | FR-025 (One-click rollback) | Rollback Plan | T030 | ✓ Covered |

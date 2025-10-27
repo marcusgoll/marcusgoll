@@ -184,7 +184,7 @@ Applications → marcusgoll-nextjs
 
 **Integration Points**:
 - **GitHub**: Webhook on push to main branch
-- **Nginx**: Reverse proxy for Dokploy UI (deploy.marcusgoll.com)
+- **Caddy**: Reverse proxy for Dokploy UI (deploy.marcusgoll.com)
 - **Docker**: Manages application containers
 - **PostgreSQL**: External database (Supabase), monitored by Dokploy
 - **Let's Encrypt**: SSL certificates for deploy.marcusgoll.com
@@ -197,7 +197,7 @@ Developer → Git Push → GitHub Webhook → Dokploy
                                            ↓
                                     Deploy Container
                                            ↓
-                                    Nginx → marcusgoll.com
+                                    Caddy → marcusgoll.com
 ```
 
 **Resource Allocation**:

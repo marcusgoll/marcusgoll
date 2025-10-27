@@ -29,26 +29,19 @@ curl -sSL https://dokploy.com/install.sh | sh
 # Username: admin
 # Password: <generated-password>
 
-# Configure Nginx reverse proxy for deploy.marcusgoll.com
-sudo nano /etc/nginx/sites-available/dokploy
+# Configure Caddy reverse proxy for deploy.marcusgoll.com
+# Edit Caddyfile inside the Caddy container
+docker exec -it proxy-caddy-1 sh -c 'cat >> /etc/caddy/Caddyfile << EOF
 
-# Add configuration:
-# server {
-#     listen 80;
-#     server_name deploy.marcusgoll.com;
-#     location / {
-#         proxy_pass http://localhost:3000;
-#         proxy_set_header Host $host;
-#         proxy_set_header X-Real-IP $remote_addr;
-#     }
-# }
+deploy.marcusgoll.com {
+    reverse_proxy localhost:3000
+}
+EOF'
 
-sudo ln -s /etc/nginx/sites-available/dokploy /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
+# Reload Caddy configuration
+docker exec proxy-caddy-1 caddy reload --config /etc/caddy/Caddyfile
 
-# Install Let's Encrypt SSL for deploy.marcusgoll.com
-sudo certbot --nginx -d deploy.marcusgoll.com
+# Caddy automatically provisions SSL via Let's Encrypt (no manual certbot needed)
 
 # Access Dokploy UI
 # URL: https://deploy.marcusgoll.com
@@ -106,12 +99,11 @@ sudo certbot --nginx -d deploy.marcusgoll.com
 curl https://test.marcusgoll.com/api/health
 # Expected: {"status":"ok"}
 
-# If validation passes, update Nginx to point marcusgoll.com to Dokploy
-sudo nano /etc/nginx/sites-available/marcusgoll
-# Change proxy_pass from localhost:3000 to Dokploy-managed container
-# OR configure marcusgoll.com domain in Dokploy UI
+# If validation passes, update Caddyfile to point marcusgoll.com to Dokploy
+# Configure marcusgoll.com domain in Dokploy UI, which will instruct Caddy routing
+# OR manually update Caddyfile to proxy to Dokploy-managed container
 
-# Dokploy will handle SSL automatically via Let's Encrypt
+# Caddy will handle SSL automatically via Let's Encrypt
 ```
 
 **Expected Duration**: 30-45 minutes
@@ -408,10 +400,10 @@ git push origin feature/047-dokploy-deployment-platform
 1. SSH to VPS: `ssh marcus@178.156.129.179`
 2. Check Dokploy container status: `docker ps | grep dokploy`
 3. If stopped, restart: `docker restart dokploy`
-4. Check Nginx: `sudo nginx -t && sudo systemctl status nginx`
-5. Check SSL cert: `sudo certbot certificates`
+4. Check Caddy: `docker exec proxy-caddy-1 caddy validate --config /etc/caddy/Caddyfile`
+5. Check SSL cert status: `docker logs proxy-caddy-1 | grep -i cert`
 
-**Emergency Access**: Access via IP:port if DNS/Nginx issues: `http://178.156.129.179:3000`
+**Emergency Access**: Access via IP:port if DNS/Caddy issues: `http://178.156.129.179:3000`
 
 ---
 
@@ -427,9 +419,9 @@ ssh marcus@178.156.129.179
 # Stop Dokploy container
 docker stop dokploy
 
-# Revert Nginx config
-sudo cp /etc/nginx/sites-available/marcusgoll.backup /etc/nginx/sites-available/marcusgoll
-sudo nginx -t && sudo systemctl reload nginx
+# Revert Caddyfile config
+docker exec proxy-caddy-1 sh -c 'cp /etc/caddy/Caddyfile.backup /etc/caddy/Caddyfile'
+docker exec proxy-caddy-1 caddy reload --config /etc/caddy/Caddyfile
 
 # Restart old Docker Compose setup
 cd /opt/marcusgoll  # Or wherever old setup is

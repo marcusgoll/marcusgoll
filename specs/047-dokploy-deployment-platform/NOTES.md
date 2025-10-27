@@ -26,7 +26,7 @@ Integrate Dokploy (self-hosted deployment platform) on Hetzner VPS to provide Ve
 - Manual deployment via `docker-compose.prod.yml`
 - GitHub Actions CI/CD (verify, build, deploy)
 - Self-hosted Supabase PostgreSQL
-- Nginx reverse proxy
+- Caddy reverse proxy (in Docker)
 - No staging environment
 - Direct-to-production deploys
 
@@ -43,7 +43,7 @@ Integrate Dokploy (self-hosted deployment platform) on Hetzner VPS to provide Ve
 **Current Infrastructure**:
 - **Platform**: Hetzner VPS (€20-30/mo, 2-4 vCPUs, 4-8GB RAM, 80-160GB SSD)
 - **Containerization**: Docker + Docker Compose
-- **Web Server**: Nginx (reverse proxy, SSL via Let's Encrypt)
+- **Web Server**: Caddy (reverse proxy, automatic HTTPS)
 - **CI/CD**: GitHub Actions
 - **Application**: Next.js 15.5.6, Node 20, TypeScript 5.9.3
 - **Database**: PostgreSQL 15+ (via Supabase self-hosted)
@@ -101,13 +101,13 @@ Integrate Dokploy (self-hosted deployment platform) on Hetzner VPS to provide Ve
    - Rollback testing (verify quick recovery)
 
 4. **Phase 4**: Cutover
-   - Update Nginx config to point marcusgoll.com to Dokploy-managed app
+   - Update Caddyfile to point marcusgoll.com to Dokploy-managed app
    - Monitor for 24-48 hours
    - Decommission old Docker Compose setup
 
 **Rollback Plan**:
 - Keep old docker-compose.prod.yml for 7 days
-- If Dokploy issues arise, revert Nginx config
+- If Dokploy issues arise, revert Caddyfile
 - Dokploy is abstraction layer (can always extract Docker configs)
 
 ### Benefits Analysis
@@ -166,9 +166,9 @@ Integrate Dokploy (self-hosted deployment platform) on Hetzner VPS to provide Ve
 - **Alignment**: Supports planned evolution path
 
 **System Architecture** (inferred from tech-stack.md):
-- Components: Next.js app, Supabase PostgreSQL, Nginx
+- Components: Next.js app, Supabase PostgreSQL, Caddy
 - Integration points: Dokploy will manage all three components
-- **Dokploy Role**: Orchestration layer above Docker, below Nginx
+- **Dokploy Role**: Orchestration layer above Docker, below Caddy
 
 **Tech Stack Validation** (from `docs/project/tech-stack.md`):
 - ✅ Next.js 15 supported (via Nixpacks or Dockerfile)
@@ -245,7 +245,7 @@ Integrate Dokploy (self-hosted deployment platform) on Hetzner VPS to provide Ve
 **Key Decisions Validated**:
 - Zero-downtime blue-green migration approach confirmed sound
 - Component reuse strategy verified (8 reusable components)
-- Rollback capability comprehensive (VPS snapshot, Nginx revert, config export)
+- Rollback capability comprehensive (VPS snapshot, Caddyfile revert, config export)
 - Testing strategy robust (5 validation checkpoints)
 - Performance targets achievable (no regression expected)
 
@@ -291,7 +291,7 @@ Integrate Dokploy (self-hosted deployment platform) on Hetzner VPS to provide Ve
 
 This is an infrastructure migration feature that requires:
 - SSH access to Hetzner VPS (not available in Claude Code environment)
-- Root/sudo privileges for Docker, Nginx, DNS configuration
+- Root/sudo privileges for Docker, Caddy, DNS configuration
 - Production server modifications
 
 Therefore, implementation phase focused on creating **comprehensive documentation**:
@@ -309,7 +309,7 @@ Therefore, implementation phase focused on creating **comprehensive documentatio
    - Deliverables: VPS snapshot, config backups, deploy.marcusgoll.com DNS
 
 2. **Dokploy Installation Guide** (`implementation-guides/02-dokploy-installation.md`)
-   - Tasks: T005-T008 (install Dokploy, Nginx config, SSL, admin access)
+   - Tasks: T005-T008 (install Dokploy, Caddy config, SSL, admin access)
    - Duration: 45-60 minutes
    - Deliverables: Dokploy running at https://deploy.marcusgoll.com
 
@@ -358,7 +358,7 @@ Therefore, implementation phase focused on creating **comprehensive documentatio
 4. **Troubleshooting**: Common errors with solutions
 5. **Time Estimates**: Realistic durations for planning
 6. **Dependencies**: Clear execution order (sequential vs parallel)
-7. **Configuration Templates**: Nginx configs, env variable schemas
+7. **Configuration Templates**: Caddyfile configs, env variable schemas
 8. **Safety Mechanisms**: VPS snapshot, config backups, parallel testing
 
 **Parallel Execution Opportunities Documented**:
@@ -383,16 +383,16 @@ Guides implement blue-green deployment pattern:
 1. Install Dokploy on separate port (3000) - production unaffected
 2. Configure and test on subdomain (test.marcusgoll.com) - production unaffected
 3. Validate functionality - production still on old infrastructure
-4. Cutover Nginx routing to Dokploy - < 1 second switch
-5. Monitor production on Dokploy - rollback available via Nginx revert
+4. Cutover Caddy routing to Dokploy - < 1 second switch
+5. Monitor production on Dokploy - rollback available via Caddyfile revert
 
 **Rollback Capability** (multi-level):
 
 1. **Level 1** (Preferred): Dokploy UI rollback (<5 min)
    - Select previous deployment, one-click rollback
 
-2. **Level 2**: Nginx config revert (<10 min)
-   - Restore backup Nginx config, point to old Docker Compose
+2. **Level 2**: Caddyfile revert (<10 min)
+   - Restore backup Caddyfile, point to old Docker Compose
 
 3. **Level 3**: VPS snapshot restoration (5-20 min)
    - Full VPS rollback via Hetzner dashboard

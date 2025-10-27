@@ -19,7 +19,7 @@ None yet.
 **Error ID**: ERR-[NNN]
 **Phase**: [Planning/Implementation/Testing/Deployment]
 **Date**: YYYY-MM-DD HH:MM
-**Component**: [dokploy-install/nginx-config/database-import/webhook/application-config]
+**Component**: [dokploy-install/caddy-config/database-import/webhook/application-config]
 **Severity**: [Critical/High/Medium/Low]
 
 **Description**:
@@ -56,29 +56,29 @@ None yet.
 
 ---
 
-### Issue: Nginx subdomain configuration fails
+### Issue: Caddy subdomain configuration fails
 
 **Symptoms**: deploy.marcusgoll.com returns 502 Bad Gateway or connection refused
 
 **Solutions**:
 1. Check Dokploy running: `docker ps | grep dokploy`
-2. Check Nginx config syntax: `sudo nginx -t`
-3. Check Nginx proxy_pass: Verify localhost:3000 correct
+2. Check Caddyfile syntax: `docker exec proxy-caddy-1 caddy validate --config /etc/caddy/Caddyfile`
+3. Check Caddy reverse_proxy: Verify localhost:3000 correct in Caddyfile
 4. Check firewall: `sudo ufw status` (allow port 3000 if needed)
-5. Check logs: `sudo tail -f /var/log/nginx/error.log`
+5. Check logs: `docker logs proxy-caddy-1 --tail 100`
 
 ---
 
 ### Issue: SSL certificate provisioning fails
 
-**Symptoms**: Certbot fails with "too many requests" or DNS validation error
+**Symptoms**: Caddy fails to obtain Let's Encrypt certificate automatically
 
 **Solutions**:
 1. Verify DNS propagation: `dig deploy.marcusgoll.com` (should point to VPS IP)
 2. Wait for DNS: May take 1-24 hours for propagation
-3. Check Certbot rate limits: Let's Encrypt has rate limits (50 certs/week)
-4. Use staging cert first: `certbot --nginx -d deploy.marcusgoll.com --staging`
-5. Manual verification: Use DNS TXT record if HTTP challenge fails
+3. Check Caddy logs: `docker logs proxy-caddy-1 | grep -i "obtain.*certificate"`
+4. Verify port 80/443 accessible: Caddy needs these for ACME HTTP challenge
+5. Check Let's Encrypt rate limits: 50 certs/week per domain (rare with automatic HTTPS)
 
 ---
 

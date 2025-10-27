@@ -28,7 +28,7 @@ This is an **infrastructure feature** that migrates deployment workflow from man
 **Validation**:
 - ✅ All 39 tasks documented with step-by-step commands
 - ✅ Each task has validation checklist
-- ✅ Rollback procedures documented (3 levels: Dokploy UI, Nginx revert, VPS snapshot)
+- ✅ Rollback procedures documented (3 levels: Dokploy UI, Caddyfile revert, VPS snapshot)
 - ✅ Troubleshooting sections included
 - ✅ Time estimates provided for planning
 
@@ -38,7 +38,7 @@ This is an **infrastructure feature** that migrates deployment workflow from man
 - ✅ Blue-green deployment at infrastructure level
 - ✅ Dokploy installed in parallel (production unaffected during setup)
 - ✅ Test subdomain validation before production cutover
-- ✅ Nginx routing switch (<1 second cutover)
+- ✅ Caddy routing switch (<1 second cutover)
 - ✅ Old infrastructure maintained during 7-day validation period
 
 **Safety Checkpoints**:
@@ -57,8 +57,8 @@ This is an **infrastructure feature** that migrates deployment workflow from man
 - Target: <5 minutes (spec.md FR-026)
 - Documented: implementation-guides/04-database-cicd-cutover-validation.md
 
-**Level 2: Nginx Configuration Revert** (<10 min)
-- Revert Nginx proxy_pass to old Docker setup
+**Level 2: Caddyfile Revert** (<10 min)
+- Revert Caddyfile proxy configuration to old Docker setup
 - Restart docker-compose.prod.yml
 - Target: <10 minutes
 - Documented: configs/rollback-procedures.md
@@ -79,7 +79,7 @@ This is an **infrastructure feature** that migrates deployment workflow from man
 
 **Version Control**:
 - ✅ Dokploy config exported as YAML (US8, T031)
-- ✅ Nginx configs for subdomain versioned
+- ✅ Caddyfile configs for subdomain versioned
 - ✅ Environment variable schema documented
 - ✅ Pre-migration backups in Git (sanitized, no secrets)
 
@@ -134,7 +134,7 @@ git push origin main
 - ✅ Same Next.js application code
 - ✅ Same Docker container runtime
 - ✅ Same PostgreSQL database
-- ✅ Same Nginx reverse proxy
+- ✅ Same Caddy reverse proxy
 - ✅ Dokploy overhead: ~500MB RAM, <10% CPU idle (documented in spec.md NFR-021)
 
 **Post-Migration Validation**:
@@ -211,7 +211,7 @@ git push origin main
 - ✅ Rollback procedures at each phase
 
 **Configuration Files**:
-- ✅ Nginx subdomain config (configs/nginx-dokploy-subdomain.conf)
+- ✅ Caddy subdomain config (configs/caddy-dokploy-subdomain.conf)
 - ✅ Dokploy config export template (configs/dokploy-config.yaml)
 - ✅ Backup configs preserved (configs/pre-migration-backup/)
 
@@ -241,7 +241,7 @@ git push origin main
 1. ✅ Dockerfile (imported to Dokploy, T010)
 2. ✅ docker-compose.prod.yml (imported to Dokploy, T010)
 3. ✅ deploy.sh logic (replaced by Dokploy webhook)
-4. ✅ Nginx reverse proxy (extended with subdomain)
+4. ✅ Caddy reverse proxy (extended with subdomain)
 5. ✅ SSL/TLS certificates (Let's Encrypt, same process)
 6. ✅ Health checks (Next.js /api/health)
 7. ✅ Environment variable schema (migrated to Dokploy UI)
@@ -251,7 +251,7 @@ git push origin main
 1. ✅ Dokploy installation script (T005, official installer)
 2. ✅ Dokploy application config (T009-T011, via UI)
 3. ✅ Database import to Dokploy management (T016-T017)
-4. ✅ Nginx subdomain config (T006, deploy.marcusgoll.com)
+4. ✅ Caddy subdomain config (T006, deploy.marcusgoll.com)
 5. ✅ GitHub webhook integration (T019-T020)
 6. ✅ Dokploy CLI config export (T031, disaster recovery)
 
@@ -277,8 +277,8 @@ git push origin main
 - ✅ Hetzner VPS accessible (SSH, existing setup)
 - ✅ Docker >= 20.10 (existing installation)
 - ✅ Docker Compose >= 2.0 (existing)
-- ✅ Nginx >= 1.18 (existing)
-- ✅ Certbot installed (Let's Encrypt CLI)
+- ✅ Caddy >= 2.0 (existing, running in Docker)
+- ✅ Caddy automatic HTTPS (Let's Encrypt handled automatically)
 - ✅ 4-8GB RAM available (Dokploy needs ~500MB)
 
 **Access Requirements**:
@@ -297,7 +297,7 @@ git push origin main
 
 **Three-Level Rollback**:
 1. **Dokploy UI**: <5 min (spec.md target)
-2. **Nginx revert + docker-compose**: <10 min
+2. **Caddyfile revert + docker-compose**: <10 min
 3. **VPS snapshot restore**: 5-20 min (nuclear option)
 
 **Rollback Testing**:
@@ -351,7 +351,7 @@ git push origin main
 | Risk | Mitigation | Residual Risk |
 |------|-----------|---------------|
 | Dokploy installation fails | VPS snapshot (T001), rollback to docker-compose (<10 min) | **LOW** |
-| Production downtime during cutover | Nginx routing switch (<1 sec), health check validation (T026) | **VERY LOW** |
+| Production downtime during cutover | Caddy routing switch (<1 sec), health check validation (T026) | **VERY LOW** |
 | Database corruption | Supabase backup (T002), no schema changes | **VERY LOW** |
 | Configuration loss | Git-versioned configs (T031), export Dokploy config as YAML | **LOW** |
 | Dokploy becomes unmaintained | Not locked in, can revert to docker-compose (configs preserved) | **LOW** |
@@ -452,7 +452,7 @@ git push origin main
 - ✅ Documentation: 5 comprehensive guides (15,000 words)
 - ✅ Safety: Zero-downtime blue-green migration strategy
 - ✅ Rollback: 3-level plan (<5 min, <10 min, <20 min)
-- ✅ Configuration: Version-controlled Nginx configs, Dokploy YAML export
+- ✅ Configuration: Version-controlled Caddyfile configs, Dokploy YAML export
 - ✅ Reuse: 8 existing components reused
 - ✅ Testing: 10 validation tasks with checklists
 - ✅ Risk: LOW (0.9 confidence)
