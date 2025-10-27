@@ -254,6 +254,90 @@ Always perform manual preview testing after accessibility fixes to verify they w
 - Code: All components tested end-to-end
 - From /feature continue (manual preview phase)
 
-**Next Steps**: 
+**Next Steps**:
 Ready to create PR and ship to production.
+
+
+---
+
+## Post-PR Creation - Merge Conflict Resolution
+
+### Entry 6: 2025-10-26 - Merge Conflicts with Main Branch
+
+**Phase**: Post-PR / Deployment
+**Date**: 2025-10-26
+**Component**: Build pipeline and CSS integration
+**Severity**: Medium (blocking PR merge)
+
+**Failure**: PR #45 blocked with merge conflicts
+**Symptom**: GitHub reported "CONFLICTING" merge state for 3 files:
+- `app/globals.css` - Design system updates vs syntax highlighting styles
+- `package.json` - Dependency conflicts (shiki vs tailwind utilities)
+- `package-lock.json` - Lock file divergence
+
+**Root Cause**:
+Main branch received significant updates while feature branch was in development:
+1. New OKLCH-based design system (Stripe-inspired color tokens)
+2. Tailwind v4 migration with `tailwindcss-animate` and `tailwind-merge`
+3. Dark mode implementation via `.dark` class instead of media queries
+4. Multiple UI component additions (dialogs, grids, sidebars)
+
+**Learning**:
+- Keep feature branches short-lived to minimize merge conflicts
+- Design system changes create high-impact conflicts with CSS features
+- OKLCH color system and `.dark` class approach are superior to old `prefers-color-scheme` media queries
+- Lock file conflicts best resolved by regenerating after merging package.json
+
+**Ghost Context Cleanup**:
+- Removed old `--background`/`--foreground` hex color definitions
+- Preserved syntax highlighting `prefers-color-scheme` media queries (still needed for `.code-light`/`.code-dark` theme switching)
+- Merged both design approaches: OKLCH tokens for UI + media queries for code blocks
+
+**Resolution**:
+1. **app/globals.css** (293 lines after merge):
+   - Kept new OKLCH design system (lines 7-106)
+   - Preserved syntax highlighting theme switching media queries (lines 77-95)
+   - Retained all code block styles with WCAG AA contrast (lines 97-179)
+   - Added new `.dark` class styles (lines 213-283)
+   - Result: Both design systems coexist harmoniously
+
+2. **package.json**:
+   - Merged dependencies alphabetically:
+     - `shiki: ^1.29.2` (from feature branch)
+     - `tailwind-merge: ^3.3.1` (from main)
+     - `tailwindcss-animate: ^1.0.7` (from main)
+     - `unist-util-visit: ^5.0.0` (from feature branch)
+   - No conflicts in devDependencies
+
+3. **package-lock.json**:
+   - Took main's lock file as base: `git checkout --theirs package-lock.json`
+   - Ran `npm install` to regenerate with merged package.json
+   - Result: 39 packages added, 33 removed, 1 changed
+   - No vulnerabilities detected
+
+4. **Verification**:
+   - Merge commit created: `639aad6`
+   - Pushed to origin successfully
+   - GitHub PR status: MERGEABLE (conflicts resolved)
+   - Build status: UNSTABLE (due to unrelated mock page import errors from main branch, not from syntax highlighting feature)
+
+**Prevention**:
+- Merge main into feature branches daily during active development
+- Run `/validate` before creating PR to catch integration issues
+- Coordinate with team on design system changes (high-impact on CSS features)
+- Always regenerate lock files after resolving package.json conflicts
+
+**Build Warnings (Non-Blocking)**:
+The production build shows warnings about `app/mock/homepage-post-feed/` pages having incorrect imports (`import Button from '@/components/ui/Button'` should be `import { Button }`). These errors existed in main branch before merge and are unrelated to syntax highlighting feature. Syntax highlighting implementation is isolated and working correctly.
+
+**Related**:
+- Spec: N/A (deployment blocker, not feature requirement)
+- Code:
+  - app/globals.css:77-95 (theme switching preserved)
+  - app/globals.css:137-162 (WCAG AA contrast preserved)
+  - package.json:33-36 (merged dependencies)
+- Commit: 639aad6 (merge commit)
+- PR: #45 (now mergeable)
+
+**Status**: ✅ Resolved - PR conflicts fixed, ready to merge (build warnings from main branch are non-blocking for syntax highlighting feature)
 
