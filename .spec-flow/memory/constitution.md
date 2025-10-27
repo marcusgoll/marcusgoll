@@ -719,7 +719,34 @@ This constitution evolves with the project. To propose changes:
 - **Content Framework**: `docs/CONTENT_FRAMEWORK_INTEGRATION.md` - Content creation workflow
 - **Brand Consistency Checklist**: `docs/BRAND_CONSISTENCY_CHECKLIST.md` - Pre-publish validation
 
-### Project Documentation
+### Project Documentation (System Design)
+
+**Location**: `docs/project/`
+
+Comprehensive project-level design documentation (initialized 2025-10-26):
+- **Overview**: `docs/project/overview.md` - Vision, users, scope, success metrics
+- **System Architecture**: `docs/project/system-architecture.md` - Components, integrations, Mermaid diagrams
+- **Tech Stack**: `docs/project/tech-stack.md` - Technology choices with rationale
+- **Data Architecture**: `docs/project/data-architecture.md` - ERD, storage strategy, data lifecycle
+- **API Strategy**: `docs/project/api-strategy.md` - REST patterns, auth, versioning
+- **Capacity Planning**: `docs/project/capacity-planning.md` - Scaling tiers (micro → large)
+- **Deployment Strategy**: `docs/project/deployment-strategy.md` - CI/CD, environments, rollback
+- **Development Workflow**: `docs/project/development-workflow.md` - Git flow, PR process, DoD
+
+**Maintenance**: Update docs when:
+- Adding new service/component (system-architecture.md)
+- Changing tech stack (tech-stack.md)
+- Scaling to next tier (capacity-planning.md)
+- Adjusting deployment strategy (deployment-strategy.md)
+
+**Workflow Integration**:
+All features MUST align with project architecture:
+- `/roadmap` - Checks overview.md for vision alignment
+- `/spec` - References project docs during research
+- `/plan` - Heavily integrates with all 8 docs
+- `/tasks` - Follows patterns from tech-stack.md, api-strategy.md
+
+### Legacy Documentation
 - **Setup Summary**: `docs/SETUP_SUMMARY.md`
 - **Website Strategy**: `docs/WEBSITE_STRATEGY_ANALYSIS.md`
 - **Quick Start**: `docs/QUICKSTART.md`
