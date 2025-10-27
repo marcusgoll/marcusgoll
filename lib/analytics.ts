@@ -193,15 +193,3 @@ export const trackPageView = ({ path, track }: TrackPageViewParams): void => {
   console.debug('[Analytics] Page view:', { path, track });
 };
 
-/**
- * TypeScript declarations for gtag global function
- */
-declare global {
-  interface Window {
-    gtag: (
-      command: string,
-      eventName: string,
-      params?: Record<string, unknown>
-    ) => void;
-  }
-}
