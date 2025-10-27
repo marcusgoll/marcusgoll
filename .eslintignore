@@ -11,6 +11,9 @@ node_modules/
 app/generated/
 .vercel/
 
+# Mock/prototype files (design artifacts, not production code)
+app/mock/
+
 # Configuration
 .env
 .env.*

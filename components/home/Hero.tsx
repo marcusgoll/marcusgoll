@@ -1,65 +1,94 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import Button from '@/components/ui/Button';
+'use client';
+
+import { Button } from '@/components/ui/button';
+import Container from '@/components/ui/Container';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { useState } from 'react';
 
 /**
- * Hero component - Homepage hero section with dual-track CTAs
- * Layout: Professional headshot (right on desktop, top on mobile)
- * Background: Navy 900 gradient
+ * Hero component - M2 Design hero section
+ * Layout: Centered text
+ * Background: Dark background
  */
 export default function Hero() {
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
+  const [email, setEmail] = useState('');
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement newsletter API call
+    // For now, just close the dialog
+    setEmail('');
+    setNewsletterOpen(false);
+  };
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-navy-900 to-navy-900/90 py-16 md:py-24">
-      <div className="mx-auto w-full max-w-[1280px] px-4 md:px-6">
-        <div className="flex flex-col items-center gap-8 md:flex-row md:items-center md:justify-between">
-          {/* Content (Left on Desktop) */}
-          <div className="flex-1 text-center md:text-left">
-            {/* Headline */}
-            <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl">
-              Marcus Gollahon
-            </h1>
-
-            {/* Tagline */}
-            <p className="mb-4 text-xl font-semibold text-emerald-600 md:text-2xl">
-              Teaching Systematic Thinking from 30,000 Feet
-            </p>
-
-            {/* Mission Subtitle */}
-            <p className="mb-8 text-lg text-gray-300 md:text-xl">
-              I help pilots advance their aviation careers and teach developers
-              to build with systematic thinking.
-            </p>
-
-            {/* Dual CTAs */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center md:justify-start">
-              <Link href="/aviation">
-                <Button variant="primary" size="lg">
-                  Explore Aviation
+    <header className="relative bg-dark-bg text-foreground overflow-hidden">
+      <Container className="relative z-10">
+        <div className="py-12 text-center">
+          <h1 className="text-4xl font-bold mb-3 text-foreground">
+            Systematic thinking from 30,000 feet
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6 leading-relaxed">
+            Aviation principles applied to software engineering and startups.
+            Learn how commercial aviation&apos;s systematic approach to safety
+            translates to building resilient systems.
+          </p>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Button size="default" variant="default">
+              Read Latest Posts
+            </Button>
+            <Dialog open={newsletterOpen} onOpenChange={setNewsletterOpen}>
+              <DialogTrigger asChild>
+                <Button size="default" variant="outline">
+                  Subscribe to Newsletter
                 </Button>
-              </Link>
-              <Link href="/dev-startup">
-                <Button variant="secondary" size="lg">
-                  Explore Dev/Startup
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Professional Headshot (Right on Desktop, Top on Mobile - order-first) */}
-          <div className="order-first flex-shrink-0 md:order-last">
-            <div className="relative h-64 w-64 overflow-hidden rounded-full border-4 border-emerald-600 shadow-2xl md:h-80 md:w-80">
-              <Image
-                src="/images/marcus-headshot.jpg"
-                alt="Marcus Gollahon - Aviation and Software Development"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 256px, 320px"
-              />
-            </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Subscribe to Newsletter</DialogTitle>
+                  <DialogDescription>
+                    Get systematic thinking insights delivered weekly. Join 500+
+                    engineers and founders.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleNewsletterSubmit}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <label
+                        htmlFor="email"
+                        className="text-sm font-medium text-foreground"
+                      >
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-foreground"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Subscribe</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </header>
   );
 }

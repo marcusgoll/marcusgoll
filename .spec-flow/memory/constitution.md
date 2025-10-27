@@ -264,7 +264,7 @@ Each feature in roadmap must have:
 
 **Checks**:
 - ✅ Deployment IDs extracted from staging logs
-- ✅ Rollback test executed (actual Vercel alias change)
+- ✅ Rollback test executed (git revert or PM2 restart with previous version)
 - ✅ Previous deployment verified live
 - ✅ Roll-forward to current deployment verified
 
@@ -325,24 +325,24 @@ Each feature in roadmap must have:
 
 ### Deployment ID Tracking
 
-**What**: Unique identifiers for each deployment (Vercel URLs, Docker images, Railway IDs)
+**What**: Unique identifiers for each deployment (git commit SHAs, PM2 process IDs, Docker images)
 
 **Storage**:
 - `specs/NNN-slug/deployment-metadata.json` - Human-readable
-- `specs/NNN-slug/workflow-state.json` - Machine-readable state
+- `specs/NNN-slug/workflow-state.yaml` - Machine-readable state
 
-**Extraction**: Automatic from GitHub Actions workflow logs
+**Extraction**: Automatic from GitHub Actions workflow logs or deployment scripts
 
 ### Rollback Testing (staging-prod only)
 
 **When**: During `/validate-staging` phase
 
 **Process**:
-1. Load previous deployment ID from state
-2. Execute: `vercel alias set <previous-id> <staging-url>`
-3. Wait for DNS propagation (15 seconds)
-4. Verify previous deployment is live (check HTTP headers)
-5. Roll forward: `vercel alias set <current-id> <staging-url>`
+1. Load previous deployment ID (git commit SHA) from state
+2. Execute: `git revert <current-commit>` or `pm2 restart <app> --update-env`
+3. Wait for application restart (15 seconds)
+4. Verify previous deployment is live (check HTTP headers and version)
+5. Roll forward: `git revert <revert-commit>` or restore current version
 6. Verify current deployment is live again
 
 **Blocking**: If rollback test fails, production deployment is blocked
@@ -357,15 +357,19 @@ Each feature in roadmap must have:
 
 **How to rollback**:
 ```bash
-# For Vercel deployments
-vercel alias set <previous-deployment-id> <production-url> --token=$VERCEL_TOKEN
-
-# For Railway/other platforms
-# Use platform's UI or CLI rollback feature
-
-# For manual git revert
+# For Hetzner VPS with PM2
+ssh hetzner
+cd /path/to/marcusgoll
 git revert <commit-sha>
-git push
+./deploy.sh
+
+# Or for quick PM2 restart with previous version
+pm2 stop marcusgoll
+git checkout <previous-commit-sha>
+npm install
+npm run build
+pm2 start npm --name "marcusgoll" -- start
+pm2 save
 ```
 
 **Deployment IDs**: Found in ship reports (`*-ship-report.md`) or `deployment-metadata.json`
