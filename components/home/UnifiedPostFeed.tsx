@@ -134,9 +134,9 @@ export default function UnifiedPostFeed({
             Dual-Track View
           </Button>
           <Button
-            variant={viewMode === 'unified' ? 'default' : 'outline'}
+            variant={(viewMode as 'dual-track' | 'unified') === 'unified' ? 'default' : 'outline'}
             onClick={() => handleViewToggle('unified')}
-            aria-pressed={viewMode === 'unified'}
+            aria-pressed={(viewMode as 'dual-track' | 'unified') === 'unified'}
             aria-label="Switch to unified view"
           >
             All Posts
@@ -165,9 +165,9 @@ export default function UnifiedPostFeed({
           Dual-Track View
         </Button>
         <Button
-          variant={viewMode === 'unified' ? 'default' : 'outline'}
+          variant={(viewMode as 'dual-track' | 'unified') === 'unified' ? 'default' : 'outline'}
           onClick={() => handleViewToggle('unified')}
-          aria-pressed={viewMode === 'unified'}
+          aria-pressed={(viewMode as 'dual-track' | 'unified') === 'unified'}
           aria-label="Switch to unified view"
         >
           All Posts
