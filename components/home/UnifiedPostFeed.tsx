@@ -7,7 +7,7 @@ import { getPrimaryTrack } from '@/lib/utils/content';
 import PostGrid from '@/components/blog/PostGrid';
 import DualTrackShowcase from './DualTrackShowcase';
 import LoadMoreButton from './LoadMoreButton';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface UnifiedPostFeedProps {
   allPosts: Post[];

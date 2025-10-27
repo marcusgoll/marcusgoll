@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 type TrackFilter = 'all' | 'aviation' | 'dev-startup' | 'cross-pollination';
 
