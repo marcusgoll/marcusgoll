@@ -126,9 +126,9 @@ export default function UnifiedPostFeed({
         {/* View Toggle */}
         <div className="flex justify-end gap-4">
           <Button
-            variant={viewMode === 'dual-track' ? 'default' : 'outline'}
+            variant={(viewMode as 'dual-track' | 'unified') === 'dual-track' ? 'default' : 'outline'}
             onClick={() => handleViewToggle('dual-track')}
-            aria-pressed={viewMode === 'dual-track'}
+            aria-pressed={(viewMode as 'dual-track' | 'unified') === 'dual-track'}
             aria-label="Switch to dual-track view"
           >
             Dual-Track View
@@ -157,9 +157,9 @@ export default function UnifiedPostFeed({
       {/* View Toggle */}
       <div className="flex justify-end gap-4">
         <Button
-          variant={viewMode === 'dual-track' ? 'default' : 'outline'}
+          variant={(viewMode as 'dual-track' | 'unified') === 'dual-track' ? 'default' : 'outline'}
           onClick={() => handleViewToggle('dual-track')}
-          aria-pressed={viewMode === 'dual-track'}
+          aria-pressed={(viewMode as 'dual-track' | 'unified') === 'dual-track'}
           aria-label="Switch to dual-track view"
         >
           Dual-Track View
