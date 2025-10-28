@@ -8,8 +8,9 @@
  * Route: /newsletter/unsubscribe/confirmation?token=xxx
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 
 interface UnsubscribeState {
@@ -20,7 +21,7 @@ interface UnsubscribeState {
   hardDeleted: boolean
 }
 
-export default function UnsubscribeConfirmationPage() {
+function UnsubscribeConfirmationContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
 
@@ -163,11 +164,11 @@ export default function UnsubscribeConfirmationPage() {
             </h2>
             <p className="text-green-700 mb-6">
               Your email and all associated data have been permanently removed from our system.
-              You're welcome to subscribe again anytime.
+              You&apos;re welcome to subscribe again anytime.
             </p>
-            <a href="/" className="text-blue-600 hover:text-blue-700 underline">
+            <Link href="/" className="text-blue-600 hover:text-blue-700 underline">
               Return to homepage
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -181,10 +182,10 @@ export default function UnsubscribeConfirmationPage() {
         <div className="rounded-lg bg-gray-50 p-8 border border-gray-200">
           <div className="text-5xl mb-4">👋</div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            You've Been Unsubscribed
+            You&apos;ve Been Unsubscribed
           </h2>
           <p className="text-gray-700 mb-6">
-            You won't receive any more newsletters from us. We'll send you a confirmation email shortly.
+            You won&apos;t receive any more newsletters from us. We&apos;ll send you a confirmation email shortly.
           </p>
 
           {token && (
@@ -224,10 +225,18 @@ export default function UnsubscribeConfirmationPage() {
           )}
         </div>
 
-        <a href="/" className="text-gray-600 hover:text-gray-700 underline mt-6 inline-block">
+        <Link href="/" className="text-gray-600 hover:text-gray-700 underline mt-6 inline-block">
           Return to homepage
-        </a>
+        </Link>
       </div>
     </div>
+  )
+}
+
+export default function UnsubscribeConfirmationPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center p-4"><div className="text-center">Loading...</div></div>}>
+      <UnsubscribeConfirmationContent />
+    </Suspense>
   )
 }

@@ -203,7 +203,7 @@ export default function NewsletterPreferencesPage() {
         {state.success && (
           <div className="rounded-lg bg-green-50 p-4 border border-green-200 mb-6">
             <p className="text-sm text-green-700">
-              Preferences updated successfully! You'll receive a confirmation email.
+              Preferences updated successfully! You&apos;ll receive a confirmation email.
             </p>
           </div>
         )}

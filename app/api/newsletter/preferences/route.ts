@@ -15,6 +15,7 @@ import {
   type NewsletterType,
 } from '@/lib/newsletter/validation-schemas'
 import { sendPreferenceUpdateEmail } from '@/lib/newsletter/email-service'
+import { checkRateLimit, getClientIp } from '@/lib/newsletter/rate-limiter'
 
 /**
  * PATCH /api/newsletter/preferences
@@ -29,6 +30,28 @@ import { sendPreferenceUpdateEmail } from '@/lib/newsletter/email-service'
  */
 export async function PATCH(request: NextRequest) {
   try {
+    // Rate limiting: 5 requests per minute per IP (NFR-011)
+    const clientIp = getClientIp(request)
+    const rateLimit = checkRateLimit(clientIp, 5, 60000)
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Too many requests. Please try again later.',
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimit.limit.toString(),
+            'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+            'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
+            'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
+          },
+        }
+      )
+    }
+
     // Parse and validate request body
     const body = await request.json()
     const validation = PreferenceUpdateSchema.safeParse(body)
@@ -38,7 +61,7 @@ export async function PATCH(request: NextRequest) {
         {
           success: false,
           message: 'Validation failed',
-          errors: validation.error.errors.map((err) => ({
+          errors: validation.error.issues.map((err) => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -102,7 +125,7 @@ export async function PATCH(request: NextRequest) {
       subscriber.email,
       subscribedNewsletters,
       subscriber.unsubscribeToken
-    ).catch((error) => {
+    ).catch((error: unknown) => {
       console.error('[Newsletter] Failed to send preference update email:', error)
     })
 
@@ -113,7 +136,7 @@ export async function PATCH(request: NextRequest) {
       },
       { status: 200 }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[Newsletter] Update preferences error:', error)
 
     return NextResponse.json(

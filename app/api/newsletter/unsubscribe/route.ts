@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { UnsubscribeSchema } from '@/lib/newsletter/validation-schemas'
 import { sendGoodbyeEmail } from '@/lib/newsletter/email-service'
+import { checkRateLimit, getClientIp } from '@/lib/newsletter/rate-limiter'
 
 /**
  * DELETE /api/newsletter/unsubscribe
@@ -26,6 +27,28 @@ import { sendGoodbyeEmail } from '@/lib/newsletter/email-service'
  */
 export async function DELETE(request: NextRequest) {
   try {
+    // Rate limiting: 5 requests per minute per IP (NFR-011)
+    const clientIp = getClientIp(request)
+    const rateLimit = checkRateLimit(clientIp, 5, 60000)
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Too many requests. Please try again later.',
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimit.limit.toString(),
+            'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+            'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
+            'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
+          },
+        }
+      )
+    }
+
     // Parse and validate request body
     const body = await request.json()
     const validation = UnsubscribeSchema.safeParse(body)
@@ -35,7 +58,7 @@ export async function DELETE(request: NextRequest) {
         {
           success: false,
           message: 'Validation failed',
-          errors: validation.error.errors.map((err) => ({
+          errors: validation.error.issues.map((err) => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -99,7 +122,7 @@ export async function DELETE(request: NextRequest) {
 
       // Send goodbye email asynchronously (only for soft delete)
       sendGoodbyeEmail(subscriber.email, subscriber.unsubscribeToken).catch(
-        (error) => {
+        (error: unknown) => {
           console.error('[Newsletter] Failed to send goodbye email:', error)
         }
       )
@@ -112,7 +135,7 @@ export async function DELETE(request: NextRequest) {
         { status: 200 }
       )
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[Newsletter] Unsubscribe error:', error)
 
     return NextResponse.json(

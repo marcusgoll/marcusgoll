@@ -10,12 +10,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import type { Prisma } from '@prisma/client'
 import {
   SubscribeRequestSchema,
   type NewsletterType,
 } from '@/lib/newsletter/validation-schemas'
 import { generateUnsubscribeToken } from '@/lib/newsletter/token-generator'
 import { sendWelcomeEmail } from '@/lib/newsletter/email-service'
+import { checkRateLimit, getClientIp } from '@/lib/newsletter/rate-limiter'
 
 /**
  * POST /api/newsletter/subscribe
@@ -32,6 +34,28 @@ import { sendWelcomeEmail } from '@/lib/newsletter/email-service'
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting: 5 requests per minute per IP (NFR-011)
+    const clientIp = getClientIp(request)
+    const rateLimit = checkRateLimit(clientIp, 5, 60000)
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Too many requests. Please try again later.',
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimit.limit.toString(),
+            'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+            'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
+            'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
+          },
+        }
+      )
+    }
+
     // Parse and validate request body
     const body = await request.json()
     const validation = SubscribeRequestSchema.safeParse(body)
@@ -41,7 +65,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: 'Validation failed',
-          errors: validation.error.errors.map((err) => ({
+          errors: validation.error.issues.map((err) => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -56,7 +80,7 @@ export async function POST(request: NextRequest) {
     const unsubscribeToken = generateUnsubscribeToken()
 
     // Upsert subscriber and update preferences (atomic transaction)
-    const subscriber = await prisma.$transaction(async (tx) => {
+    const subscriber = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Upsert subscriber (create if new, update if existing)
       const sub = await tx.newsletterSubscriber.upsert({
         where: { email },
@@ -98,7 +122,7 @@ export async function POST(request: NextRequest) {
       email,
       newsletterTypes as NewsletterType[],
       subscriber.unsubscribeToken
-    ).catch((error) => {
+    ).catch((error: unknown) => {
       console.error('[Newsletter] Failed to send welcome email:', error)
       // Don't throw - email failure shouldn't break subscription
     })
@@ -127,7 +151,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[Newsletter] Subscription error:', error)
 
     return NextResponse.json(

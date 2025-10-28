@@ -10,7 +10,7 @@ feature:
   last_updated: 2025-10-28T17:08:25Z
   roadmap_status: in_progress # Options: backlog, next, in_progress, shipped
   github_issue: 46
-deployment_model: staging-prod # Options: staging-prod, direct-prod, local-only
+deployment_model: direct-prod # Options: staging-prod, direct-prod, local-only
 workflow:
   phase: spec-flow
   status: in_progress # Options: in_progress, completed, failed, pending

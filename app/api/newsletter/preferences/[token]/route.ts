@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { TokenParamSchema } from '@/lib/newsletter/validation-schemas'
+import { checkRateLimit, getClientIp } from '@/lib/newsletter/rate-limiter'
 
 /**
  * GET /api/newsletter/preferences/:token
@@ -22,9 +23,34 @@ import { TokenParamSchema } from '@/lib/newsletter/validation-schemas'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  context: { params: Promise<{ token: string }> }
 ) {
   try {
+    // Rate limiting: 5 requests per minute per IP (NFR-011)
+    const clientIp = getClientIp(request)
+    const rateLimit = checkRateLimit(clientIp, 5, 60000)
+
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Too many requests. Please try again later.',
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimit.limit.toString(),
+            'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+            'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
+            'Retry-After': Math.ceil((rateLimit.reset - Date.now()) / 1000).toString(),
+          },
+        }
+      )
+    }
+
+    // Await params (Next.js 15 requirement)
+    const params = await context.params
+
     // Validate token format
     const tokenValidation = TokenParamSchema.safeParse(params.token)
 
@@ -66,7 +92,7 @@ export async function GET(
       all: false,
     }
 
-    subscriber.preferences.forEach((pref) => {
+    subscriber.preferences.forEach((pref: { newsletterType: string; subscribed: boolean }) => {
       if (pref.newsletterType in preferencesObj) {
         preferencesObj[pref.newsletterType as keyof typeof preferencesObj] = pref.subscribed
       }
@@ -81,7 +107,7 @@ export async function GET(
       },
       { status: 200 }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('[Newsletter] Get preferences error:', error)
 
     return NextResponse.json(
