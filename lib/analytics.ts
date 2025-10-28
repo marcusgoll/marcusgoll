@@ -193,3 +193,43 @@ export const trackPageView = ({ path, track }: TrackPageViewParams): void => {
   console.debug('[Analytics] Page view:', { path, track });
 };
 
+/**
+ * Send Web Vitals metric to GA4
+ * Used by web-vitals package to track real user performance metrics
+ *
+ * Metrics sent to GA4:
+ * - CLS (Cumulative Layout Shift)
+ * - FCP (First Contentful Paint)
+ * - LCP (Largest Contentful Paint)
+ * - TTFB (Time to First Byte)
+ * - INP (Interaction to Next Paint)
+ *
+ * @param metric Web Vitals metric object
+ * @see https://github.com/GoogleChrome/web-vitals
+ */
+export const sendMetricToGA4 = (metric: {
+  name: string;
+  value: number;
+  id: string;
+  delta: number;
+}): void => {
+  if (!isGtagAvailable()) return;
+
+  // Send Web Vitals metrics to GA4 as custom events
+  window.gtag!('event', 'web_vitals', {
+    event_category: 'Web Vitals',
+    event_label: metric.id,
+    metric_name: metric.name,
+    metric_value: Math.round(metric.value),
+    metric_delta: Math.round(metric.delta),
+    // Custom dimension for detailed analysis
+    value: Math.round(metric.value),
+  });
+
+  console.debug('[Analytics] Web Vitals:', {
+    name: metric.name,
+    value: Math.round(metric.value),
+    delta: Math.round(metric.delta),
+  });
+};
+
