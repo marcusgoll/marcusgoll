@@ -1,4 +1,4 @@
-name: Build and Test
+name: CI/CD Pipeline - Build, Test, Deploy
 
 on:
   push:
@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - main
+
+# Security: Explicit permissions (principle of least privilege)
+permissions:
+  contents: read      # Read code for checkout
+  packages: write     # Push to GitHub Container Registry (GHCR)
+  actions: read       # Read workflow status for summaries
 
 jobs:
   build:
@@ -26,15 +32,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint check
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
       - name: Build application
         run: npm run build
         env:
           PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.PUBLIC_URL }}
           NODE_ENV: "production"
-          # Ghost CMS (using placeholder values for build)
-          GHOST_API_URL: "https://demo.ghost.io"
-          GHOST_CONTENT_API_KEY: "22444f78447824223cefc48062" # Demo key
+          # Ghost CMS (using demo values from secrets for consistency)
+          GHOST_API_URL: ${{ secrets.GHOST_API_URL }}
+          GHOST_CONTENT_API_KEY: ${{ secrets.GHOST_CONTENT_API_KEY }}
           # Optional vars (not required for build)
           DATABASE_URL: ""
           NEXTAUTH_SECRET: ""
@@ -42,11 +54,7 @@ jobs:
           RESEND_API_KEY: ""
           ADMIN_EMAIL: ""
 
-      - name: Lint check
-        run: npm run lint
-        continue-on-error: true
-
-      - name: Auto-Deployment Summary
+      - name: Build Summary
         run: |
           echo "## Build Complete ✅" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -54,28 +62,160 @@ jobs:
           echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Lint**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
+          echo "**Type Check**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
+          echo "**Build**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "### Auto-Deployment Triggered 🚀" >> $GITHUB_STEP_SUMMARY
-            echo "Dokploy will automatically deploy this to production:" >> $GITHUB_STEP_SUMMARY
-            echo "- **URL**: https://test.marcusgoll.com" >> $GITHUB_STEP_SUMMARY
-            echo "- **Dashboard**: https://deploy.marcusgoll.com" >> $GITHUB_STEP_SUMMARY
-            echo "- **Status**: Watch the Dokploy dashboard for deployment progress" >> $GITHUB_STEP_SUMMARY
+            echo "### CI/CD Automated Deployment 🚀" >> $GITHUB_STEP_SUMMARY
+            echo "Next steps: Docker build and VPS deployment" >> $GITHUB_STEP_SUMMARY
           else
             echo "### Pull Request Build" >> $GITHUB_STEP_SUMMARY
-            echo "Build completed but deployment is skipped for PR branches." >> $GITHUB_STEP_SUMMARY
+            echo "Build completed. Deployment skipped for PR branches." >> $GITHUB_STEP_SUMMARY
           fi
+
+  docker-build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate short SHA
+        id: vars
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/marcusgoll:latest
+            ghcr.io/${{ github.repository_owner }}/marcusgoll:sha-${{ env.SHORT_SHA }}
+          build-args: |
+            NODE_ENV=production
+            NEXT_PUBLIC_SITE_URL=${{ secrets.PUBLIC_URL }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Docker Build Summary
+        run: |
+          echo "## Docker Build Complete ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image Tags Pushed**:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/marcusgoll:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`ghcr.io/${{ github.repository_owner }}/marcusgoll:sha-${{ env.SHORT_SHA }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry**: GitHub Container Registry (GHCR)" >> $GITHUB_STEP_SUMMARY
+
+  deploy-vps:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: [build, docker-build]
+    if: github.ref == 'refs/heads/main' && success()
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            cd "${{ secrets.VPS_DEPLOY_PATH }}"
+
+            # Capture current image tag for rollback
+            CURRENT_TAG=$(docker inspect marcusgoll-nextjs-prod --format='{{index .Config.Image}}' 2>/dev/null || echo 'none')
+            echo "Current tag: $CURRENT_TAG"
+
+            # Pull latest image from GHCR
+            docker-compose -f docker-compose.prod.yml pull nextjs
+
+            # Restart container with new image
+            docker-compose -f docker-compose.prod.yml up -d --no-deps nextjs
+
+            # Wait for health check (30 seconds max)
+            for i in {1..6}; do
+              HEALTH=$(docker inspect --format='{{.State.Health.Status}}' marcusgoll-nextjs-prod 2>/dev/null || echo 'unknown')
+              echo "Health check attempt $i: $HEALTH"
+              if [ "$HEALTH" = "healthy" ]; then
+                echo "Container is healthy"
+                break
+              fi
+              sleep 5
+            done
+
+            # Final health check
+            FINAL_HEALTH=$(docker inspect --format='{{.State.Health.Status}}' marcusgoll-nextjs-prod 2>/dev/null)
+            if [ "$FINAL_HEALTH" != "healthy" ]; then
+              echo "ERROR: Container failed health check after 30 seconds"
+              exit 1
+            fi
+
+            echo "Deployment successful"
+
+      - name: Post-Deployment Health Check
+        run: |
+          echo "Checking site health at ${{ secrets.PUBLIC_URL }}..."
+          for i in {1..3}; do
+            if curl -f -m 3 --retry 3 --retry-delay 10 ${{ secrets.PUBLIC_URL }}; then
+              echo "Health check passed"
+              break
+            fi
+            if [ $i -eq 3 ]; then
+              echo "ERROR: Site health check failed after 3 attempts"
+              exit 1
+            fi
+            sleep 10
+          done
+
+      - name: Deployment Success Summary
+        run: |
+          echo "## Deployment Successful ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment URL**: ${{ secrets.PUBLIC_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Health Check**: ✅ Passed" >> $GITHUB_STEP_SUMMARY
+          echo "**Container Status**: ✅ Healthy" >> $GITHUB_STEP_SUMMARY
 
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build, docker-build, deploy-vps]
     if: always()
 
     steps:
-      - name: Check build status
+      - name: Check pipeline status
         run: |
           if [ "${{ needs.build.result }}" != "success" ]; then
             echo "❌ Build failed. Check logs above."
             exit 1
           fi
-          echo "✅ Build passed and auto-deployment via Dokploy initiated!"
+          if [ "${{ needs.docker-build.result }}" != "success" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "❌ Docker build failed. Check logs above."
+            exit 1
+          fi
+          if [ "${{ needs.deploy-vps.result }}" != "success" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "❌ VPS deployment failed. Check logs above."
+            exit 1
+          fi
+          echo "✅ CI/CD pipeline completed successfully!"
