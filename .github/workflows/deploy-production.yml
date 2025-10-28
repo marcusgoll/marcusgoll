@@ -46,7 +46,7 @@ jobs:
         run: npm run lint
         continue-on-error: true
 
-      - name: Build Summary
+      - name: Auto-Deployment Summary
         run: |
           echo "## Build Complete ✅" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -54,42 +54,21 @@ jobs:
           echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
-          echo "To deploy to VPS, SSH into your server and run:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "cd /path/to/marcusgoll" >> $GITHUB_STEP_SUMMARY
-          echo "./deploy.sh" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Server**: http://178.156.129.179:3000" >> $GITHUB_STEP_SUMMARY
-
-  deploy:
-    name: Deploy to Dokploy
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.result == 'success'
-
-    steps:
-      - name: Trigger Dokploy deployment
-        run: |
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.DOKPLOY_API_KEY }}" \
-            -d '{"applicationId":"marcusgoll-nextjs-app"}' \
-            "${{ secrets.DOKPLOY_WEBHOOK_URL }}/api/applications/deploy"
-        continue-on-error: true
-
-      - name: Deployment notification
-        run: |
-          echo "✅ Deployment triggered on Dokploy"
-          echo "Application: marcusgoll-nextjs-app"
-          echo "Environment: Production (test.marcusgoll.com)"
-          echo "Status: Watch deployment at https://deploy.marcusgoll.com"
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "### Auto-Deployment Triggered 🚀" >> $GITHUB_STEP_SUMMARY
+            echo "Dokploy will automatically deploy this to production:" >> $GITHUB_STEP_SUMMARY
+            echo "- **URL**: https://test.marcusgoll.com" >> $GITHUB_STEP_SUMMARY
+            echo "- **Dashboard**: https://deploy.marcusgoll.com" >> $GITHUB_STEP_SUMMARY
+            echo "- **Status**: Watch the Dokploy dashboard for deployment progress" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Pull Request Build" >> $GITHUB_STEP_SUMMARY
+            echo "Build completed but deployment is skipped for PR branches." >> $GITHUB_STEP_SUMMARY
+          fi
 
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [build, deploy]
+    needs: [build]
     if: always()
 
     steps:
@@ -99,13 +78,4 @@ jobs:
             echo "❌ Build failed. Check logs above."
             exit 1
           fi
-          echo "✅ Build passed!"
-
-      - name: Check deployment status
-        run: |
-          if [ "${{ needs.deploy.result }}" != "success" ]; then
-            echo "⚠️  Deployment may have failed or is pending."
-            echo "Check Dokploy dashboard: https://deploy.marcusgoll.com"
-          else
-            echo "✅ Deployment triggered successfully"
-          fi
+          echo "✅ Build passed and auto-deployment via Dokploy initiated!"
