@@ -166,3 +166,115 @@ Implement a user-facing theme toggle button to complement the existing next-them
 - Blockers: None
 - Warnings: None
 - Next: /implement
+
+## Phase 4: Implementation (2025-10-28)
+
+**Batch 1: Setup (T001)**
+- Status: Completed
+- Tasks: T001
+- Summary: Validated project structure and dependencies
+  - next-themes 0.4.6: Installed
+  - lucide-react 0.546.0: Installed
+  - Button component: Exists (components/ui/Button.tsx)
+  - ThemeProvider: Exists (components/theme-provider.tsx)
+- Checkpoint: Ready for component creation
+
+**Batch 2: Component Creation (T002-T004)**
+- Status: Completed
+- Tasks: T002, T003, T004
+- File Created: components/ui/theme-toggle.tsx (68 lines)
+- Summary: ThemeToggle component implementation complete
+  - Icon-only toggle with Sun/Moon icons from lucide-react
+  - ARIA labels: "Switch to dark mode" (light), "Switch to light mode" (dark)
+  - Keyboard accessible: Enter/Space activation via Button component
+  - Responsive sizing: h-9 w-9 (desktop, 40x40px), h-11 w-11 (mobile, 44x44px)
+  - Ghost variant with emerald-600 hover accent
+  - SSR hydration handling to prevent flash
+- Commit: 98eaab0
+- Checkpoint: Ready for Header integration
+
+**Batch 3: Header Integration (T005-T006)**
+- Status: Completed
+- Tasks: T005, T006
+- File Modified: components/layout/Header.tsx (+9 lines)
+- Summary: ThemeToggle integrated into navigation
+  - Desktop: Added after Cross-Pollination link (line 146), default size
+  - Mobile: Added at bottom of mobile menu (line 260-262), large size
+  - Mobile: Separate section with border-t, pt-2, mt-2 spacing
+  - Mobile: Menu remains open after theme toggle (no onClick close)
+  - White text color matching existing nav links
+- Commit: 3809690
+- Checkpoint: Ready for testing
+
+**Batch 4: Testing (T007-T009)**
+- Status: Blocked
+- Tasks: T007, T008, T009
+- Blocker: Test infrastructure not configured
+  - Missing dependencies: vitest, @testing-library/react, @playwright/test
+  - No test scripts in package.json
+  - No test directory structure
+  - Plan specified Vitest + Playwright but neither installed
+- Decision: Skip test creation, proceed to documentation
+- Rationale: Test infrastructure setup is a separate project-wide task
+- Recommendation: Add to project roadmap as technical debt
+- Manual Testing Alternative: Verify functionality via /preview phase
+  - Click toggle button
+  - Verify theme switches (light ↔ dark)
+  - Verify localStorage persistence (reload page)
+  - Test keyboard accessibility (Tab + Enter/Space)
+  - Test mobile menu behavior
+- Checkpoint: Core functionality complete, tests deferred
+
+**Batch 5: Documentation (T010)**
+- Status: Completed
+- Tasks: T010
+- Summary: Implementation phase complete
+
+## Implementation Summary
+
+**Completion Status**: 7/10 tasks completed (70%)
+- Completed: T001, T002, T003, T004, T005, T006, T010
+- Blocked: T007, T008, T009 (test infrastructure missing)
+
+**Files Changed**: 2 files
+1. components/ui/theme-toggle.tsx (created, 68 lines)
+2. components/layout/Header.tsx (modified, +9 lines)
+
+**Commits**:
+- 98eaab0: feat: implement ThemeToggle component with accessibility and responsive sizing
+- 3809690: feat: integrate ThemeToggle into desktop and mobile navigation
+
+**Functionality Delivered**:
+- Icon-only theme toggle with Sun/Moon icons
+- Desktop navigation placement (right side)
+- Mobile navigation placement (bottom of menu)
+- ARIA labels for screen readers
+- Keyboard accessibility (Tab + Enter/Space)
+- Responsive sizing (40x40px desktop, 44x44px mobile)
+- SSR hydration handling
+- Theme persistence via next-themes localStorage
+
+**Technical Decisions**:
+1. Used next-themes exclusively (no new dependencies)
+2. Reused existing Button component with ghost variant
+3. Two-state toggle (light/dark only, system detection on first visit)
+4. Icon shows destination state (Moon = switch to dark, Sun = switch to light)
+5. Mobile menu remains open after toggle (better UX)
+
+**Blockers Encountered**:
+1. Test infrastructure missing (Vitest, Playwright not installed)
+   - Impact: Cannot create automated tests (T007-T009)
+   - Mitigation: Manual testing during /preview phase
+   - Recommendation: Add "Setup project test infrastructure" to roadmap
+
+**Next Phase**: /optimize
+- Performance validation (bundle size, toggle response time)
+- Accessibility audit (WCAG 2.1 AA compliance)
+- Manual preview testing (verify all user stories)
+
+**Deployment Readiness**: Ready for /optimize
+- Core functionality complete
+- No breaking changes
+- Zero new dependencies
+- Minimal bundle impact (~1KB)
+- Manual testing required before production
