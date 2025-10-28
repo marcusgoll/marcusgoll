@@ -81,3 +81,44 @@ Automatic HTTPS certificate management using Caddy server with Let's Encrypt int
 
 ## Last Updated
 2025-10-28T12:10:00Z
+
+## Phase 2: Tasks (2025-10-28 12:30)
+
+**Summary**:
+- Total tasks: 18
+- User story tasks: 9 (US1: 3, US2: 1, US3: 2, US4: 1, US6: 2)
+- Parallel opportunities: 11
+- Setup tasks: 3
+- Validation tasks: 8
+- Task file: specs/048-ssl-tls-letsencrypt/tasks.md
+
+**Checkpoint**:
+- ✅ Tasks generated: 18
+- ✅ User story organization: Complete (by priority P1, P2)
+- ✅ Dependency graph: Created (US1 blocks US2/US3, US6 depends on US1/US3)
+- ✅ MVP strategy: Defined (US1-US4 only, defer US6 SSL Labs validation)
+- ✅ REUSE analysis: 3 existing components identified (Caddyfile, docker-compose.prod.yml, Dockerfile)
+- 📋 Ready for: /analyze
+
+**Task Breakdown**:
+- Phase 1 (Setup): 3 tasks - Docker Compose validation, Caddyfile validation, deployment checklist creation
+- Phase 2 (Certificate Persistence - US1): 3 tasks - Add Caddy service, add volume, update Next.js port
+- Phase 3 (HTTP Redirect & HSTS - US2/US3): 3 tasks - Verify redirect, add HSTS to all domains
+- Phase 4 (Documentation - US4): 1 task - Document DNS validation procedure
+- Phase 5 (Validation & Polish): 8 tasks - Post-deployment verification, SSL Labs scan, documentation updates
+
+**Implementation Notes**:
+- Infrastructure-only feature (no application code changes)
+- Direct-prod deployment model (no staging)
+- Caddy provides automatic HTTPS, HTTP redirect, certificate renewal
+- Manual configuration needed for HSTS headers and volume persistence
+- Rollback consideration: HSTS caching (6-month enforcement)
+- Estimated effort: 6-8 hours
+
+**Key Decisions**:
+- Task organization by user story priority (P1 MVP, P2 enhancement)
+- 11 parallel opportunities identified (validation tasks, documentation)
+- Certificate persistence (US1) blocks all SSL functionality
+- SSL Labs validation (US6) deferred to enhancement phase
+- DNS validation checklist prevents issuance failures
+
