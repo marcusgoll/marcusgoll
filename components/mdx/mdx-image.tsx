@@ -5,6 +5,7 @@
  */
 
 import Image from 'next/image';
+import { shimmerDataURL } from '@/lib/utils/shimmer';
 
 interface MDXImageProps {
   src: string;
@@ -32,19 +33,28 @@ export function MDXImage({ src, alt, width = 800, height = 450, priority = false
         width={width}
         height={height}
         priority={priority}
+        placeholder="blur"
+        blurDataURL={shimmerDataURL(width, height)}
         className="rounded-lg w-full h-auto my-6"
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
       />
     );
   }
 
-  // External images (HTTP/HTTPS)
+  // External images (HTTP/HTTPS) - Use Next.js Image with blur placeholder
+  // Note: External domains must be added to next.config.ts remotePatterns
   if (src.startsWith('http://') || src.startsWith('https://')) {
     return (
-      <img
+      <Image
         src={src}
         alt={alt}
+        width={width}
+        height={height}
+        priority={priority}
+        placeholder="blur"
+        blurDataURL={shimmerDataURL(width, height)}
         className="rounded-lg w-full h-auto my-6"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
       />
     );
   }
@@ -59,6 +69,8 @@ export function MDXImage({ src, alt, width = 800, height = 450, priority = false
       width={width}
       height={height}
       priority={priority}
+      placeholder="blur"
+      blurDataURL={shimmerDataURL(width, height)}
       className="rounded-lg w-full h-auto my-6"
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
     />

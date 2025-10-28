@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Post } from '@/lib/posts';
 import { getPrimaryTrack } from '@/lib/utils/content';
 import TrackBadge from '@/components/blog/TrackBadge';
+import { shimmerDataURL } from '@/lib/utils/shimmer';
 
 interface FeaturedPostsSectionProps {
   featuredPosts: Post[];
@@ -67,6 +68,8 @@ export default function FeaturedPostsSection({
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 640px"
                     priority
+                    placeholder="blur"
+                    blurDataURL={shimmerDataURL(1280, 720)}
                   />
                   {/* Featured Badge Overlay */}
                   <div className="absolute top-4 right-4 rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground shadow-lg">

@@ -181,6 +181,62 @@ System is already using Next.js Image component. This is a refinement and standa
 - Image cache: `.next/cache/images/` will be created on first image request
 - Status: Build successful, ready for blur placeholder implementation
 
+#### Batch 4: Shimmer Utility + Priority Identification (T007, T012) - COMPLETED
+
+✅ T007: Create shimmer placeholder utility in lib/utils/shimmer.ts
+- Created: lib/utils/shimmer.ts
+- Function: shimmerDataURL(width, height) returns base64-encoded SVG
+- Implementation: Animated gradient shimmer effect for blur placeholders
+- Usage: Import and use with placeholder="blur" and blurDataURL props
+- Status: Utility ready for component integration
+
+✅ T012: Identify above-the-fold images requiring priority prop
+- Audited: Homepage components (FeaturedPostsSection, MagazineMasonry)
+- Above-the-fold images identified:
+  1. FeaturedPostsSection: Both featured post images (up to 2) - ALREADY HAS priority={true} (line 69)
+  2. MagazineMasonry hero: Featured hero image - ALREADY HAS priority={true} (line 44)
+  3. MagazineMasonry grid: Grid images are below fold - correctly NO priority
+- Status: Priority props already correctly implemented, no changes needed
+- Decision: T013 and T014 will verify existing implementation (no modifications required)
+
+#### Batch 5: Component Updates (T008-T010, T013-T014) - COMPLETED
+
+✅ T008: Add blur placeholder to PostCard component
+- File: components/blog/PostCard.tsx
+- Added: import shimmerDataURL from '@/lib/utils/shimmer'
+- Added: placeholder="blur" and blurDataURL={shimmerDataURL(800, 450)} to Image
+- Result: Blog post cards now show shimmer effect while images load
+- Status: Complete
+
+✅ T009: Update MDXImage component to add blur placeholders
+- File: components/mdx/mdx-image.tsx
+- Added: import shimmerDataURL from '@/lib/utils/shimmer'
+- Added: placeholder="blur" and blurDataURL to all three Image branches (local, external, relative)
+- REMOVED: Raw img tag for external images (lines 44-49) - now uses Image component
+- Result: All MDX images (local and external) now use Next.js Image optimization with blur
+- Status: Complete, external images now optimized (requires remotePatterns configuration)
+
+✅ T010: Add blur placeholder to MagazineMasonry hero and grid images
+- File: components/home/MagazineMasonry.tsx
+- Added: import shimmerDataURL from '@/lib/utils/shimmer'
+- Updated hero: placeholder="blur" and blurDataURL={shimmerDataURL(1200, 600)}
+- Updated grid: placeholder="blur" and blurDataURL={shimmerDataURL(600, 400)}
+- Result: Magazine layout shows shimmer on both hero and grid cards
+- Status: Complete
+
+✅ T013: Add priority prop to featured posts in FeaturedPostsSection
+- File: components/home/FeaturedPostsSection.tsx
+- Verification: priority={true} already present on line 70
+- Added: blur placeholder (shimmerDataURL(1280, 720)) for consistency
+- Result: Featured posts already have priority, now also have blur placeholders
+- Status: Complete (verified + enhanced)
+
+✅ T014: Verify MagazineMasonry hero already has priority prop
+- File: components/home/MagazineMasonry.tsx
+- Verification: priority={true} confirmed on line 45
+- Result: Hero image correctly prioritized for immediate loading
+- Status: Complete (verified, no changes needed)
+
 **Task Breakdown by Phase**:
 - Phase 1 (Setup): T001-T003 (3 tasks, 1-2 hours)
 - Phase 2 (US1 Configuration): T004-T006 (3 tasks, 2-3 hours)

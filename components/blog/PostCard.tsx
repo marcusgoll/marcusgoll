@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Post } from '@/lib/posts';
 import TrackBadge from './TrackBadge';
+import { shimmerDataURL } from '@/lib/utils/shimmer';
 
 interface PostCardProps {
   post: Post;
@@ -34,6 +35,8 @@ export default function PostCard({ post, track }: PostCardProps) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            placeholder="blur"
+            blurDataURL={shimmerDataURL(800, 450)}
           />
         </div>
       )}
