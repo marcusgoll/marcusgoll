@@ -16,9 +16,10 @@ deployment:
     url: null
     deployment_id: null
     deployed_at: null
+    deployment_type: manual-vps
 workflow:
-  phase: optimize
-  status: completed
+  phase: ship:deploy-manual
+  status: manual-deployment-required
   completed_phases:
     - spec
     - plan
@@ -29,8 +30,12 @@ workflow:
   failed_phases: []
 quality_gates:
   pre_flight:
-    status: not_started
-    checks: []
+    status: passed
+    checks:
+      - docker-compose
+      - env
+      - dns-validation
+    timestamp: "2025-10-28T18:31:17Z"
   code_review:
     status: passed
     critical_issues: 0
@@ -39,9 +44,10 @@ quality_gates:
     test_passed: false
 manual_gates:
   preview:
-    status: not_started
-    approved: false
-    approved_at: null
+    status: not-applicable
+    approved: true
+    approved_at: "2025-10-28T18:31:34Z"
+    note: Infrastructure-only feature - no UI to preview locally
   validate_staging:
     status: not_started
     approved: false
