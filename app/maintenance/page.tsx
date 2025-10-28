@@ -48,15 +48,15 @@ export default function MaintenancePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-navy-900 px-4 py-16 sm:px-6 lg:px-8">
       {/* Main Content Container */}
-      <div className="w-full max-w-md text-center">
+      <div className="w-full max-w-md text-center lg:max-w-2xl">
         {/* Image Element */}
         <div className="mb-12 flex justify-center">
           <Image
             src="/images/maintenance.png"
             alt="Construction worker building"
-            width={500}
-            height={500}
-            className="h-screen max-h-96 w-auto object-contain sm:max-h-full"
+            width={700}
+            height={700}
+            className="max-h-[400px] w-auto object-contain sm:max-h-[500px] lg:max-h-[700px]"
             priority
           />
         </div>

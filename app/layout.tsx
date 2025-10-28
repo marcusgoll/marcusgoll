@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import { LayoutWrapper } from "@/app/components/layout-wrapper";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
@@ -51,10 +50,8 @@ export default function RootLayout({
             </>
           )}
 
-          {/* Site Layout */}
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          {/* Site Layout with conditional Header/Footer */}
+          <LayoutWrapper>{children}</LayoutWrapper>
         </ThemeProvider>
       </body>
     </html>
