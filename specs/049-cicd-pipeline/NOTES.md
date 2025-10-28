@@ -105,3 +105,47 @@ Rationale: CI/CD pipeline is an infrastructure feature focused on automation. No
 - No implementation details in specification ✅
 
 **Next Phase**: `/plan` - Generate design artifacts for implementation
+
+## Phase 2: Tasks (2025-10-28 14:45)
+
+**Summary**:
+- Total tasks: 45
+- User story tasks: 30
+- Parallel opportunities: 23 tasks marked [P]
+- Setup tasks: 3
+- Task file: specs/049-cicd-pipeline/tasks.md
+
+**Task Breakdown by Phase**:
+- Phase 1 (Setup): 3 tasks - Documentation and structure
+- Phase 2 (Foundational): 4 tasks - SSH keys and secrets configuration
+- Phase 3 (US1 - PR validation): 3 tasks - Lint, type-check, build pipeline
+- Phase 4 (US2 - Docker build): 5 tasks - GHCR push with buildx
+- Phase 5 (US3 - SSH deployment): 6 tasks - VPS deployment automation
+- Phase 6 (US4 - Rollback): 4 tasks - Automatic rollback on failure
+- Phase 7 (US5 - Notifications): 3 tasks - Slack/Discord webhooks
+- Phase 8 (US6 - Secrets): 3 tasks - Security audit and rotation
+- Phase 9 (US7 - Caching): 3 tasks - npm and Docker layer caching
+- Phase 10 (US8 - Integration tests): 3 tasks - API contract validation (DEFERRED)
+- Phase 11 (Polish): 8 tasks - Deployment tracking, documentation, testing
+
+**MVP Scope**: Phases 1-5 (US1-US3) = 22 tasks
+- Core CI/CD: PR validation → Docker build → SSH deployment → Health checks
+- Estimated: 12-20 hours to MVP
+
+**Reuse Identified**:
+- Existing workflow structure (deploy-production.yml)
+- Multi-stage Dockerfile (no changes needed)
+- docker-compose.prod.yml (pull and restart pattern)
+- Caddyfile (SSL + reverse proxy)
+- VPS SSH access (ssh hetzner alias)
+- Docker healthcheck (/api/health)
+
+**Checkpoint**:
+- ✅ Tasks generated: 45 concrete tasks
+- ✅ User story organization: Complete (US1-US8)
+- ✅ Dependency graph: Created (10 phases with clear dependencies)
+- ✅ MVP strategy: Defined (22 tasks for core CI/CD)
+- ✅ Parallel opportunities: 23 tasks can run concurrently
+- 📋 Ready for: /analyze
+
+**Next Phase**: /analyze - Validate architecture, identify risks, generate implementation hints
