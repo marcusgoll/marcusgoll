@@ -198,6 +198,13 @@ ssh -i ~/.ssh/github_actions_ed25519 hetzner "docker --version"
 | VPS_USER | SSH username on VPS | marcus | Current SSH user (check with `whoami` after SSH) |
 | VPS_DEPLOY_PATH | Docker Compose directory path | /home/marcus/marcusgoll | Path where docker-compose.prod.yml is located |
 
+**Build-time Secrets** (required for Next.js build):
+
+| Secret Name | Description | Example Value | Where to Get It |
+|------------|-------------|---------------|-----------------|
+| GHOST_API_URL | Ghost CMS API URL (demo or production) | https://demo.ghost.io | Ghost admin panel → Integrations → Custom Integration |
+| GHOST_CONTENT_API_KEY | Ghost Content API key (demo or production) | 22444f78447824223cefc48062 | Ghost admin panel → Integrations → Custom Integration → Content API key |
+
 **Optional Secrets** (for notifications):
 
 | Secret Name | Description | Example Value | Where to Get It |

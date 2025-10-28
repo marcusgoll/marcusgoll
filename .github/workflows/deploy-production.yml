@@ -8,6 +8,12 @@ on:
     branches:
       - main
 
+# Security: Explicit permissions (principle of least privilege)
+permissions:
+  contents: read      # Read code for checkout
+  packages: write     # Push to GitHub Container Registry (GHCR)
+  actions: read       # Read workflow status for summaries
+
 jobs:
   build:
     name: Build and Test Application
@@ -38,9 +44,9 @@ jobs:
           PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.PUBLIC_URL }}
           NODE_ENV: "production"
-          # Ghost CMS (using placeholder values for build)
-          GHOST_API_URL: "https://demo.ghost.io"
-          GHOST_CONTENT_API_KEY: "22444f78447824223cefc48062" # Demo key
+          # Ghost CMS (using demo values from secrets for consistency)
+          GHOST_API_URL: ${{ secrets.GHOST_API_URL }}
+          GHOST_CONTENT_API_KEY: ${{ secrets.GHOST_CONTENT_API_KEY }}
           # Optional vars (not required for build)
           DATABASE_URL: ""
           NEXTAUTH_SECRET: ""
@@ -132,7 +138,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
-            cd ${{ secrets.VPS_DEPLOY_PATH }}
+            cd "${{ secrets.VPS_DEPLOY_PATH }}"
 
             # Capture current image tag for rollback
             CURRENT_TAG=$(docker inspect marcusgoll-nextjs-prod --format='{{index .Config.Image}}' 2>/dev/null || echo 'none')
