@@ -1,0 +1,25 @@
+// Prisma schema for self-hosted Supabase PostgreSQL
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Supabase uses connection pooling via Supavisor
+  // Use direct URL for migrations: env("DIRECT_DATABASE_URL")
+}
+
+// Example model - customize based on your needs
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}

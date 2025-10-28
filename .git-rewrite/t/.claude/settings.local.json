@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/Coding/Stocks/.spec-flow/templates/**)",
+      "Bash(git rev-parse:*)",
+      "Bash(head:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
