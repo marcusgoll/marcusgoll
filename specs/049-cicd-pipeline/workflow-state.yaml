@@ -7,21 +7,22 @@ feature:
   title: CI/CD Pipeline (GitHub Actions)
   branch_name: feature/049-cicd-pipeline
   created: 2025-10-28T19:27:53Z
-  last_updated: 2025-10-28T19:27:53Z
+  last_updated: "2025-10-28T20:08:09Z"
   roadmap_status: in_progress # Options: backlog, next, in_progress, shipped
   github_issue: 29
 deployment_model: staging-prod # Options: staging-prod, direct-prod, local-only
 workflow:
-  phase: spec-flow
-  status: in_progress # Options: in_progress, completed, failed, pending
-  completed_phases: []
+  phase: optimize
+  status: completed # Options: in_progress, completed, failed, pending
+  completed_phases: [spec, clarify, plan, tasks, analyze, implementation, optimize]
   failed_phases: []
-  manual_gates: {}
+  manual_gates:
+    ssh_setup: pending # User must complete SSH key setup and GitHub Secrets configuration
 context:
   token_budget:
-    phase: planning
-    budget: 75000
-    estimated_usage: 0
+    phase: implementation
+    budget: 100000
+    estimated_usage: 57692
     compaction_needed: false
 deployment:
   staging:
@@ -35,13 +36,21 @@ deployment:
     url: null
     deployment_ids: {}
 artifacts:
-  spec: specs/cicd-pipeline/spec.md
-  plan: null
-  tasks: null
+  spec: specs/049-cicd-pipeline/spec.md
+  plan: specs/049-cicd-pipeline/plan.md
+  tasks: specs/049-cicd-pipeline/tasks.md
+  implementation_notes: specs/049-cicd-pipeline/NOTES.md
+  deployment_log: specs/049-cicd-pipeline/deployment-log.md
   optimization_report: null
   staging_validation: null
   ship_report: null
-quality_gates: {}
+quality_gates:
+  pre_flight:
+    status: pending # Requires SSH secrets configuration
+    notes: "User must configure GitHub Secrets before first deployment"
+  code_review:
+    status: pending # Will be checked in /optimize phase
+    notes: "Workflow syntax validated, deployment logic reviewed"
 metadata:
   schema_version: "2.0.0"
   workflow_version: "2.0.0"
