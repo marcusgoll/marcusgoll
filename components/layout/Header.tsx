@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 /**
  * Header component - Site navigation with dropdown menus
@@ -140,6 +141,9 @@ export default function Header() {
           >
             Cross-Pollination
           </Link>
+
+          {/* Theme Toggle - Desktop */}
+          <ThemeToggle className="text-white" />
         </div>
 
         {/* Mobile Menu Button */}
@@ -251,6 +255,11 @@ export default function Header() {
             >
               Cross-Pollination
             </Link>
+
+            {/* Theme Toggle - Mobile */}
+            <div className="border-t border-gray-700 pt-2 mt-2">
+              <ThemeToggle size="mobile" className="text-white w-full justify-start" />
+            </div>
           </div>
         </div>
       )}
