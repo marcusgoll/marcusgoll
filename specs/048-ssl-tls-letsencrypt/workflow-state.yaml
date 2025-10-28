@@ -6,7 +6,6 @@ feature:
   branch_name: feature/048-ssl-tls-letsencrypt
   github_issue: 30
   roadmap_status: in-progress
-
 deployment:
   model: remote-direct
   staging:
@@ -17,13 +16,12 @@ deployment:
     url: null
     deployment_id: null
     deployed_at: null
-
 workflow:
-  phase: initialize
-  status: in_progress
-  completed_phases: []
+  phase: spec
+  status: completed
+  completed_phases:
+    - spec
   failed_phases: []
-
 quality_gates:
   pre_flight:
     status: not_started
@@ -34,7 +32,6 @@ quality_gates:
   rollback_capability:
     status: not_started
     test_passed: false
-
 manual_gates:
   preview:
     status: not_started
@@ -44,12 +41,10 @@ manual_gates:
     status: not_started
     approved: false
     approved_at: null
-
 artifacts:
   spec: specs/048-ssl-tls-letsencrypt/spec.md
   plan: specs/048-ssl-tls-letsencrypt/plan.md
   tasks: specs/048-ssl-tls-letsencrypt/tasks.md
-
 token_budget:
   phase: initialize
   used: 0
