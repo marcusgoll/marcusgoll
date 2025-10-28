@@ -331,6 +331,57 @@ Config Files:
 
 ---
 
+## Phase 1: Planning (2025-10-28)
+
+**Summary**:
+- Architecture decisions: 5 key patterns (dynamic imports, next/font, web-vitals RUM, bundle analyzer, Lighthouse CI)
+- Reuse opportunities: 7 existing components (GA4 integration, SSG pattern, Image optimization, analytics infrastructure)
+- New components: 6 (app/fonts.ts, lib/web-vitals-tracking.ts, components/providers/WebVitalsReporter.tsx, Lighthouse CI workflow, lighthouserc.json, analyze-bundle.sh)
+- Critical gaps: 5 identified (no font optimization, no bundle analysis tooling, no Web Vitals RUM tracking, no Lighthouse CI, Dialog component loaded eagerly)
+
+**Checkpoint**:
+- ✅ Planning complete: Implementation plan documented
+- ✅ Research complete: Codebase patterns identified
+- ✅ Reuse analysis: 7 existing components to extend
+- ✅ Architecture: 5 optimization patterns defined
+- 📋 Ready for: /tasks
+
+---
+
+## Phase 2: Tasks (2025-10-28)
+
+**Summary**:
+- Total tasks: 33
+- Parallel opportunities: 10 tasks marked [P]
+- Phased approach: 7 phases (Setup & Baseline, Font Optimization, Code Splitting, Web Vitals RUM, Lighthouse CI, Validation & Testing, Documentation & Deployment)
+- MVP scope: Phases 1-4 (measurement, fonts, code splitting, monitoring)
+- Task file: specs/049-performance-optimization/tasks.md
+
+**Checkpoint**:
+- ✅ Tasks generated: 33
+- ✅ Dependency graph: Created (7 phases, sequential with parallel opportunities)
+- ✅ MVP strategy: Defined (Phases 1-4 for core optimizations)
+- ✅ Parallel execution: 10 tasks can run simultaneously
+- 📋 Ready for: /analyze
+
+**Task Breakdown by Phase**:
+- Phase 1 (Setup & Baseline): 4 tasks (T001-T004)
+- Phase 2 (Font Optimization): 4 tasks (T010-T013)
+- Phase 3 (Code Splitting): 4 tasks (T015-T018)
+- Phase 4 (Web Vitals RUM): 6 tasks (T020-T025)
+- Phase 5 (Lighthouse CI): 5 tasks (T030-T034)
+- Phase 6 (Validation & Testing): 6 tasks (T040-T045)
+- Phase 7 (Documentation & Deployment): 4 tasks (T050-T053)
+
+**Key Task Sequencing Decisions**:
+1. Baseline metrics first (Phase 1) - establishes comparison baseline
+2. Font optimization next (Phase 2) - quick win with immediate CLS impact
+3. Code splitting follows (Phase 3) - depends on baseline bundle analysis
+4. Web Vitals tracking (Phase 4) - extends existing GA4 infrastructure
+5. Lighthouse CI last (Phase 5) - validates optimizations automatically
+
+---
+
 ## Last Updated
 
-2025-10-28T14:45:00Z (Specification Phase)
+2025-10-28T16:30:00Z (Task Breakdown Phase)
