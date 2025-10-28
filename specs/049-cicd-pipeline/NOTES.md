@@ -149,3 +149,246 @@ Rationale: CI/CD pipeline is an infrastructure feature focused on automation. No
 - 📋 Ready for: /analyze
 
 **Next Phase**: /analyze - Validate architecture, identify risks, generate implementation hints
+
+## Phase 4: Implementation (2025-10-28)
+
+### Batch 1: Documentation Setup (T001-T003)
+
+**T001: Create deployment tracking log structure**
+- Created: specs/049-cicd-pipeline/deployment-log.md
+- Format: Markdown table with Date, Commit SHA, Status, Duration, URL, Notes
+- Pattern: Append-only log for historical tracking
+
+**T002: Document SSH key setup procedure**
+
+**SSH Key Generation for GitHub Actions**:
+```bash
+# Generate Ed25519 SSH key pair for GitHub Actions
+ssh-keygen -t ed25519 -f ~/.ssh/github_actions_ed25519 -C "github-actions-ci-cd" -N ""
+
+# Output files:
+# - Private key: ~/.ssh/github_actions_ed25519 (copy to GitHub Secrets)
+# - Public key: ~/.ssh/github_actions_ed25519.pub (add to VPS)
+```
+
+**Add Public Key to VPS**:
+```bash
+# Option 1: Using ssh-copy-id (recommended)
+ssh-copy-id -i ~/.ssh/github_actions_ed25519.pub hetzner
+
+# Option 2: Manual (if ssh-copy-id unavailable)
+cat ~/.ssh/github_actions_ed25519.pub | ssh hetzner "cat >> ~/.ssh/authorized_keys"
+```
+
+**Validation**:
+```bash
+# Test SSH connection with new key
+ssh -i ~/.ssh/github_actions_ed25519 hetzner "docker --version"
+# Expected output: Docker version 24.x.x (or current version)
+```
+
+**T003: Document GitHub Secrets configuration**
+
+**Required GitHub Secrets** (navigate to: GitHub repo → Settings → Secrets and variables → Actions):
+
+| Secret Name | Description | Example Value | Where to Get It |
+|------------|-------------|---------------|-----------------|
+| VPS_SSH_PRIVATE_KEY | Full SSH private key content | -----BEGIN OPENSSH PRIVATE KEY----- ... -----END OPENSSH PRIVATE KEY----- | Content of ~/.ssh/github_actions_ed25519 |
+| VPS_HOST | VPS IP address or hostname | 123.456.789.10 or vpn.example.com | From Hetzner dashboard or `ssh hetzner` config |
+| VPS_USER | SSH username on VPS | marcus | Current SSH user (check with `whoami` after SSH) |
+| VPS_DEPLOY_PATH | Docker Compose directory path | /home/marcus/marcusgoll | Path where docker-compose.prod.yml is located |
+
+**Optional Secrets** (for notifications):
+
+| Secret Name | Description | Example Value | Where to Get It |
+|------------|-------------|---------------|-----------------|
+| SLACK_WEBHOOK_URL | Slack incoming webhook URL | https://hooks.slack.com/services/xxx/yyy/zzz | Slack workspace settings → Incoming Webhooks |
+| DISCORD_WEBHOOK_URL | Discord webhook URL | https://discord.com/api/webhooks/xxx/yyy | Discord server settings → Integrations → Webhooks |
+
+**Security Notes**:
+- Private keys are automatically masked in GitHub Actions logs
+- Never commit secrets to repository
+- Rotate SSH keys quarterly (see secret rotation procedure below)
+- Delete local private key after copying to GitHub Secrets
+
+Status: Batch 1 documentation complete (T001-T003)
+
+### Batch 2: SSH Infrastructure Setup (T005-T008)
+
+**IMPORTANT**: These tasks require manual execution by the user on their local machine and in GitHub UI.
+
+**T005: Generate SSH key pair for GitHub Actions**
+
+Instructions documented above (see T002). User must execute:
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/github_actions_ed25519 -C "github-actions-ci-cd" -N ""
+```
+
+**T006: Add GitHub Actions public key to VPS authorized_keys**
+
+Instructions documented above (see T002). User must execute:
+```bash
+ssh-copy-id -i ~/.ssh/github_actions_ed25519.pub hetzner
+```
+
+**T007: Add VPS_SSH_PRIVATE_KEY to GitHub Secrets**
+
+Manual steps required:
+1. Navigate to GitHub repository → Settings → Secrets and variables → Actions
+2. Click "New repository secret"
+3. Name: `VPS_SSH_PRIVATE_KEY`
+4. Value: Full content of `~/.ssh/github_actions_ed25519` (including headers)
+5. Click "Add secret"
+6. SECURITY: Delete local private key file after copying to GitHub
+
+**T008: Add VPS connection secrets to GitHub**
+
+Manual steps required (same navigation as T007):
+1. Add `VPS_HOST` secret (get value from `ssh hetzner` config or Hetzner dashboard)
+2. Add `VPS_USER` secret (typically "marcus" or current SSH user)
+3. Add `VPS_DEPLOY_PATH` secret (path where docker-compose.prod.yml is located)
+
+**Validation Checklist**:
+- [ ] SSH key pair generated successfully
+- [ ] Public key added to VPS authorized_keys
+- [ ] Private key added to GitHub Secrets
+- [ ] All 4 VPS connection secrets configured in GitHub
+- [ ] Local private key deleted for security
+
+Status: Batch 2 instructions documented (T005-T008) - REQUIRES MANUAL USER EXECUTION
+
+### Batch 3: PR Validation Workflow (T010-T012)
+
+**T010: Add type-check step to workflow before build**
+- Modified: .github/workflows/deploy-production.yml
+- Added: `npx tsc --noEmit` step after lint, before build
+- Fail-fast: Type errors now block PR merge
+
+**T011: Move lint step before build (fail-fast)**
+- Modified: .github/workflows/deploy-production.yml
+- Moved lint to run after dependencies, before build
+- Removed: `continue-on-error: true` flag
+- Effect: Lint errors now block build execution
+
+**T012: Update workflow name and summary for CI/CD**
+- Modified: .github/workflows/deploy-production.yml
+- Changed workflow name: "Build and Test" → "CI/CD Pipeline - Build, Test, Deploy"
+- Updated summary: Added lint/type-check status, removed Dokploy references
+- Effect: Clearer workflow purpose and CI/CD automation messaging
+
+**Changes Summary**:
+- Workflow name updated to reflect CI/CD pipeline
+- Lint and type-check now run before build (fail-fast)
+- All validation steps are now blocking (no continue-on-error)
+- Build summary shows validation step status
+
+Status: Batch 3 complete (T010-T012)
+
+### Batch 4: Docker Build Pipeline (T020-T024)
+
+**T020: Add Docker buildx setup step to workflow**
+- Modified: .github/workflows/deploy-production.yml
+- Added: New job `docker-build` after build job
+- Condition: Only runs on main branch push (`if: github.ref == 'refs/heads/main'`)
+- Action: `docker/setup-buildx-action@v3` for layer caching support
+
+**T021: Add GHCR login step to workflow**
+- Modified: .github/workflows/deploy-production.yml
+- Action: `docker/login-action@v3`
+- Registry: ghcr.io (GitHub Container Registry)
+- Auth: Automatic using `${{ secrets.GITHUB_TOKEN }}` (no manual secret needed)
+- User: `${{ github.actor }}` (current user triggering workflow)
+
+**T022: Add Docker build and push step to workflow**
+- Modified: .github/workflows/deploy-production.yml
+- Action: `docker/build-push-action@v5`
+- Context: Repository root (.)
+- Dockerfile: ./Dockerfile (existing multi-stage build)
+- Push: true (pushes to GHCR on success)
+- Tags: `latest` and `sha-<short-sha>` (see T023)
+- Build args: NODE_ENV=production, NEXT_PUBLIC_SITE_URL from secrets
+- Cache: GitHub Actions cache (type=gha) for 50%+ speedup
+
+**T023: Add short SHA tag for readability**
+- Modified: .github/workflows/deploy-production.yml
+- Generated: `SHORT_SHA=${GITHUB_SHA::7}` (first 7 chars of commit SHA)
+- Tag format: `ghcr.io/<owner>/marcusgoll:sha-<7-char-sha>`
+- Purpose: Human-readable image tags vs 40-character full SHA
+
+**T024: Add Docker build summary to workflow**
+- Modified: .github/workflows/deploy-production.yml
+- Content: Image tags pushed, commit SHA, registry name
+- Format: Markdown appended to `$GITHUB_STEP_SUMMARY`
+- Display: Shows in GitHub Actions workflow summary UI
+
+**Changes Summary**:
+- New `docker-build` job runs only on main branch
+- Automatic GHCR authentication using GITHUB_TOKEN
+- Docker images tagged with `latest` and `sha-<short-sha>`
+- GitHub Actions cache enabled for Docker layers (50%+ speedup)
+- Build summary shows image tags and registry info
+
+Status: Batch 4 complete (T020-T024)
+
+### Batch 5: SSH Deployment Automation (T030-T035)
+
+**T030: Add VPS deployment job to workflow**
+- Modified: .github/workflows/deploy-production.yml
+- Added: New job `deploy-vps` after docker-build
+- Depends on: `needs: [build, docker-build]`
+- Condition: Only main branch + all previous jobs successful
+- Runs on: ubuntu-latest
+
+**T031: Add SSH action step for VPS deployment**
+- Modified: .github/workflows/deploy-production.yml
+- Action: `appleboy/ssh-action@v1.0.0`
+- Host: `${{ secrets.VPS_HOST }}`
+- Username: `${{ secrets.VPS_USER }}`
+- Key: `${{ secrets.VPS_SSH_PRIVATE_KEY }}`
+- Script: Multi-line bash commands (see T032)
+
+**T032: Write deployment script for SSH action**
+- Modified: .github/workflows/deploy-production.yml (inline script)
+- Commands executed on VPS:
+  1. `cd ${{ secrets.VPS_DEPLOY_PATH }}` - Navigate to deployment directory
+  2. Capture current Docker image tag for rollback
+  3. `docker-compose -f docker-compose.prod.yml pull nextjs` - Pull latest image from GHCR
+  4. `docker-compose -f docker-compose.prod.yml up -d --no-deps nextjs` - Restart container
+  5. Verify container status with docker ps
+
+**T033: Add container health check wait logic**
+- Modified: .github/workflows/deploy-production.yml
+- Logic: Loop 6 times (30 seconds total)
+- Command: `docker inspect --format='{{.State.Health.Status}}' marcusgoll-nextjs-prod`
+- Success: Container status = "healthy"
+- Failure: Exit 1 if not healthy after 30 seconds
+- Triggers: Rollback on failure (Phase 6 feature)
+
+**T034: Add post-deployment health check via curl**
+- Modified: .github/workflows/deploy-production.yml
+- New step: After SSH action
+- Command: `curl -f -m 3 --retry 3 --retry-delay 10 ${{ secrets.PUBLIC_URL }}`
+- Success: HTTP 200 response from site
+- Failure: Exit 1 after 3 retry attempts
+- Purpose: Verify site is publicly accessible
+
+**T035: Add deployment success summary to workflow**
+- Modified: .github/workflows/deploy-production.yml
+- Content: Deployment URL, commit SHA, branch, actor, health check status
+- Format: Markdown appended to `$GITHUB_STEP_SUMMARY`
+- Display: Shows in GitHub Actions workflow summary UI
+
+**Changes Summary**:
+- New `deploy-vps` job deploys to Hetzner VPS via SSH
+- Deployment script: Pull latest image → Restart container → Health check
+- Container health check: 30 second wait for Docker healthcheck
+- Post-deployment health check: Curl site URL with 3 retries
+- Deployment summary: Shows deployment status and health checks
+- CI summary job: Now checks build, docker-build, and deploy-vps results
+
+**MVP Complete**: US1-US3 implemented
+- US1: PR validation (lint, type-check, build)
+- US2: Docker build and push to GHCR
+- US3: SSH deployment to VPS with health checks
+
+Status: Batch 5 complete (T030-T035) - MVP READY FOR TESTING
