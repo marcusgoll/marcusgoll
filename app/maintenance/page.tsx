@@ -7,6 +7,7 @@
  * Route: /maintenance
  * Accessibility: WCAG 2.1 AA compliant
  * Performance: <1.5s FCP target
+ * Auto-deployment: Enabled via GitHub Actions → Dokploy
  */
 
 import type { Metadata } from 'next'
