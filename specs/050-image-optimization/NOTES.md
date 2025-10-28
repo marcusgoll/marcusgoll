@@ -92,3 +92,123 @@ System is already using Next.js Image component. This is a refinement and standa
 
 ## Last Updated
 2025-10-28T21:45:00Z
+
+## Phase 2: Tasks (2025-10-28)
+
+**Summary**:
+- Total tasks: 27
+- User story tasks: 19 (US1-US5 organized by priority P1-P2)
+- Parallel opportunities: 14 tasks marked [P]
+- Setup tasks: 3 (baseline capture, codebase audit)
+- Task file: specs/050-image-optimization/tasks.md
+
+## Phase 4: Implementation (2025-10-28)
+
+### Performance Baseline (Before Optimization)
+
+**Metrics to Capture:**
+- LCP (Largest Contentful Paint): TBD
+- CLS (Cumulative Layout Shift): TBD
+- FCP (First Contentful Paint): TBD
+- TTI (Time to Interactive): TBD
+- Image bytes transferred: TBD
+- Lighthouse Performance Score: TBD
+
+**Baseline Capture Instructions:**
+1. Run local dev server: `npm run dev`
+2. Open Chrome DevTools → Lighthouse
+3. Run audit in "Desktop" mode with "Clear storage" checked
+4. Record metrics above
+5. Run audit in "Mobile" mode (3G throttling)
+6. Record metrics above
+7. Open Network tab → Filter by "Img" → Reload page
+8. Sum total KB transferred for all images
+
+**Status:** Baseline will be captured in /optimize phase (after implementation complete)
+
+### Task Completion Log
+
+#### Batch 1: Setup (T001-T003) - COMPLETED
+
+✅ T001: Create baseline performance capture checklist
+- Added Performance Baseline section with metrics template
+- Instructions for Lighthouse audit and Network tab analysis
+- Will populate actual metrics during /optimize phase
+
+✅ T002: Verify Next.js Image component usage across codebase
+- Command: `grep -r "next/image" components/ --include="*.tsx"`
+- Found 5 files using Next.js Image component:
+  1. components/blog/PostCard.tsx
+  2. components/home/FeaturedPostsSection.tsx
+  3. components/home/MagazineMasonry.tsx
+  4. components/home/Sidebar.tsx
+  5. components/mdx/mdx-image.tsx
+- Status: Good foundation, all major components already using Next.js Image
+
+✅ T003: Verify no raw img tags exist in components
+- Command: `grep -r "<img" components/ --include="*.tsx" | grep -v "next/image"`
+- Found 2 occurrences:
+  1. components/mdx/mdx-components.tsx: Uses raw img tag (fallback pattern)
+  2. components/mdx/mdx-image.tsx: Uses raw img tag for external images (lines 44-49)
+- Action: Will remove external image fallback in T009 (MDXImage blur placeholder task)
+- Status: Minor cleanup needed, will be addressed in Phase 3
+
+#### Batch 2: Configuration (T004-T005) - COMPLETED
+
+✅ T004: Add image optimization configuration to next.config.ts
+- Added formats: ['image/avif', 'image/webp'] for modern image formats
+- Added deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840] for responsive breakpoints
+- Added imageSizes: [16, 32, 48, 64, 96, 128, 256, 384] for smaller UI elements
+- Added minimumCacheTTL: 60 seconds for image caching
+- Status: Configuration complete, ready for optimization
+
+✅ T005: Add security configuration for images in next.config.ts
+- Added dangerouslyAllowSVG: false (blocks XSS risk from SVG uploads)
+- Added contentDispositionType: 'attachment' (forces SVG downloads)
+- Added remotePatterns: [] (empty array, will add domains on-demand)
+- Replaced deprecated domains array with remotePatterns
+- Status: Security hardening complete
+
+#### Batch 3: Build Verification (T006) - COMPLETED
+
+✅ T006: Rebuild application and verify image optimization works
+- Command: `npm run build`
+- Build status: ✅ Compiled successfully in 4.4s
+- No "Unoptimized Image" warnings found
+- Image warnings found (expected, will fix in next batches):
+  - components/mdx/mdx-components.tsx: Using raw img tag
+  - components/mdx/mdx-image.tsx: Using raw img tag (external fallback)
+- Image cache: `.next/cache/images/` will be created on first image request
+- Status: Build successful, ready for blur placeholder implementation
+
+**Task Breakdown by Phase**:
+- Phase 1 (Setup): T001-T003 (3 tasks, 1-2 hours)
+- Phase 2 (US1 Configuration): T004-T006 (3 tasks, 2-3 hours)
+- Phase 3 (US2 Blur Placeholders): T007-T011 (5 tasks, 4-6 hours)
+- Phase 4 (US3 Priority Loading): T012-T015 (4 tasks, 2-3 hours)
+- Phase 5 (US4 Standardization): T016-T018 (3 tasks, 5-7 hours)
+- Phase 6 (US5 Accessibility): T019-T022 (4 tasks, 3-4 hours)
+- Phase 7 (Polish & Validation): T023-T027 (5 tasks, 2-3 hours)
+
+**Implementation Strategy**:
+- MVP Scope: Phases 1-4 (US1-US3) = 9-14 hours
+- Full Delivery: All phases = 19-28 hours
+- MVP delivers: Configuration → Placeholders → Priority loading
+- Enhancement adds: Standardization → Accessibility audit
+
+**Checkpoint**:
+- ✅ Tasks generated: 27 concrete tasks with file paths
+- ✅ User story organization: Complete (US1-US5 with P1-P2 priorities)
+- ✅ Dependency graph: Created (7 phases with blocking relationships)
+- ✅ MVP strategy: Defined (Phases 1-4 for first release)
+- ✅ Parallel execution: 14 tasks identified for parallel work
+- ✅ REUSE analysis: 5 existing components documented
+- 📋 Ready for: /analyze
+
+**Key Decisions**:
+- Task organization follows user story priorities from spec.md
+- Concrete file paths provided (no generic placeholders)
+- Marked parallelizable tasks with [P] for concurrent execution
+- MVP focuses on highest-impact optimizations (configuration, placeholders, priority)
+- Enhancement phase adds standardization and accessibility (lower priority, higher effort)
+
