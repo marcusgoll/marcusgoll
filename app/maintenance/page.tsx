@@ -106,7 +106,7 @@ export default function MaintenancePage() {
           <p>
             Need to reach us?{' '}
             <a
-              href="mailto:hello@marcusgoll.com"
+              href="mailto:marcusgoll@gmail.com"
               className="text-emerald-600 underline hover:text-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-navy-900"
             >
               Send an email
