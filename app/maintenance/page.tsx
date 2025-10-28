@@ -49,13 +49,13 @@ export default function MaintenancePage() {
       {/* Main Content Container */}
       <div className="w-full max-w-md text-center">
         {/* Image Element */}
-        <div className="mb-8 flex justify-center">
+        <div className="mb-12 flex justify-center">
           <Image
             src="/images/maintenance.png"
             alt="Construction worker building"
-            width={200}
-            height={200}
-            className="h-48 w-48 object-contain"
+            width={500}
+            height={500}
+            className="h-screen max-h-96 w-auto object-contain sm:max-h-full"
             priority
           />
         </div>
