@@ -17,10 +17,13 @@ deployment:
     deployment_id: null
     deployed_at: null
 workflow:
-  phase: spec
+  phase: analyze
   status: completed
   completed_phases:
     - spec
+    - plan
+    - tasks
+    - analyze
   failed_phases: []
 quality_gates:
   pre_flight:

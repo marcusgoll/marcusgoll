@@ -122,3 +122,171 @@ Automatic HTTPS certificate management using Caddy server with Let's Encrypt int
 - SSL Labs validation (US6) deferred to enhancement phase
 - DNS validation checklist prevents issuance failures
 
+## Phase 4: Implementation (2025-10-28)
+
+**Batch Execution Strategy**:
+- Batch 1 (Setup): T001, T002, T003 - Independent validation
+- Batch 2 (Certificate Persistence): T004, T005, T006 - Blocks SSL functionality
+- Batch 3 (HTTP Redirect & HSTS): T007, T008, T009 - Depends on Batch 2
+- Batch 4 (Documentation): T010 - Independent
+- Batch 5 (Post-Deployment): T011-T014 - Verification tasks
+- Batch 6 (SSL Labs & Docs): T015-T018 - Final validation
+
+### Batch 1: Setup Validation (COMPLETED)
+
+✅ T001: Docker Compose validation
+- Validated docker-compose.prod.yml syntax
+- Warning: .env.production file not found (non-critical)
+- Result: YAML parses correctly
+
+✅ T002: Caddyfile syntax validation
+- Validated infrastructure/Caddyfile using caddy:2-alpine
+- Result: Valid configuration
+- Note: Minor formatting inconsistency (non-blocking)
+- Automatic HTTP→HTTPS redirect confirmed by Caddy
+
+✅ T003: Deployment checklist created
+- File: specs/048-ssl-tls-letsencrypt/deployment-checklist.md
+- Content: DNS validation, pre-flight checks, deployment steps, troubleshooting
+- Includes: dig commands, A record verification, port checks
+
+### Batch 2: Certificate Persistence (COMPLETED)
+
+✅ T004: Add Caddy Docker service to docker-compose.prod.yml
+- Added caddy service after nextjs service
+- Image: caddy:2-alpine
+- Ports: 80:80 (HTTP), 443:443 (HTTPS)
+- Volumes: Caddyfile (read-only), caddy-data (persistent)
+- Network: app-network (shared with nextjs)
+- Health check: wget http://localhost:2019/health
+- Logging: json-file driver (10m max-size, 3 files)
+- Restart: always
+
+✅ T005: Add caddy-data volume definition
+- Added volumes section with caddy-data volume
+- Driver: local
+- Location: /data/caddy in Caddy container
+- Purpose: Persistent certificate storage across restarts
+
+✅ T006: Update Next.js service port exposure
+- Commented out ports: - "3000:3000" section
+- Port 3000 now only accessible via internal Docker network
+- External traffic routed through Caddy reverse proxy
+- Reason: Security best practice, single entry point
+
+### Batch 3: HTTP Redirect & HSTS (COMPLETED)
+
+✅ T007: Verify HTTP to HTTPS redirect in Caddyfile
+- Verified: Caddy provides automatic HTTP→HTTPS redirect by default
+- No explicit configuration needed
+- All domain blocks automatically redirect HTTP to HTTPS
+- Status: 308 Permanent Redirect
+- Documented: Automatic behavior confirmed during Caddyfile validation
+
+✅ T008: Add HSTS header to marcusgoll.com domain block
+- Added header directive: Strict-Transport-Security "max-age=15768000; includeSubDomains"
+- Max-age: 15768000 seconds (6 months)
+- IncludeSubDomains: Applies to all subdomains
+- Location: After domain declaration, before reverse_proxy
+
+✅ T009: Add HSTS header to all remaining domain blocks
+- cfipros.com: HSTS header added
+- ghost.marcusgoll.com: HSTS header added
+- api.marcusgoll.com: HSTS header added
+- api.cfipros.com: HSTS header added
+- Total: 5 domain blocks with HSTS headers
+- Validated: Caddyfile syntax passes with all HSTS headers
+
+### Batch 4: Documentation (COMPLETED)
+
+✅ T010: Document DNS validation procedure
+- Enhanced deployment checklist with comprehensive DNS validation
+- Added 5-step pre-deployment validation procedure
+- Included DNS propagation check (Google/Cloudflare/OpenDNS)
+- Added firewall configuration verification (UFW ports 80/443)
+- Documented deployment steps with monitoring commands
+- Added troubleshooting section for common issues
+- Included Let's Encrypt rate limit documentation
+- Added HSTS rollback warnings
+- Total checklist items: 12 pre-deployment, 7 post-deployment
+- References: Let's Encrypt docs, Caddy docs, HSTS spec
+
+### Batch 5: Post-Deployment Verification (PENDING - REQUIRES PRODUCTION DEPLOYMENT)
+
+Tasks T011-T014 require production deployment to execute:
+
+- [ ] T011: Verify HTTPS certificate validity for all domains
+  - Command: openssl s_client -connect marcusgoll.com:443
+  - Requires: Live production environment with Let's Encrypt certificates
+
+- [ ] T012: Verify HTTP to HTTPS redirect for all domains
+  - Command: curl -I http://marcusgoll.com
+  - Requires: Caddy running in production with configured domains
+
+- [ ] T013: Verify HSTS header present for all domains
+  - Command: curl -I https://marcusgoll.com | grep -i strict-transport
+  - Requires: Production HTTPS endpoints
+
+- [ ] T014: Test certificate persistence across container restarts
+  - Command: docker-compose restart caddy (3x in 5 minutes)
+  - Requires: Production VPS access with deployed Caddy service
+
+**Status**: Documented in deployment checklist (Step 3-6)
+**Execution timing**: During /ship phase after production deployment
+
+### Batch 6: SSL Labs & Final Documentation (PENDING - REQUIRES PRODUCTION DEPLOYMENT)
+
+Tasks T015-T018 are enhancement and documentation tasks:
+
+- [ ] T015: Run SSL Labs scan for marcusgoll.com (US6)
+  - URL: https://www.ssllabs.com/ssltest/analyze.html?d=marcusgoll.com
+  - Requires: Production HTTPS deployment
+  - Target: A+ rating
+
+- [ ] T016: Run SSL Labs scan for cfipros.com (US6)
+  - URL: https://www.ssllabs.com/ssltest/analyze.html?d=cfipros.com
+  - Requires: Production HTTPS deployment
+
+- [ ] T017: Update OPERATIONS_RUNBOOK.md with SSL troubleshooting
+  - Status: Can be completed pre-deployment
+  - Content: Certificate failures, renewal issues, HSTS considerations
+
+- [ ] T018: Create infrastructure README documenting Caddy SSL setup
+  - Status: Can be completed pre-deployment
+  - Content: Architecture, certificate storage, renewal schedule
+
+**Status**: T015-T016 blocked by deployment, T017-T018 can proceed independently
+**Decision**: Defer T015-T018 to post-/ship phase or separate enhancement feature
+
+## Implementation Summary
+
+**Completed Tasks**: 10/18 (56%)
+- Batch 1 (Setup): 3/3 tasks complete
+- Batch 2 (Certificate Persistence): 3/3 tasks complete
+- Batch 3 (HTTP Redirect & HSTS): 3/3 tasks complete
+- Batch 4 (Documentation): 1/1 task complete
+- Batch 5 (Post-Deployment): 0/4 tasks (blocked by deployment)
+- Batch 6 (SSL Labs & Docs): 0/4 tasks (2 blocked, 2 deferrable)
+
+**Files Modified**: 3
+1. docker-compose.prod.yml - Added Caddy service, volume, removed nextjs port exposure
+2. infrastructure/Caddyfile - Added HSTS headers to all 5 domain blocks
+3. specs/048-ssl-tls-letsencrypt/deployment-checklist.md - Comprehensive deployment guide
+
+**Files Created**: 1
+1. specs/048-ssl-tls-letsencrypt/deployment-checklist.md (enhanced from stub)
+
+**Configuration Changes**:
+- Caddy service: caddy:2-alpine image, ports 80/443, persistent volume
+- Volume: caddy-data for certificate persistence
+- HSTS headers: 6-month max-age with includeSubDomains on all domains
+- Security: Next.js port 3000 no longer publicly exposed
+
+**Key Decisions**:
+1. Batch 5-6 tasks require production deployment - defer to /ship phase
+2. T017-T018 (documentation) can be completed independently but deferred for focus
+3. Core MVP functionality (US1-US4) fully implemented
+4. SSL Labs validation (US6) deferred as enhancement (P2 priority)
+
+**Ready for**: /ship phase (deploy to production VPS, execute verification tasks)
+
