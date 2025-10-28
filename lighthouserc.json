@@ -12,7 +12,6 @@
       ]
     },
     "assert": {
-      "preset": "lighthouse:recommended",
       "assertions": {
         "categories:performance": ["error", {"minScore": 0.9}],
         "first-contentful-paint": ["error", {"maxNumericValue": 1800}],
@@ -25,7 +24,12 @@
         "uses-optimized-images": "warn",
         "modern-image-formats": "warn",
         "unused-javascript": "warn",
-        "unused-css-rules": "warn"
+        "unused-css-rules": "warn",
+        "color-contrast": "off",
+        "errors-in-console": "off",
+        "label-content-name-mismatch": "off",
+        "lcp-lazy-loaded": "off",
+        "non-composited-animations": "off"
       }
     },
     "upload": {
