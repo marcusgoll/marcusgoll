@@ -26,7 +26,7 @@ PUBLIC_URL=https://test.marcusgoll.com
 NEXT_PUBLIC_SITE_URL=https://test.marcusgoll.com
 NODE_ENV=production
 NEXT_PUBLIC_GA_ID=G-SE02S59BZW
-RESEND_API_KEY=REDACTED - See Dokploy Secrets
+RESEND_API_KEY=[REDACTED - See Dokploy Secrets for actual value]
 DATABASE_URL=postgresql://postgres:***@5.161.75.135:5433/marcusgoll_db
 NEXT_PUBLIC_APP_URL=https://deploy.marcusgoll.com (Dokploy only)
 ```
@@ -237,7 +237,7 @@ docker exec postgres psql -U postgres -d marcusgoll_db -c "SELECT 1;"
 
 **Format**: `re_` followed by alphanumeric code
 
-**Current Value**: `REDACTED - See Dokploy Secrets`
+**Current Value**: [REDACTED - See Dokploy Secrets]
 
 **Used By**:
 - Newsletter email sending
@@ -436,7 +436,7 @@ NEXT_PUBLIC_GA_ID=G-SE02S59BZW  # Production GA property
 DATABASE_URL=postgresql://postgres:PASSWORD@5.161.75.135:5433/marcusgoll_db
 # Production database
 
-RESEND_API_KEY=REDACTED - See Dokploy Secrets
+RESEND_API_KEY=[REDACTED - See Dokploy Secrets]
 # Production Resend key
 ```
 
@@ -454,7 +454,7 @@ NODE_ENV=production
 # Everything else stays the same
 NEXT_PUBLIC_GA_ID=G-SE02S59BZW
 DATABASE_URL=postgresql://postgres:PASSWORD@5.161.75.135:5433/marcusgoll_db
-RESEND_API_KEY=REDACTED - See Dokploy Secrets
+RESEND_API_KEY=[REDACTED - See Dokploy Secrets]
 ```
 
 ---
