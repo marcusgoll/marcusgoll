@@ -1,0 +1,64 @@
+feature:
+  slug: ssl-tls-letsencrypt
+  title: SSL/TLS with Let's Encrypt
+  created_at: 2025-10-28T00:00:00Z
+  updated_at: 2025-10-28T00:00:00Z
+  branch_name: feature/048-ssl-tls-letsencrypt
+  github_issue: 30
+  roadmap_status: in-progress
+deployment:
+  model: remote-direct
+  staging:
+    url: null
+    deployment_id: null
+    deployed_at: null
+  production:
+    url: null
+    deployment_id: null
+    deployed_at: null
+    deployment_type: manual-vps
+workflow:
+  phase: finalize
+  status: completed
+  completed_phases:
+    - spec
+    - plan
+    - tasks
+    - analyze
+    - implement
+    - optimize
+    - finalize
+  failed_phases: []
+quality_gates:
+  pre_flight:
+    status: passed
+    checks:
+      - docker-compose
+      - env
+      - dns-validation
+    timestamp: "2025-10-28T18:31:17Z"
+  code_review:
+    status: passed
+    critical_issues: 0
+  rollback_capability:
+    status: not_started
+    test_passed: false
+manual_gates:
+  preview:
+    status: not-applicable
+    approved: true
+    approved_at: "2025-10-28T18:31:34Z"
+    note: Infrastructure-only feature - no UI to preview locally
+  validate_staging:
+    status: not_started
+    approved: false
+    approved_at: null
+artifacts:
+  spec: specs/048-ssl-tls-letsencrypt/spec.md
+  plan: specs/048-ssl-tls-letsencrypt/plan.md
+  tasks: specs/048-ssl-tls-letsencrypt/tasks.md
+token_budget:
+  phase: initialize
+  used: 0
+  limit: 75000
+  compaction_threshold: 60000

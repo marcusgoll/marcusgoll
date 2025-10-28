@@ -24,8 +24,10 @@ services:
       dockerfile: Dockerfile
       target: production
     container_name: marcusgoll-nextjs-prod
-    ports:
-      - "3000:3000"
+    # Port 3000 only accessible via internal Docker network (Caddy reverse proxy)
+    # Commented out for production deployment - Caddy handles external traffic
+    # ports:
+    #   - "3000:3000"
     env_file:
       - .env.production  # Loads production environment variables
     environment:
@@ -54,9 +56,37 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: marcusgoll-caddy-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data/caddy
+    networks:
+      - app-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:2019/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  caddy-data:
+    driver: local
 
 # Production Security Notes:
 # - .env.production must have 600 permissions (chmod 600 .env.production)
