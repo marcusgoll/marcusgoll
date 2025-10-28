@@ -105,3 +105,31 @@ Implement a user-facing theme toggle button to complement the existing next-them
 
 ## Last Updated
 2025-10-28T18:30:00Z
+
+## Phase 2: Tasks (2025-10-28 19:45)
+
+**Summary**:
+- Total tasks: 10
+- Parallel opportunities: 5 tasks marked [P]
+- Setup tasks: 1 (dependency validation)
+- Component creation: 3 tasks (T002-T004)
+- Integration: 2 tasks (T005-T006)
+- Testing: 3 tasks (T007-T009, fully parallel)
+- Documentation: 1 task (T010)
+- Task file: specs/050-dark-light-mode-toggle/tasks.md
+
+**Checkpoint**:
+- ✅ Tasks generated: 10
+- ✅ Dependency graph: Created (5 phases)
+- ✅ Parallel execution opportunities: Identified (T002-T004, T007-T009)
+- ✅ Reuse analysis: 6 existing components identified
+- ✅ New components: 1 (ThemeToggle)
+- 📋 Ready for: /analyze
+
+**Key Task Decisions**:
+1. Single new component: ThemeToggle (~1KB estimated size)
+2. Two integration points: Desktop nav (line 143) + Mobile menu (line 253)
+3. Three test files: Component test + E2E persistence + E2E accessibility
+4. Zero new dependencies: All required packages already installed
+5. Test coverage: 100% requirement on new ThemeToggle component
+
