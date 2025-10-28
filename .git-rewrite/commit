@@ -1,0 +1,15 @@
+tree 39bdf0d7ebfb470201dcf55da4fa8739b3c0f9a7
+author Marcus Gollahon <marcusgoll@gmail.com> 1761056748 -0500
+committer Marcus Gollahon <marcusgoll@gmail.com> 1761056748 -0500
+
+feat: initial Next.js setup with Prisma and Ghost CMS integration
+
+- Initialize Next.js 15 with TypeScript and Tailwind CSS
+- Configure Prisma for self-hosted Supabase PostgreSQL
+- Install and configure Ghost Content API SDK
+- Set up spec-flow workflow structure
+- Document VPS infrastructure in DEPLOYMENT.md
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
