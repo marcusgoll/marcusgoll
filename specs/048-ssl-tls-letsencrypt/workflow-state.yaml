@@ -18,8 +18,8 @@ deployment:
     deployed_at: null
     deployment_type: manual-vps
 workflow:
-  phase: ship:deploy-manual
-  status: manual-deployment-required
+  phase: finalize
+  status: completed
   completed_phases:
     - spec
     - plan
@@ -27,6 +27,7 @@ workflow:
     - analyze
     - implement
     - optimize
+    - finalize
   failed_phases: []
 quality_gates:
   pre_flight:
