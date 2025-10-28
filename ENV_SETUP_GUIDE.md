@@ -27,7 +27,7 @@ NEXT_PUBLIC_SITE_URL=https://test.marcusgoll.com
 NODE_ENV=production
 NEXT_PUBLIC_GA_ID=G-SE02S59BZW
 RESEND_API_KEY=[REDACTED - See Dokploy Secrets for actual value]
-DATABASE_URL=postgresql://postgres:***@5.161.75.135:5433/marcusgoll_db
+DATABASE_URL=postgresql://postgres:[REDACTED_PASSWORD]@[REDACTED_VPS_IP]:5433/marcusgoll_db
 NEXT_PUBLIC_APP_URL=https://deploy.marcusgoll.com (Dokploy only)
 ```
 
@@ -190,22 +190,22 @@ postgresql://postgres:PASSWORD@5.161.75.135:5433/marcusgoll_db
 
 **How to Update**:
 ```bash
-# Via Dokploy Web UI:
+# Via Dokploy Web UI (Recommended):
 # 1. Applications > marcusgoll-nextjs
 # 2. Environment Variables (Secrets)
 # 3. Update DATABASE_URL value
 # 4. Deploy
 
-# Via CLI:
-ssh hetzner
+# Via CLI (Advanced):
+ssh [vps-host]
 docker service update marcusgoll-nextjs \
   --secret-rm DATABASE_URL \
-  --secret-add "DATABASE_URL=postgresql://..."
+  --secret-add "DATABASE_URL=postgresql://[user]:[password]@[host]:[port]/[dbname]"
 ```
 
 **Testing Connection**:
 ```bash
-ssh hetzner
+ssh [vps-host]
 docker exec postgres psql -U postgres -d marcusgoll_db -c "SELECT 1;"
 ```
 
@@ -416,10 +416,11 @@ NODE_ENV=production
 
 NEXT_PUBLIC_GA_ID=G-SE02S59BZW  # Use staging GA property or same
 
-DATABASE_URL=postgresql://postgres:PASSWORD@5.161.75.135:5433/marcusgoll_db
+DATABASE_URL=postgresql://postgres:[REDACTED_PASSWORD]@[REDACTED_VPS_IP]:5433/marcusgoll_db
 # Should point to test/staging database, not production
 
-RESEND_API_KEY=re_...  # Staging/test API key
+RESEND_API_KEY=[REDACTED - See Dokploy Secrets]
+# Staging/test API key (separate from production)
 ```
 
 ---
@@ -433,8 +434,8 @@ NODE_ENV=production
 
 NEXT_PUBLIC_GA_ID=G-SE02S59BZW  # Production GA property
 
-DATABASE_URL=postgresql://postgres:PASSWORD@5.161.75.135:5433/marcusgoll_db
-# Production database
+DATABASE_URL=postgresql://postgres:[REDACTED_PASSWORD]@[REDACTED_VPS_IP]:5433/marcusgoll_db
+# Production database (stored securely in Dokploy)
 
 RESEND_API_KEY=[REDACTED - See Dokploy Secrets]
 # Production Resend key
@@ -453,7 +454,7 @@ NODE_ENV=production
 
 # Everything else stays the same
 NEXT_PUBLIC_GA_ID=G-SE02S59BZW
-DATABASE_URL=postgresql://postgres:PASSWORD@5.161.75.135:5433/marcusgoll_db
+DATABASE_URL=postgresql://postgres:[REDACTED_PASSWORD]@[REDACTED_VPS_IP]:5433/marcusgoll_db
 RESEND_API_KEY=[REDACTED - See Dokploy Secrets]
 ```
 
@@ -674,10 +675,11 @@ docker exec postgres psql -U postgres -d marcusgoll_db -c "SELECT 1;"
 
 **Fix**:
 ```bash
-# Update with correct connection string
+# Update with correct connection string (via Dokploy or CLI)
 docker service update marcusgoll-nextjs \
-  --env-rm DATABASE_URL \
-  --env-add "DATABASE_URL=postgresql://postgres:NEWPASS@5.161.75.135:5433/marcusgoll_db"
+  --secret-rm DATABASE_URL \
+  --secret-add "DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]:5433/marcusgoll_db"
+# Replace [PASSWORD] and [HOST] with actual values
 ```
 
 ### Issue: Emails Not Sending

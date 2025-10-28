@@ -21,7 +21,7 @@ The maintenance mode feature has been successfully deployed to production via Do
 
 | Component | Details | Status |
 |-----------|---------|--------|
-| **Platform** | Hetzner VPS (5.161.75.135) | ✅ Active |
+| **Platform** | Hetzner VPS ([REDACTED_IP]) | ✅ Active |
 | **Orchestration** | Docker Swarm (Dokploy) | ✅ Active |
 | **Service Name** | marcusgoll-nextjs:latest | ✅ Running |
 | **Port Mapping** | 3001:3000 (host:container) | ✅ Active |
@@ -58,15 +58,17 @@ The maintenance mode feature has been successfully deployed to production via Do
 
 ```yaml
 MAINTENANCE_MODE: "true"  # Feature enabled in production
-MAINTENANCE_BYPASS_TOKEN: "475b86c8cddb4332ba86ed879c83190df81271989bd63da1b84b9ce8f3b0496f"
+MAINTENANCE_BYPASS_TOKEN: "[REDACTED - 256-bit token stored in Dokploy]"
 NODE_ENV: "production"
 NEXT_PUBLIC_GA_ID: "G-SE02S59BZW"
 PUBLIC_URL: "https://test.marcusgoll.com"
-DATABASE_URL: "postgresql://marcusgoll_user:***@5.161.75.135:5433/marcusgoll_db"
-NEXTAUTH_SECRET: "e45563b39f4bce7f4b5e196810e1ac627ed68a52a5094db09d4a738fa3d54ce2"
+DATABASE_URL: "postgresql://marcusgoll_user:[REDACTED]@[REDACTED_IP]:5433/marcusgoll_db"
+NEXTAUTH_SECRET: "[REDACTED - stored in Dokploy]"
 NEXTAUTH_URL: "https://test.marcusgoll.com"
 ADMIN_EMAIL: "marcus@marcusgoll.com"
 ```
+
+**Security Note**: All sensitive secrets (tokens, passwords, API keys) are stored in Dokploy's secure vault and not committed to the repository.
 
 ---
 

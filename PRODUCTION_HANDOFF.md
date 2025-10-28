@@ -30,7 +30,7 @@ The marcusgoll.com Next.js application is fully deployed and operational on a He
 
 ```
 ┌──────────────────────────────────────────┐
-│         Hetzner VPS (5.161.75.135)       │
+│     Hetzner VPS ([REDACTED_IP])          │
 │                                          │
 │  ┌──────────────────────────────────┐   │
 │  │   Docker Swarm (Orchestration)   │   │
@@ -143,8 +143,9 @@ The marcusgoll.com Next.js application is fully deployed and operational on a He
 
 **Connection**:
 ```
-postgresql://postgres:PASSWORD@5.161.75.135:5433/marcusgoll_db
+postgresql://postgres:[REDACTED_PASSWORD]@[REDACTED_VPS_IP]:5433/marcusgoll_db
 ```
+**Note**: Actual credentials stored securely in Dokploy secrets.
 
 ---
 
@@ -356,8 +357,8 @@ docker service update marcusgoll-nextjs --env-add MAINTENANCE_MODE=false
 ### Immediate (Ready to Execute)
 
 1. **DNS Cutover to marcusgoll.com**
-   - Add DNS A record: `marcusgoll.com → 5.161.75.135`
-   - See: `DNS_CUTOVER_CHECKLIST.md`
+   - Add DNS A record: `marcusgoll.com → [REDACTED_VPS_IP]`
+   - See: `DNS_CUTOVER_CHECKLIST.md` for actual IP
    - Expected time: 5-15 minutes
    - Risk: Low (test.marcusgoll.com remains active as fallback)
 
