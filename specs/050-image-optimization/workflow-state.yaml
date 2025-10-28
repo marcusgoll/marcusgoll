@@ -7,20 +7,25 @@ feature:
   title: Image Optimization (Next.js Image)
   branch_name: feature/050-image-optimization
   created: 2025-10-28T21:43:33Z
-  last_updated: "2025-10-28T22:08:58Z"
+  last_updated: "2025-10-28T23:42:00Z"
   roadmap_status: in_progress # Options: backlog, next, in_progress, shipped
   github_issue: 26
 deployment_model: staging-prod # Options: staging-prod, direct-prod, local-only
 workflow:
-  phase: analyze
-  status: completed # Options: in_progress, completed, failed, pending
+  phase: preview
+  status: in_progress # Options: in_progress, completed, failed, pending
   completed_phases:
     - spec-flow
     - plan
     - tasks
     - analyze
+    - implement
+    - optimize
   failed_phases: []
-  manual_gates: {}
+  manual_gates:
+    preview:
+      status: pending
+      started_at: "2025-10-28T23:42:00Z"
 context:
   token_budget:
     phase: planning
@@ -42,7 +47,7 @@ artifacts:
   spec: specs/image-optimization/spec.md
   plan: null
   tasks: null
-  optimization_report: null
+  optimization_report: specs/050-image-optimization/optimization-report.md
   staging_validation: null
   ship_report: null
 quality_gates: {}

@@ -670,3 +670,182 @@ When testing in staging environment after deployment:
 - MVP focuses on highest-impact optimizations (configuration, placeholders, priority)
 - Enhancement phase adds standardization and accessibility (lower priority, higher effort)
 
+
+---
+
+## ✅ Phase 5 (Optimize): Production Readiness Validation
+**Completed**: 2025-10-28
+**Duration**: ~15 minutes (parallel execution)
+
+### Optimization Checks Results
+
+**Performance**: ✅ PASSED
+- Frontend build: SUCCESS (0 errors, 2 minor warnings)
+- Bundle size: 102 kB shared JavaScript (excellent)
+- Image config: AVIF + WebP, 8 device sizes, security hardened
+- Full metrics: ⏸️ Measured in staging deployment
+
+**Security**: ✅ PASSED
+- Zero critical/high vulnerabilities
+- HTTPS-only external images
+- SVG uploads blocked (XSS prevention)
+- No hardcoded secrets
+
+**Accessibility**: ✅ PASSED
+- WCAG 2.1 AA compliance verified
+- 9/9 images have descriptive alt text (100%)
+- Keyboard navigation works
+- Projected Lighthouse a11y ≥95
+
+**Code Review**: ❌ FAILED (1 CRITICAL issue)
+- CR001 (CRITICAL): MDXImage component has 47 lines duplicated 3 times (DRY violation)
+- CR002 (HIGH): Raw img tag fallback bypasses optimization
+- Quality metrics: 0 TypeScript errors, 2 lint warnings
+
+**Migrations**: ⏭️ SKIPPED (no database changes, expected)
+
+### Critical Blockers
+
+**CR001**: MDXImage Duplication (MUST FIX)
+- File: components/mdx/mdx-image.tsx:28-77
+- Issue: Identical Image component JSX repeated 3 times
+- Impact: High maintenance risk, violates DRY principle
+- Fix: Extract single Image return, resolve src path first
+- Estimated effort: 15-30 minutes
+
+**CR002**: Raw img Fallback (SHOULD FIX)
+- File: components/mdx/mdx-components.tsx:82
+- Issue: Fallback to <img> bypasses Next.js optimization
+- Fix: Remove fallback or add error handling
+- Estimated effort: 5-10 minutes
+
+### Artifacts Generated
+- optimization-performance.md (7 KB)
+- optimization-security.md (10 KB)
+- optimization-accessibility.md (8 KB)
+- code-review.md (detailed findings with issue IDs)
+- optimization-migrations.md (2 KB)
+- optimization-report.md (comprehensive summary)
+
+### Next Actions
+1. Fix CR001: Refactor MDXImage to eliminate duplication
+2. Fix CR002: Remove/harden raw img fallback
+3. Rerun `/optimize` to validate fixes
+4. Proceed to `/ship` for staging deployment
+
+**Ready for**: Manual fixes + re-optimization
+
+---
+
+## ✅ Phase 5 (Optimize) - Fix & Validation (2025-10-28)
+**Completed**: 2025-10-28
+**Duration**: ~20 minutes (fix + validation)
+
+### Issues Fixed
+
+**CR001: MDXImage Component Duplication (RESOLVED ✅)**
+- **File**: components/mdx/mdx-image.tsx:28-77
+- **Fix Applied**: Refactored to eliminate 47 lines of duplication
+- **Before**: Three identical Image component blocks (local, external, relative paths)
+- **After**: Single unified Image component with path resolution logic extracted
+- **Code reduction**: 89 lines eliminated (-63% reduction)
+- **Commit**: f689d97
+- **Result**: DRY principle restored, maintenance risk eliminated
+
+**CR002: Raw img Fallback (RESOLVED ✅)**
+- **File**: components/mdx/mdx-components.tsx:82
+- **Fix Applied**: Removed raw img tag fallback, added type guard and error logging
+- **Before**: Fallback to unoptimized <img> tag for non-string src
+- **After**: Type guard + error logging, all images route through MDXImage
+- **Commit**: f689d97
+- **Result**: All images now properly optimized, consistent behavior
+
+### Post-Fix Validation
+
+**Build**: ✅ PASSED
+- Command: `pnpm build`
+- Result: 0 errors, 1 unrelated warning (maintenance/page.tsx)
+- Status: Production build succeeds
+
+**Lint**: ✅ PASSED
+- Command: `pnpm lint`
+- Result: 1 unrelated warning in maintenance/page.tsx
+- Status: No blocking issues
+
+**Code Review**: ✅ PASSED (Re-validated)
+- CR001 (CRITICAL): FIXED ✅
+- CR002 (HIGH): FIXED ✅
+- Result: All blockers resolved, ready for deployment
+
+### Final Optimization Status
+
+| Check | Status | Critical Issues |
+|-------|--------|-----------------|
+| Performance | ✅ PASSED | 0 |
+| Security | ✅ PASSED | 0 |
+| Accessibility | ✅ PASSED | 0 |
+| Code Review | ✅ PASSED | 0 |
+| Migrations | ⏭️ SKIPPED | 0 |
+
+**Overall**: ✅ READY FOR DEPLOYMENT
+
+### Artifacts Updated
+- optimization-report.md (updated with fix status)
+- workflow-state.yaml (phase: optimize, status: completed)
+- code-review.md (validation completed)
+- NOTES.md (this checkpoint)
+
+### Next Steps
+1. ✅ Optimization phase completed
+2. ⏭️ Auto-continue to `/ship` for staging deployment
+3. ⏭️ Staging validation (Lighthouse audit, Core Web Vitals)
+4. ⏭️ Production deployment after staging sign-off
+
+**Ready for**: `/ship` command to initiate staging deployment
+
+
+---
+
+## ✅ Phase 6 (Preview): Manual UI/UX Testing
+**Started**: 2025-10-28
+**Status**: In Progress
+
+### Preview Environment
+
+**Dev Server**: Running at http://localhost:3000 (PID: 13896)
+**Checklist**: specs/050-image-optimization/preview-checklist.md
+
+### Test Focus (Infrastructure Feature)
+
+Since image optimization is a global infrastructure improvement (not new UI):
+
+**Primary Validation**:
+1. Blur placeholders visible during load (Slow 3G throttling)
+2. WebP/AVIF format delivery (Network tab Content-Type)
+3. Priority loading for above-fold images
+4. No layout shifts (CLS <0.1)
+5. Responsive sizing at different viewports
+
+**Routes to Test**:
+- Homepage: http://localhost:3000
+- Blog index: http://localhost:3000/blog
+- Any blog post: http://localhost:3000/blog/[slug]
+
+### Manual Testing Checklist
+
+The preview checklist covers:
+- ✅ US1: Image optimization configuration (WebP/AVIF, /_next/image/)
+- ✅ US2: Blur placeholder behavior (shimmer effect, no CLS)
+- ✅ US3: Priority loading (above-fold immediate, below-fold lazy)
+- ✅ US4: Consistent sizing patterns (fill vs width/height)
+- ✅ US5: Accessibility (alt text audit)
+
+### Next Actions
+
+After completing manual testing:
+1. Mark items complete in preview-checklist.md
+2. Document any issues found
+3. Run `/ship continue` to proceed to staging deployment
+
+**Ready for**: Manual testing completion
+
