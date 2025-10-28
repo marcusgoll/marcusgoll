@@ -1,0 +1,36 @@
+DEPENDENCY SECURITY ANALYSIS - Feature 049 Performance Optimization
+============================================================================
+Date: 2025-10-28
+Feature: specs/049-performance-optimization
+
+NEW DEPENDENCIES ADDED:
+1. @next/bundle-analyzer: ^15.5.6
+   - Category: devDependencies ✅
+   - Purpose: Production build analysis
+   - Security: Low risk - development tool only
+   - Status: PASSED
+
+2. web-vitals: ^4.2.4
+   - Category: dependencies
+   - Purpose: Real User Monitoring (RUM) metrics
+   - Security: Low risk - Google Chrome official library
+   - Note: Production dependency (correct placement)
+   - Status: PASSED
+
+3. @lhci/cli: ^0.14.0
+   - Category: devDependencies ✅
+   - Purpose: Lighthouse CI integration
+   - Security: Low risk - Google Lighthouse official tool
+   - Known Vulnerabilities: 8 low severity (transitive dependencies)
+   - Impact: Development-only, no production exposure
+   - Status: PASSED (dev-only vulnerabilities acceptable)
+
+DEPENDENCY PLACEMENT VALIDATION:
+✅ @next/bundle-analyzer (devDependencies) - Correct
+✅ @lhci/cli (devDependencies) - Correct
+✅ web-vitals (dependencies) - Correct (needed at runtime for RUM)
+
+VERDICT: PASSED
+- All new dependencies are appropriately categorized
+- No critical or high severity vulnerabilities in production dependencies
+- Development vulnerabilities are isolated and acceptable
