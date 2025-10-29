@@ -32,6 +32,7 @@ import { SocialShare } from '@/components/blog/social-share';
 import { TableOfContents } from '@/components/blog/table-of-contents';
 import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
 import { generateBlogPostingSchema } from '@/lib/schema';
+import { TLDRSection } from '@/components/blog/tldr-section';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
 
@@ -240,6 +241,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           title={frontmatter.title}
         />
       </header>
+
+      {/* TL;DR Section - T013: LLM optimization summary (US5) */}
+      <TLDRSection excerpt={frontmatter.excerpt} />
 
       {/* Featured image - responsive with 16:9 aspect ratio, priority loading */}
       {frontmatter.featuredImage && (
