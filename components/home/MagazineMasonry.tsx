@@ -4,6 +4,7 @@ import { Post } from '@/lib/posts';
 import { getPrimaryTrack } from '@/lib/utils/content';
 import TrackBadge from '@/components/blog/TrackBadge';
 import { Button } from '@/components/ui/Button';
+import { shimmerDataURL } from '@/lib/utils/shimmer';
 
 interface MagazineMasonryProps {
   posts: Post[];
@@ -42,6 +43,8 @@ export default function MagazineMasonry({
                   height={600}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   priority
+                  placeholder="blur"
+                  blurDataURL={shimmerDataURL(1200, 600)}
                 />
               </div>
             )}
@@ -111,6 +114,8 @@ export default function MagazineMasonry({
                       width={600}
                       height={400}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      placeholder="blur"
+                      blurDataURL={shimmerDataURL(600, 400)}
                     />
                   </div>
                 )}

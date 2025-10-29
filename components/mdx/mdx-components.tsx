@@ -75,11 +75,12 @@ export const mdxComponents: MDXComponents = {
 
   // Images with Next.js Image component (optimized)
   img: ({ src, alt, ...props }) => {
-    if (typeof src === 'string') {
-      return <MDXImage src={src} alt={alt || ''} {...props} />;
+    // CR002 Fix: Always use MDXImage for optimization, error if src is invalid
+    if (typeof src !== 'string') {
+      console.error('MDX Image requires string src, received:', typeof src);
+      return null;
     }
-    // Fallback for non-string src
-    return <img src={src} alt={alt} className="rounded-lg my-6" {...props} />;
+    return <MDXImage src={src} alt={alt || ''} {...props} />;
   },
 
   // Code blocks with syntax highlighting (handled by rehype-shiki with dual themes)
