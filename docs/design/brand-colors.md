@@ -14,10 +14,10 @@
 
 | Token | Hex | Usage |
 |-------|-----|-------|
-| `--brand-bg-900` | `#142019` | Darkest background - primary surface |
-| `--brand-bg-800` | `#203129` | Dark background - secondary surface |
-| `--brand-surface-700` | `#20312b` | Surface color - cards, panels |
-| `--brand-surface-100` | `#41584b` | Brightest neutral (still dark) |
+| `--brand-bg-900` | `#0a1628` | Darkest navy background - primary surface |
+| `--brand-bg-800` | `#0f1f3a` | Dark navy background - secondary surface |
+| `--brand-surface-700` | `#1a2942` | Navy surface color - cards, panels |
+| `--brand-surface-100` | `#2d3e5c` | Brightest neutral navy (still dark) |
 
 ## Text Colors
 
@@ -53,21 +53,21 @@
 ### Background Palette
 ```
 ┌────────────────────────────────────────────────────────────┐
-│ #41584b  Brightest Neutral (surface-100)                  │
+│ #2d3e5c  Brightest Neutral Navy (surface-100)             │
 ├────────────────────────────────────────────────────────────┤
-│ #20312b  Surface (surface-700)                            │
+│ #1a2942  Navy Surface (surface-700)                       │
 ├────────────────────────────────────────────────────────────┤
-│ #203129  Dark Background (bg-800)                         │
+│ #0f1f3a  Dark Navy Background (bg-800)                    │
 ├────────────────────────────────────────────────────────────┤
-│ #142019  Darkest Background (bg-900)                      │
+│ #0a1628  Darkest Navy Background (bg-900)                 │
 └────────────────────────────────────────────────────────────┘
 ```
 
 ## Usage Guidelines
 
 **Dark Mode (Primary):**
-- Background: `--brand-bg-900` (#142019)
-- Surface: `--brand-surface-700` (#20312b)
+- Background: `--brand-bg-900` (#0a1628)
+- Surface: `--brand-surface-700` (#1a2942)
 - Primary text: `--white` (#ffffff)
 - Accent: `--brand-primary-600` (#498b63)
 - Highlights: `--brand-primary-300` (#cbf0e5)
@@ -96,10 +96,10 @@
   --brand-primary-300: #cbf0e5;
 
   /* Background Colors */
-  --brand-bg-900: #142019;
-  --brand-bg-800: #203129;
-  --brand-surface-700: #20312b;
-  --brand-surface-100: #41584b;
+  --brand-bg-900: #0a1628;
+  --brand-bg-800: #0f1f3a;
+  --brand-surface-700: #1a2942;
+  --brand-surface-100: #2d3e5c;
 
   /* Text Colors */
   --text-primary: #142019;
@@ -128,12 +128,12 @@ module.exports = {
             300: '#cbf0e5',
           },
           bg: {
-            900: '#142019',
-            800: '#203129',
+            900: '#0a1628',
+            800: '#0f1f3a',
           },
           surface: {
-            700: '#20312b',
-            100: '#41584b',
+            700: '#1a2942',
+            100: '#2d3e5c',
           },
         },
         text: {

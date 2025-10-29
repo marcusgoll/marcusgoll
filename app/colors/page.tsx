@@ -8,10 +8,10 @@ export default function ColorsPage() {
       { name: 'Primary 300', value: '#cbf0e5', var: '--brand-primary-300' },
     ],
     backgrounds: [
-      { name: 'BG 900', value: '#142019', var: '--brand-bg-900' },
-      { name: 'BG 800', value: '#203129', var: '--brand-bg-800' },
-      { name: 'Surface 700', value: '#20312b', var: '--brand-surface-700' },
-      { name: 'Surface 100', value: '#41584b', var: '--brand-surface-100' },
+      { name: 'BG 900', value: '#0a1628', var: '--brand-bg-900' },
+      { name: 'BG 800', value: '#0f1f3a', var: '--brand-bg-800' },
+      { name: 'Surface 700', value: '#1a2942', var: '--brand-surface-700' },
+      { name: 'Surface 100', value: '#2d3e5c', var: '--brand-surface-100' },
     ],
     text: [
       { name: 'Text Primary', value: '#142019', var: '--text-primary' },
@@ -24,7 +24,7 @@ export default function ColorsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#142019] p-8">
+    <div className="min-h-screen bg-[#0a1628] p-8">
       <div className="mx-auto max-w-6xl">
         <h1 className="mb-8 text-4xl font-bold text-white">
           Brand Color Tokens
@@ -39,7 +39,7 @@ export default function ColorsPage() {
             {colors.primary.map((color) => (
               <div
                 key={color.value}
-                className="overflow-hidden rounded-lg border border-[#41584b] bg-[#20312b]"
+                className="overflow-hidden rounded-lg border border-[#2d3e5c] bg-[#1a2942]"
               >
                 <div
                   className="h-32"
@@ -70,7 +70,7 @@ export default function ColorsPage() {
             {colors.backgrounds.map((color) => (
               <div
                 key={color.value}
-                className="overflow-hidden rounded-lg border border-[#41584b] bg-[#20312b]"
+                className="overflow-hidden rounded-lg border border-[#2d3e5c] bg-[#1a2942]"
               >
                 <div
                   className="h-32"
@@ -101,7 +101,7 @@ export default function ColorsPage() {
             {colors.text.map((color) => (
               <div
                 key={color.value}
-                className="overflow-hidden rounded-lg border border-[#41584b] bg-[#20312b]"
+                className="overflow-hidden rounded-lg border border-[#2d3e5c] bg-[#1a2942]"
               >
                 <div
                   className="h-32"
@@ -132,10 +132,10 @@ export default function ColorsPage() {
             {colors.base.map((color) => (
               <div
                 key={color.value}
-                className="overflow-hidden rounded-lg border border-[#41584b] bg-[#20312b]"
+                className="overflow-hidden rounded-lg border border-[#2d3e5c] bg-[#1a2942]"
               >
                 <div
-                  className="h-32 border border-[#41584b]"
+                  className="h-32 border border-[#2d3e5c]"
                   style={{ backgroundColor: color.value }}
                 />
                 <div className="p-4">
@@ -162,7 +162,7 @@ export default function ColorsPage() {
 
           <div className="space-y-4">
             {/* Button Examples */}
-            <div className="rounded-lg border border-[#41584b] bg-[#20312b] p-6">
+            <div className="rounded-lg border border-[#2d3e5c] bg-[#1a2942] p-6">
               <h3 className="mb-4 text-lg font-semibold text-white">
                 Buttons
               </h3>
@@ -180,11 +180,11 @@ export default function ColorsPage() {
             </div>
 
             {/* Card Example */}
-            <div className="rounded-lg border border-[#41584b] bg-[#20312b] p-6">
+            <div className="rounded-lg border border-[#2d3e5c] bg-[#1a2942] p-6">
               <h3 className="mb-4 text-lg font-semibold text-white">
                 Card Example
               </h3>
-              <div className="rounded-lg border border-[#41584b] bg-[#203129] p-6">
+              <div className="rounded-lg border border-[#2d3e5c] bg-[#0f1f3a] p-6">
                 <h4 className="mb-2 text-xl font-bold text-white">
                   Card Title
                 </h4>
@@ -199,13 +199,13 @@ export default function ColorsPage() {
             </div>
 
             {/* Text on Backgrounds */}
-            <div className="rounded-lg border border-[#41584b] bg-[#20312b] p-6">
+            <div className="rounded-lg border border-[#2d3e5c] bg-[#1a2942] p-6">
               <h3 className="mb-4 text-lg font-semibold text-white">
                 Text on Backgrounds
               </h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-lg bg-[#142019] p-4">
-                  <p className="text-white">White text on darkest bg</p>
+                <div className="rounded-lg bg-[#0a1628] p-4">
+                  <p className="text-white">White text on darkest navy bg</p>
                 </div>
                 <div className="rounded-lg bg-[#498b63] p-4">
                   <p className="text-white">White text on primary</p>
@@ -213,8 +213,8 @@ export default function ColorsPage() {
                 <div className="rounded-lg bg-[#cbf0e5] p-4">
                   <p className="text-[#142019]">Dark text on light mint</p>
                 </div>
-                <div className="rounded-lg bg-[#41584b] p-4">
-                  <p className="text-white">White text on neutral</p>
+                <div className="rounded-lg bg-[#2d3e5c] p-4">
+                  <p className="text-white">White text on neutral navy</p>
                 </div>
               </div>
             </div>
