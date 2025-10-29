@@ -42,6 +42,9 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Generate Prisma Client (required for Next.js API routes using Prisma)
+RUN npx prisma generate
+
 # Build Next.js application
 # Environment variables prefixed with NEXT_PUBLIC_ are baked into build
 RUN npm run build
