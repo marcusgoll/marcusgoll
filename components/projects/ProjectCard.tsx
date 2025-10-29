@@ -88,7 +88,7 @@ export default function ProjectCard({ project, className = '' }: ProjectCardProp
         </h3>
 
         {/* Description */}
-        <p className="mb-3 text-gray-600 line-clamp-2">{project.description}</p>
+        <p className="mb-3 text-gray-800 line-clamp-2">{project.description}</p>
 
         {/* Tech Stack Badges */}
         <div className="mb-4 flex flex-wrap gap-1.5">

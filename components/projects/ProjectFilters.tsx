@@ -71,7 +71,7 @@ export default function ProjectFilters({ activeFilter, onFilterChange }: Project
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2
               ${
                 isActive
-                  ? `${filter.colorClass} text-white shadow-md`
+                  ? `${filter.colorClass} text-navy-900 shadow-md`
                   : 'border border-gray-500 bg-transparent text-gray-300 hover:border-gray-400 hover:bg-gray-800/50'
               }
             `}
