@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Project } from '@/lib/projects';
 import TrackBadge from '@/components/blog/TrackBadge';
 import TechStackBadge from './TechStackBadge';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { shimmerDataURL } from '@/lib/utils/shimmer';
 import { ExternalLink, Github, Users, TrendingUp, Target } from 'lucide-react';
 
