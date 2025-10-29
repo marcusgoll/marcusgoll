@@ -284,3 +284,27 @@ Optimize marcusgoll.com content for AI-powered search engines and LLM crawlers (
 - ✅ T003: HowTo schema interfaces (lib/schema.ts)
 - ✅ T004: PostFrontmatter extension with contentType and faq fields (lib/mdx-types.ts)
 - ✅ T005: TLDRSection component (components/blog/tldr-section.tsx)
+
+### Batch 2: MVP Core (COMPLETED)
+**Tasks**: T006, T007 (2 parallel tasks)
+**Status**: ✅ Complete
+**Duration**: ~5 minutes
+**Files Changed**:
+- public/robots.txt: Updated AI crawler rules - Allow PerplexityBot, ChatGPT-User, Claude-Web (search bots); Block GPTBot, ClaudeBot, Google-Extended (training bots)
+
+**Key Decisions**:
+- robots.txt strategy reversal: Feature 051 blocked all AI crawlers, Feature 052 allows search-focused bots for citations
+- Clear separation: AI Search Crawlers (Allow) vs AI Training Crawlers (Block)
+- Added Claude-Web for Anthropic search feature compatibility
+
+**Semantic HTML Verification (T007)**:
+✅ Verified existing structure in app/blog/[slug]/page.tsx:
+- <article> wrapper present (line 196)
+- <header> with <h1> and <time datetime=""> present (lines 201-241)
+- <aside> element for related content (TOC sidebar, line 282)
+- Canonical URL already set in metadata (line 95)
+- **PASSES** US2 acceptance criteria (W3C validation will be done post-deployment)
+
+**Completed Tasks**:
+- ✅ T006: robots.txt AI crawler strategy update (public/robots.txt)
+- ✅ T007: Semantic HTML verification (app/blog/[slug]/page.tsx - existing structure validated)
