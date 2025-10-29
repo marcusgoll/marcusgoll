@@ -155,4 +155,4 @@ curl -I https://marcusgoll.com
 - Dokploy Docs: https://docs.dokploy.com
 - Traefik Docs: https://doc.traefik.io
 - Infrastructure: `infrastructure/dns/README.md`
-- Maintenance Mode: `middleware.ts`
+- Maintenance Mode: `proxy.ts` (Next.js 16+)
