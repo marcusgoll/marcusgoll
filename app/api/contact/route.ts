@@ -15,7 +15,7 @@ import {
   getAdminNotificationEmail,
   getAutoReplyEmail,
 } from '@/lib/contact/email-templates'
-import { getClientIp } from '@/lib/newsletter/rate-limiter'
+import { checkRateLimit, getClientIp } from '@/lib/newsletter/rate-limiter'
 import { Resend } from 'resend'
 
 /**
@@ -63,10 +63,34 @@ function getAdminEmail(): string {
  */
 export async function POST(request: NextRequest) {
   try {
-    // 1. Extract client IP for Turnstile verification
+    // 1. Extract client IP for rate limiting and Turnstile verification
     const clientIp = getClientIp(request)
 
-    // 2. Parse and validate request body
+    // 2. Rate limiting: 3 submissions per 15 minutes per IP (spec NFR-004)
+    const rateLimit = checkRateLimit(clientIp, 3, 900000) // 15 min = 900,000 ms
+
+    if (!rateLimit.success) {
+      const retryAfterSeconds = Math.ceil((rateLimit.reset - Date.now()) / 1000)
+      const retryAfterMinutes = Math.ceil(retryAfterSeconds / 60)
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Too many requests. Please try again in ${retryAfterMinutes} minute${retryAfterMinutes !== 1 ? 's' : ''}.`,
+        },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': rateLimit.limit.toString(),
+            'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+            'X-RateLimit-Reset': new Date(rateLimit.reset).toISOString(),
+            'Retry-After': retryAfterSeconds.toString(),
+          },
+        }
+      )
+    }
+
+    // 3. Parse and validate request body
     const body = await request.json()
     const validation = ContactFormSchema.safeParse(body)
 
@@ -86,7 +110,7 @@ export async function POST(request: NextRequest) {
 
     const { name, email, subject, message, turnstileToken, honeypot } = validation.data
 
-    // 3. Honeypot check (anti-spam)
+    // 4. Honeypot check (anti-spam)
     if (honeypot && honeypot.length > 0) {
       // Silently reject bot submissions (don't reveal anti-spam mechanism)
       console.warn(`[Contact] Honeypot triggered from IP: ${clientIp}`)
@@ -99,7 +123,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 4. Verify Turnstile token
+    // 5. Verify Turnstile token
     const turnstileResult = await verifyTurnstileToken(turnstileToken, clientIp)
 
     if (!turnstileResult.success) {
@@ -116,7 +140,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 5. Initialize Resend client
+    // 6. Initialize Resend client
     const resend = getResendClient()
 
     if (!resend) {
@@ -130,7 +154,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 6. Send admin notification email (blocking - critical)
+    // 7. Send admin notification email (blocking - critical)
     const adminEmail = getAdminNotificationEmail({ name, email, subject, message, turnstileToken, honeypot: '' })
     const fromEmail = getFromEmail()
     const toEmail = getAdminEmail()
@@ -157,7 +181,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 7. Send auto-reply email (fire-and-forget - non-critical)
+    // 8. Send auto-reply email (fire-and-forget - non-critical)
     const autoReply = getAutoReplyEmail(name)
 
     resend.emails
@@ -176,7 +200,7 @@ export async function POST(request: NextRequest) {
         // Don't throw - auto-reply failure shouldn't break the submission
       })
 
-    // 8. Return success response
+    // 9. Return success response
     return NextResponse.json(
       {
         success: true,

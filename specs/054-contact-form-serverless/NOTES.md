@@ -200,3 +200,17 @@ Options:
 - Batch 5: Client validation (T030), character counter (T031), success/error states (T032) - DONE
 This reduces redundant work and maintains UI cohesion.
 
+**Batch 6 (Rate Limiting & Subject) - COMPLETED**:
+- T040: Added rate limiting to API endpoint (3 submissions per 15 minutes per IP, spec NFR-004)
+- T041: Subject dropdown already complete in ContactForm (6 options from spec FR-002)
+
+**Key Decisions**:
+- Rate limit: 3 requests per 15 min (900,000ms) using in-memory store (reuse newsletter pattern)
+- Rate limit headers: X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, Retry-After
+- User-friendly message: "Too many requests. Please try again in X minutes." (calculated from reset time)
+
+**Batch 7 (Auto-Reply) - ALREADY COMPLETE**:
+- T050: Auto-reply email already implemented in API endpoint (step 8, fire-and-forget pattern)
+- Non-blocking: Auto-reply sent asynchronously, failures don't break submission
+- Template: getAutoReplyEmail() with personalized greeting, response time expectation, professional signature
+
