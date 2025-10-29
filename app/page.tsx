@@ -4,6 +4,7 @@ import Hero from '@/components/home/Hero';
 import HomePageClient from '@/components/home/HomePageClient';
 import PageViewTracker from '@/components/analytics/PageViewTracker';
 import { getAllPosts } from '@/lib/posts';
+import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema';
 
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;
@@ -24,23 +25,40 @@ export const metadata: Metadata = {
  * - Featured post hero
  * - Mobile responsive with menu overlay
  * - Keyboard shortcuts
+ * - T027, T048: Website + Organization schemas for SEO
  */
 export default async function Home() {
   // Fetch all posts
   const allPosts = await getAllPosts();
 
+  // Generate schemas for SEO (T027, T048)
+  const websiteSchema = generateWebsiteSchema();
+  const organizationSchema = generateOrganizationSchema(false); // No founder reference on homepage
+
   return (
-    <div className="min-h-screen">
-      {/* Analytics Page View Tracking */}
-      <PageViewTracker track="general" />
+    <>
+      {/* Schema.org JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
 
-      {/* Hero Section */}
-      <Hero />
+      <div className="min-h-screen">
+        {/* Analytics Page View Tracking */}
+        <PageViewTracker track="general" />
 
-      {/* M2 Layout (Sidebar + Magazine Masonry) */}
-      <Suspense fallback={<div className="min-h-screen" />}>
-        <HomePageClient allPosts={allPosts} />
-      </Suspense>
-    </div>
+        {/* Hero Section */}
+        <Hero />
+
+        {/* M2 Layout (Sidebar + Magazine Masonry) */}
+        <Suspense fallback={<div className="min-h-screen" />}>
+          <HomePageClient allPosts={allPosts} />
+        </Suspense>
+      </div>
+    </>
   );
 }
