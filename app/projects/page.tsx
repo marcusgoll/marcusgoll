@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { getAllProjects } from '@/lib/projects';
 import { generateCollectionPageSchema } from '@/lib/schema';
 import Container from '@/components/ui/Container';
-import ProjectGrid from '@/components/projects/ProjectGrid';
+import ProjectsClient from '@/components/projects/ProjectsClient';
 
 export const metadata: Metadata = {
   title: 'Projects | Marcus Gollahon',
@@ -17,9 +17,10 @@ export const dynamic = 'force-static';
  * Projects Page - Portfolio showcase with category filtering
  * T010: Created projects page with SSG
  * T011: Embedded CollectionPage schema for SEO
+ * T021-T023: Integrated client-side filtering with URL params
  */
 export default async function ProjectsPage() {
-  // Fetch all projects at build time
+  // Fetch all projects at build time (SSG)
   const projects = await getAllProjects();
 
   // Generate schema for SEO (T011)
@@ -47,8 +48,8 @@ export default async function ProjectsPage() {
             </p>
           </header>
 
-          {/* Projects Grid */}
-          <ProjectGrid projects={projects} />
+          {/* Client-side filtering wrapper (T021-T023) */}
+          <ProjectsClient projects={projects} />
         </Container>
       </div>
     </>
