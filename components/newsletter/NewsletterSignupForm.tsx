@@ -11,6 +11,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import type { NewsletterType } from '@/lib/newsletter/validation-schemas'
+import { trackNewsletterSuccess } from '@/lib/analytics'
 
 interface NewsletterSignupFormProps {
   /**
@@ -21,6 +22,17 @@ interface NewsletterSignupFormProps {
    * Additional CSS classes
    */
   className?: string
+  /**
+   * Form variant for different placement contexts
+   * - compact: Single-line layout, minimal spacing, hides newsletter type checkboxes (defaults to 'all')
+   * - inline: Shows all checkboxes, optional headline, prominent CTA
+   * - comprehensive: Full-featured form with all options (default)
+   */
+  variant?: 'compact' | 'inline' | 'comprehensive'
+  /**
+   * Optional headline for inline variant
+   */
+  headline?: string
 }
 
 interface FormState {
@@ -54,10 +66,15 @@ const NEWSLETTER_OPTIONS: { value: NewsletterType; label: string; description: s
   },
 ]
 
-export function NewsletterSignupForm({ source = 'form', className = '' }: NewsletterSignupFormProps) {
+export function NewsletterSignupForm({
+  source = 'form',
+  className = '',
+  variant = 'comprehensive',
+  headline
+}: NewsletterSignupFormProps) {
   const [state, setState] = useState<FormState>({
     email: '',
-    newsletterTypes: [],
+    newsletterTypes: variant === 'compact' ? ['all'] : [],
     loading: false,
     error: null,
     success: false,
@@ -99,7 +116,8 @@ export function NewsletterSignupForm({ source = 'form', className = '' }: Newsle
       return
     }
 
-    if (state.newsletterTypes.length === 0) {
+    // Skip validation for compact variant (defaults to 'all')
+    if (variant !== 'compact' && state.newsletterTypes.length === 0) {
       setState((prev) => ({
         ...prev,
         error: 'Please select at least one newsletter.',
@@ -130,10 +148,17 @@ export function NewsletterSignupForm({ source = 'form', className = '' }: Newsle
       // Success!
       setState({
         email: '',
-        newsletterTypes: [],
+        newsletterTypes: variant === 'compact' ? ['all'] : [],
         loading: false,
         error: null,
         success: true,
+      })
+
+      // Track newsletter signup success in GA4
+      trackNewsletterSuccess({
+        location: source,
+        source: source,
+        track: undefined, // Can be enhanced later with content track detection
       })
 
       // Reset success message after 5 seconds
@@ -149,6 +174,116 @@ export function NewsletterSignupForm({ source = 'form', className = '' }: Newsle
     }
   }
 
+  // Compact variant: Single-line layout
+  if (variant === 'compact') {
+    return (
+      <div className={`newsletter-signup-form-compact ${className}`}>
+        {state.success ? (
+          <div className="text-sm text-green-600">
+            Successfully subscribed! Check your email.
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="email"
+              id="email-compact"
+              name="email"
+              value={state.email}
+              onChange={(e) => setState((prev) => ({ ...prev, email: e.target.value }))}
+              placeholder="your@email.com"
+              disabled={state.loading}
+              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              required
+              aria-label="Email address"
+            />
+            <Button
+              type="submit"
+              disabled={state.loading}
+              className="whitespace-nowrap"
+            >
+              {state.loading ? 'Subscribing...' : 'Subscribe'}
+            </Button>
+            {state.error && (
+              <p className="text-xs text-red-600 mt-1 w-full">{state.error}</p>
+            )}
+          </form>
+        )}
+      </div>
+    )
+  }
+
+  // Inline variant: With optional headline
+  if (variant === 'inline') {
+    return (
+      <div className={`newsletter-signup-form-inline ${className}`}>
+        {headline && (
+          <h3 className="text-xl font-semibold mb-4">{headline}</h3>
+        )}
+        {state.success ? (
+          <div className="rounded-lg bg-green-50 p-4 border border-green-200">
+            <p className="text-green-700 font-medium">
+              Successfully subscribed! Check your email for a welcome message.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <input
+                type="email"
+                id="email-inline"
+                name="email"
+                value={state.email}
+                onChange={(e) => setState((prev) => ({ ...prev, email: e.target.value }))}
+                placeholder="Enter your email"
+                disabled={state.loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                required
+                aria-label="Email address"
+              />
+            </div>
+
+            <div className="space-y-2">
+              {NEWSLETTER_OPTIONS.map((option) => (
+                <label
+                  key={option.value}
+                  className="flex items-start gap-2 cursor-pointer group"
+                >
+                  <input
+                    type="checkbox"
+                    checked={state.newsletterTypes.includes(option.value)}
+                    onChange={() => handleCheckboxChange(option.value)}
+                    disabled={state.loading}
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed"
+                  />
+                  <div className="flex-1">
+                    <div className="text-sm font-medium group-hover:text-emerald-600 transition-colors">
+                      {option.label}
+                    </div>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            {state.error && (
+              <div className="rounded-lg bg-red-50 p-3 border border-red-200">
+                <p className="text-sm text-red-700">{state.error}</p>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              disabled={state.loading}
+              className="w-full"
+            >
+              {state.loading ? 'Subscribing...' : 'Subscribe'}
+            </Button>
+          </form>
+        )}
+      </div>
+    )
+  }
+
+  // Comprehensive variant: Full-featured form (default)
   return (
     <div className={`newsletter-signup-form ${className}`}>
       {state.success ? (
@@ -172,7 +307,7 @@ export function NewsletterSignupForm({ source = 'form', className = '' }: Newsle
               onChange={(e) => setState((prev) => ({ ...prev, email: e.target.value }))}
               placeholder="you@example.com"
               disabled={state.loading}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               required
             />
           </div>
@@ -190,10 +325,10 @@ export function NewsletterSignupForm({ source = 'form', className = '' }: Newsle
                     checked={state.newsletterTypes.includes(option.value)}
                     onChange={() => handleCheckboxChange(option.value)}
                     disabled={state.loading}
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium group-hover:text-blue-600 transition-colors">
+                    <div className="text-sm font-medium group-hover:text-emerald-600 transition-colors">
                       {option.label}
                     </div>
                     <div className="text-xs text-gray-600">{option.description}</div>

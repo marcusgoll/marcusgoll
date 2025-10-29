@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import { CompactNewsletterSignup } from '@/components/newsletter/CompactNewsletterSignup';
 
 /**
  * Footer component - Site footer with navigation and social links
  * - Secondary navigation with category links
  * - Social media links (LinkedIn, Twitter, GitHub)
+ * - Newsletter signup (compact variant)
  * - Copyright notice
  * - Navy 900 background to match header
  */
@@ -119,6 +121,13 @@ export default function Footer() {
                 Cross-Pollination
               </Link>
             </nav>
+          </div>
+        </div>
+
+        {/* Newsletter Signup */}
+        <div className="mt-12 pt-8 border-t border-gray-700">
+          <div className="max-w-md mx-auto md:mx-0">
+            <CompactNewsletterSignup />
           </div>
         </div>
 
