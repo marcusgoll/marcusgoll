@@ -1,0 +1,502 @@
+# API Contracts
+
+**Feature**: Projects Showcase Page
+**Created**: 2025-10-29
+**Phase**: Planning
+
+## Overview
+
+This feature has **no external API dependencies**. All data is loaded from local MDX files at build time using filesystem operations. This document defines internal TypeScript interfaces that serve as "contracts" between components and data layer.
+
+---
+
+## Internal Contracts
+
+### 1. Project Interface
+
+**Purpose**: Type definition for project entities
+
+**Provider**: `lib/projects.ts`
+
+**Consumer**: All project-related components
+
+**Contract**:
+```typescript
+export interface Project {
+  // Core metadata
+  slug: string;                // URL-safe identifier
+  title: string;               // Display name
+  description: string;         // 1-sentence excerpt
+
+  // Categorization
+  category: 'aviation' | 'dev-startup' | 'cross-pollination';
+
+  // Technology
+  techStack: string[];         // Array of technologies
+
+  // Media
+  coverImage: string;          // Path to screenshot
+
+  // Links
+  liveUrl?: string;            // Optional live demo URL
+  githubUrl?: string;          // Optional GitHub repository URL
+
+  // Flags
+  featured: boolean;           // Show in featured section
+
+  // Dates
+  dateCreated: string;         // ISO 8601 date
+
+  // Metrics (featured only)
+  metrics?: {
+    users?: string;            // User count
+    impact?: string;           // Business impact
+    outcome?: string;          // Key outcome
+  };
+
+  // Full content
+  content: string;             // Rendered HTML/MDX
+}
+```
+
+**Validation**:
+- All required fields must be present
+- `category` must be one of 3 valid values
+- `techStack` must have 2-10 items
+- `dateCreated` must be valid ISO 8601 format
+- If `featured: true`, `metrics` object must be present
+
+---
+
+### 2. Data Fetching Functions
+
+**Purpose**: Load project data from filesystem
+
+**Provider**: `lib/projects.ts`
+
+**Consumer**: Page components (`app/projects/page.tsx`, `app/projects/[slug]/page.tsx`)
+
+**Contracts**:
+
+#### `getProjectSlugs()`
+
+```typescript
+export function getProjectSlugs(): string[];
+```
+
+**Returns**: Array of project slugs (filenames without `.mdx`)
+
+**Example**: `["cfipros", "personal-website", "spec-flow"]`
+
+**Side Effects**: Reads from `content/projects/` directory
+
+**Errors**: Throws if directory doesn't exist
+
+---
+
+#### `getProjectBySlug(slug: string)`
+
+```typescript
+export function getProjectBySlug(slug: string): Project;
+```
+
+**Parameters**:
+- `slug` (string) - Project slug to load
+
+**Returns**: Single Project object
+
+**Side Effects**: Reads MDX file from `content/projects/[slug].mdx`
+
+**Errors**: Throws if file doesn't exist or frontmatter invalid
+
+---
+
+#### `getAllProjects()`
+
+```typescript
+export async function getAllProjects(): Promise<Project[]>;
+```
+
+**Returns**: Array of all projects, sorted by `dateCreated` descending
+
+**Side Effects**: Reads all MDX files from `content/projects/`
+
+**Errors**: Throws if directory doesn't exist or any MDX file invalid
+
+---
+
+#### `getFeaturedProjects()`
+
+```typescript
+export async function getFeaturedProjects(): Promise<Project[]>;
+```
+
+**Returns**: Array of featured projects (max 3), sorted by `dateCreated` descending
+
+**Filtering**: Only projects with `featured: true` AND `metrics` object
+
+**Side Effects**: Calls `getAllProjects()` internally
+
+**Errors**: None (returns empty array if no featured projects)
+
+---
+
+#### `getProjectsByCategory(category: string)`
+
+```typescript
+export async function getProjectsByCategory(
+  category: string
+): Promise<Project[]>;
+```
+
+**Parameters**:
+- `category` (string) - One of `'aviation'`, `'dev-startup'`, `'cross-pollination'`
+
+**Returns**: Array of projects matching category
+
+**Filtering**: Only projects with matching `category` field
+
+**Side Effects**: Calls `getAllProjects()` internally
+
+**Errors**: None (returns empty array if no matching projects)
+
+---
+
+### 3. Component Props Contracts
+
+**Purpose**: Define expected props for project components
+
+**Provider**: Component implementations
+
+**Consumer**: Parent components rendering these components
+
+#### ProjectCard Props
+
+```typescript
+interface ProjectCardProps {
+  project: Project;       // Required project data
+  className?: string;     // Optional additional classes
+}
+```
+
+**Usage**:
+```typescript
+<ProjectCard project={project} className="custom-class" />
+```
+
+---
+
+#### FeaturedProjectCard Props
+
+```typescript
+interface FeaturedProjectCardProps {
+  project: Project;       // Required, must have metrics field
+  className?: string;     // Optional additional classes
+}
+```
+
+**Validation**: Project must have `metrics` object populated
+
+**Usage**:
+```typescript
+<FeaturedProjectCard project={featuredProject} />
+```
+
+---
+
+#### TechStackBadge Props
+
+```typescript
+interface TechStackBadgeProps {
+  tech: string;           // Technology name (e.g., "Next.js")
+  colorScheme?: 'frontend' | 'backend' | 'database' | 'deployment';
+}
+```
+
+**Default**: `colorScheme` defaults to `'frontend'` if not provided
+
+**Usage**:
+```typescript
+<TechStackBadge tech="Next.js" colorScheme="frontend" />
+```
+
+---
+
+#### ProjectFilters Props
+
+```typescript
+interface ProjectFiltersProps {
+  activeFilter: 'all' | 'aviation' | 'dev-startup' | 'cross-pollination';
+  onFilterChange: (filter: string) => void;
+}
+```
+
+**Usage**:
+```typescript
+<ProjectFilters
+  activeFilter="aviation"
+  onFilterChange={(filter) => setFilter(filter)}
+/>
+```
+
+---
+
+#### ProjectGrid Props
+
+```typescript
+interface ProjectGridProps {
+  projects: Project[];    // Array of projects to display
+}
+```
+
+**Empty State**: Component handles rendering "No projects found" if array empty
+
+**Usage**:
+```typescript
+<ProjectGrid projects={filteredProjects} />
+```
+
+---
+
+## Data Flow
+
+### Build-Time Flow (SSG)
+
+```
+MDX Files (content/projects/*.mdx)
+  ↓
+getProjectSlugs() → ["cfipros", ...]
+  ↓
+getProjectBySlug("cfipros") → Project object
+  ↓
+getAllProjects() → Project[]
+  ↓
+Page Component (app/projects/page.tsx)
+  ↓
+ProjectGrid → ProjectCard (rendered HTML)
+```
+
+**Timing**: All data loaded at build time, no runtime fetching
+
+---
+
+### Runtime Flow (Filtering)
+
+```
+User clicks "Aviation" filter
+  ↓
+onFilterChange("aviation") called
+  ↓
+URL updates to /projects?category=aviation
+  ↓
+searchParams change triggers re-render
+  ↓
+Filter projects by category
+  ↓
+ProjectGrid re-renders with filtered projects
+```
+
+**Timing**: Client-side filtering, no server round-trip
+
+---
+
+## Error Handling
+
+### Build-Time Errors
+
+**Scenario**: MDX file missing required frontmatter field
+
+**Handler**: `getProjectBySlug()` throws error
+
+**Result**: Build fails with descriptive error message
+
+**Example**:
+```
+Error: Project 'cfipros': Missing required field 'title'
+```
+
+---
+
+**Scenario**: Invalid category value in frontmatter
+
+**Handler**: `getProjectBySlug()` throws error
+
+**Result**: Build fails with validation error
+
+**Example**:
+```
+Error: Project 'cfipros': Invalid category 'software' (must be 'aviation', 'dev-startup', or 'cross-pollination')
+```
+
+---
+
+**Scenario**: `content/projects/` directory missing
+
+**Handler**: `getProjectSlugs()` returns empty array
+
+**Result**: Page renders with "No projects found" message
+
+**Recovery**: Create directory and add MDX files, rebuild
+
+---
+
+### Runtime Errors
+
+**Scenario**: Image file missing (broken `coverImage` path)
+
+**Handler**: Next.js Image component shows placeholder
+
+**Result**: Alt text displayed instead of image
+
+**Recovery**: Add missing image to `public/images/projects/`, redeploy
+
+---
+
+**Scenario**: Invalid filter parameter in URL (e.g., `/projects?category=invalid`)
+
+**Handler**: `getProjectsByCategory()` returns empty array
+
+**Result**: "No projects found in this category" message
+
+**Recovery**: User clicks "All Projects" to reset filter
+
+---
+
+## Type Safety
+
+### TypeScript Strict Mode
+
+All functions and components use TypeScript strict mode:
+- No `any` types allowed
+- All parameters typed
+- All return types explicit
+- Null checks enforced
+
+---
+
+### Runtime Validation (Optional Enhancement)
+
+If runtime validation needed (e.g., for user-submitted data in future), use Zod:
+
+```typescript
+import { z } from 'zod';
+
+const ProjectSchema = z.object({
+  slug: z.string().min(1).max(50),
+  title: z.string().min(1).max(80),
+  description: z.string().min(1).max(200),
+  category: z.enum(['aviation', 'dev-startup', 'cross-pollination']),
+  techStack: z.array(z.string()).min(2).max(10),
+  // ... rest of schema
+});
+
+export type Project = z.infer<typeof ProjectSchema>;
+```
+
+**Decision**: Not needed for MVP (build-time validation sufficient)
+
+---
+
+## Versioning
+
+**Current Version**: 1.0.0 (Initial release)
+
+**Breaking Changes**:
+- Changing `Project` interface fields (type changes, field removal)
+- Changing function signatures (parameter changes, return type changes)
+
+**Non-Breaking Changes**:
+- Adding optional fields to `Project` interface
+- Adding new functions to `lib/projects.ts`
+- Adding new components
+
+**Deprecation Policy**:
+- Mark deprecated fields with `@deprecated` comment
+- Maintain deprecated fields for 1 major version
+- Remove after deprecation period
+
+---
+
+## External Dependencies (None)
+
+This feature has **zero external API dependencies**:
+- ❌ No REST APIs
+- ❌ No GraphQL endpoints
+- ❌ No database queries
+- ❌ No third-party services
+- ✅ Only filesystem reads (MDX files)
+
+**Benefits**:
+- No rate limits
+- No network latency
+- No API keys to manage
+- No external service downtime
+- Build-time static generation (optimal performance)
+
+---
+
+## Future API Considerations
+
+If feature grows beyond ~50 projects or requires CMS:
+
+### Option 1: Add REST API
+
+**Endpoint**: `GET /api/projects`
+
+**Response**:
+```json
+{
+  "projects": [
+    {
+      "slug": "cfipros",
+      "title": "CFIPros.com",
+      "category": "aviation",
+      ...
+    }
+  ],
+  "total": 12,
+  "featured": [...]
+}
+```
+
+**Contract**: OpenAPI 3.0 spec
+
+---
+
+### Option 2: Add GraphQL API
+
+**Endpoint**: `POST /api/graphql`
+
+**Query**:
+```graphql
+query GetProjects($category: String) {
+  projects(category: $category) {
+    slug
+    title
+    description
+    category
+    techStack
+    coverImage
+  }
+}
+```
+
+**Contract**: GraphQL schema
+
+---
+
+### Option 3: Integrate Headless CMS
+
+**CMS**: Contentful, Sanity, or Strapi
+
+**API**: CMS-provided REST or GraphQL API
+
+**Contract**: CMS-defined schema
+
+---
+
+**Decision**: Start with filesystem-based approach (YAGNI), add API only if needed
+
+---
+
+**Last Updated**: 2025-10-29
