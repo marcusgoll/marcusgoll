@@ -7,11 +7,42 @@ import { getPostsByTag } from '@/lib/posts';
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;
 
-// Static metadata
+// Site URL with fallback
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
+// Static metadata with Open Graph and Twitter Card
 export const metadata: Metadata = {
   title: 'Dev/Startup | Marcus Gollahon',
   description:
     'Software development insights, systematic thinking, and startup lessons from Marcus Gollahon - teaching developers to build with clarity.',
+  alternates: {
+    canonical: `${SITE_URL}/dev-startup`,
+  },
+  openGraph: {
+    title: 'Dev & Startup | Marcus Gollahon',
+    description:
+      'Software development insights, systematic thinking, and startup lessons from Marcus Gollahon - teaching developers to build with clarity.',
+    url: `${SITE_URL}/dev-startup`,
+    type: 'website',
+    siteName: 'Marcus Gollahon',
+    images: [
+      {
+        url: `${SITE_URL}/images/og/og-default.svg`,
+        width: 1200,
+        height: 630,
+        alt: 'Dev & Startup - Marcus Gollahon',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@marcusgoll',
+    creator: '@marcusgoll',
+    title: 'Dev & Startup | Marcus Gollahon',
+    description:
+      'Software development insights, systematic thinking, and startup lessons from Marcus Gollahon - teaching developers to build with clarity.',
+    images: [`${SITE_URL}/images/og/og-default.svg`],
+  },
 };
 
 /**

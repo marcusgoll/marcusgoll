@@ -1,0 +1,36 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Navy 900 Background #0F172A -->
+  <rect width="1200" height="630" fill="#0F172A"/>
+
+  <!-- Emerald 600 Accent Bar -->
+  <rect x="0" y="0" width="8" height="630" fill="#059669"/>
+
+  <!-- Brand Name - Work Sans Bold -->
+  <text x="600" y="240" font-family="'Work Sans', sans-serif" font-size="72" font-weight="700" fill="#FFFFFF" text-anchor="middle">
+    Marcus Gollahon
+  </text>
+
+  <!-- Tagline - Work Sans Regular -->
+  <text x="600" y="320" font-family="'Work Sans', sans-serif" font-size="32" font-weight="400" fill="#94A3B8" text-anchor="middle">
+    Teaching systematic thinking from 30,000 feet
+  </text>
+
+  <!-- Dual Track Indicators - Emerald 600 Accents -->
+  <g>
+    <!-- Aviation Icon Placeholder -->
+    <circle cx="400" cy="450" r="40" fill="none" stroke="#059669" stroke-width="3"/>
+    <text x="400" y="460" font-family="'Work Sans', sans-serif" font-size="40" fill="#059669" text-anchor="middle">✈</text>
+    <text x="400" y="530" font-family="'Work Sans', sans-serif" font-size="18" font-weight="400" fill="#94A3B8" text-anchor="middle">
+      Aviation
+    </text>
+  </g>
+
+  <g>
+    <!-- Dev Icon Placeholder -->
+    <circle cx="800" cy="450" r="40" fill="none" stroke="#059669" stroke-width="3"/>
+    <text x="800" y="460" font-family="'Work Sans', sans-serif" font-size="40" fill="#059669" text-anchor="middle">&lt;/&gt;</text>
+    <text x="800" y="530" font-family="'Work Sans', sans-serif" font-size="18" font-weight="400" fill="#94A3B8" text-anchor="middle">
+      Dev &amp; Startup
+    </text>
+  </g>
+</svg>

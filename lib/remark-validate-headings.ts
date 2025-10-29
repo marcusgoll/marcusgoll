@@ -13,6 +13,7 @@
  */
 
 import { visit } from 'unist-util-visit';
+import type { VFile } from 'vfile';
 import type { Root, Heading, PhrasingContent, Text } from 'mdast';
 
 /**
@@ -42,7 +43,7 @@ function extractHeadingText(children: PhrasingContent[]): string {
  * @returns Remark transformer function
  */
 export function remarkValidateHeadings() {
-  return (tree: Root, file: any) => {
+  return (tree: Root, file: VFile) => {
     let h1Count = 0;
     let previousLevel = 0;
     const violations: string[] = [];

@@ -34,8 +34,11 @@ export async function generateStaticParams() {
   }
 }
 
+// Site URL with fallback
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
 /**
- * Generate metadata for tag archive pages
+ * Generate metadata for tag archive pages with Open Graph and Twitter Card
  */
 export async function generateMetadata({ params }: TagArchivePageProps): Promise<Metadata> {
   try {
@@ -52,9 +55,39 @@ export async function generateMetadata({ params }: TagArchivePageProps): Promise
       (t) => t.toLowerCase().replace(/\s+/g, '-') === tag
     ) || tag;
 
+    const title = `Posts tagged: ${displayName} | Marcus Gollahon`;
+    const description = `Explore all posts about ${displayName}. ${posts.length} post${posts.length !== 1 ? 's' : ''} found.`;
+    const url = `${SITE_URL}/blog/tag/${tag}`;
+
     return {
-      title: `${displayName} | Blog`,
-      description: `Articles tagged with ${displayName}. ${posts.length} post${posts.length !== 1 ? 's' : ''} found.`,
+      title,
+      description,
+      alternates: {
+        canonical: url,
+      },
+      openGraph: {
+        title,
+        description,
+        url,
+        type: 'website',
+        siteName: 'Marcus Gollahon',
+        images: [
+          {
+            url: `${SITE_URL}/images/og/og-default.svg`,
+            width: 1200,
+            height: 630,
+            alt: `Posts tagged: ${displayName}`,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        site: '@marcusgoll',
+        creator: '@marcusgoll',
+        title,
+        description,
+        images: [`${SITE_URL}/images/og/og-default.svg`],
+      },
     };
   } catch (error) {
     console.error('[generateMetadata] Failed to generate tag metadata:', error);
