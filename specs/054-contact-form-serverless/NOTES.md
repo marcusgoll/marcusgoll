@@ -172,3 +172,14 @@ Options:
 - Environment variables: Added comprehensive documentation in .env.example with setup steps for Cloudflare dashboard
 - Type safety: Updated EnvironmentVariables interface, ENV_CATEGORIES, ENV_REQUIREMENTS, ENV_ACCESS, and ENV_METRICS
 
+**Batch 2 (Foundational) - COMPLETED**:
+- T005: Created lib/contact/validation-schema.ts (Zod schema with 6 subject options, 500-10K char message requirement, honeypot field)
+- T006: Created lib/contact/turnstile-verifier.ts (async verification with 5s timeout, error handling, configuration check)
+- T007: Created lib/contact/email-templates.ts (admin notification + auto-reply templates with HTML/text, XSS escaping)
+
+**Key Decisions**:
+- Validation: 500 char minimum for messages (prevents low-effort spam), 10K max (prevents abuse)
+- Turnstile: 5 second timeout for verification API, graceful error handling for network issues
+- Email templates: Professional design with gradient headers, XSS protection via escapeHtml(), reply-to instructions
+- Pattern reuse: Followed newsletter validation schema patterns (Zod error messages, type inference)
+
