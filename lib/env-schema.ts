@@ -122,6 +122,44 @@ export interface EnvironmentVariables {
   NEWSLETTER_FROM_EMAIL: string
 
   // ============================================================================
+  // Cloudflare Turnstile (Spam Protection)
+  // ============================================================================
+
+  /**
+   * Cloudflare Turnstile site key (public, client-side)
+   * @required Yes (for contact form)
+   * @client-accessible Yes (NEXT_PUBLIC_* prefix)
+   * @format 0x[64-character hex string]
+   * @example "0x4AAAAAAAy7c0hh..." (test key) | "0x1234567890abc..." (prod key)
+   * @purpose Client-side Turnstile widget initialization
+   * @security Safe to expose (public key)
+   * @where-to-get https://dash.cloudflare.com/?to=/:account/turnstile
+   */
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: string
+
+  /**
+   * Cloudflare Turnstile secret key (server-side only)
+   * @required Yes (for contact form)
+   * @client-accessible No (server-side only)
+   * @format 0x[64-character hex string]
+   * @example "0x4AAAAAAAy7c0hh..." (test key) | "0x1234567890abc..." (prod key)
+   * @purpose Server-side verification of Turnstile tokens
+   * @security KEEP SECRET - never expose to browser
+   * @where-to-get https://dash.cloudflare.com/?to=/:account/turnstile
+   */
+  TURNSTILE_SECRET_KEY: string
+
+  /**
+   * Admin email address to receive contact form submissions
+   * @required Yes (for contact form)
+   * @format email@domain.com
+   * @example "hello@marcusgoll.com" | "contact@marcusgoll.com"
+   * @purpose Destination for contact form messages
+   * @note Can be different from NEWSLETTER_FROM_EMAIL
+   */
+  CONTACT_ADMIN_EMAIL: string
+
+  // ============================================================================
   // Third-Party Services (Optional)
   // ============================================================================
 
@@ -186,6 +224,11 @@ export const ENV_CATEGORIES = {
     'SUPABASE_SERVICE_ROLE_KEY',
   ],
   newsletter: ['RESEND_API_KEY', 'MAILGUN_API_KEY', 'NEWSLETTER_FROM_EMAIL'],
+  turnstile: [
+    'NEXT_PUBLIC_TURNSTILE_SITE_KEY',
+    'TURNSTILE_SECRET_KEY',
+    'CONTACT_ADMIN_EMAIL',
+  ],
   thirdParty: ['GA4_MEASUREMENT_ID'],
   maintenance: ['MAINTENANCE_MODE', 'MAINTENANCE_BYPASS_TOKEN'],
 } as const
@@ -202,6 +245,9 @@ export const ENV_REQUIREMENTS = {
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
     'SUPABASE_SERVICE_ROLE_KEY',
     'NEWSLETTER_FROM_EMAIL',
+    'NEXT_PUBLIC_TURNSTILE_SITE_KEY',
+    'TURNSTILE_SECRET_KEY',
+    'CONTACT_ADMIN_EMAIL',
     // Note: One of RESEND_API_KEY or MAILGUN_API_KEY is required (validated separately)
   ],
   optional: [
@@ -219,6 +265,7 @@ export const ENV_ACCESS = {
   clientAccessible: [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'NEXT_PUBLIC_TURNSTILE_SITE_KEY',
   ],
   serverOnly: [
     'DATABASE_URL',
@@ -227,6 +274,8 @@ export const ENV_ACCESS = {
     'RESEND_API_KEY',
     'MAILGUN_API_KEY',
     'NEWSLETTER_FROM_EMAIL',
+    'TURNSTILE_SECRET_KEY',
+    'CONTACT_ADMIN_EMAIL',
     'GA4_MEASUREMENT_ID', // Server-only for now, can be client-accessible if prefixed
   ],
 } as const
@@ -235,9 +284,9 @@ export const ENV_ACCESS = {
  * Total variable count
  */
 export const ENV_METRICS = {
-  total: 12,
-  required: 8, // 7 always required + 1 of (RESEND_API_KEY | MAILGUN_API_KEY)
+  total: 15,
+  required: 11, // 10 always required + 1 of (RESEND_API_KEY | MAILGUN_API_KEY)
   optional: 4,
-  clientAccessible: 2,
-  serverOnly: 10,
+  clientAccessible: 3,
+  serverOnly: 12,
 } as const
