@@ -118,12 +118,15 @@ test('generateBlogPostingSchema: includes articleSection field for aviation post
   const mockPost: PostData = {
     slug: 'test-aviation-post',
     frontmatter: {
-      title: 'Aviation Test',
-      date: '2025-10-29',
+      title: "Aviation Test",
+      slug: "test-aviation-post",
+      date: "2025-10-29T00:00:00Z",
       author: 'Marcus Gollahon',
-      excerpt: 'Test excerpt',
+      excerpt: "Test excerpt for aviation post",
       tags: ['aviation', 'pilot'],
-      featuredImage: '/images/test.png'
+      featuredImage: '/images/test.png',
+      draft: false,
+      contentType: "standard" as const
     },
     content: 'Test content for aviation post with multiple words here.'
   };
@@ -138,12 +141,15 @@ test('generateBlogPostingSchema: includes articleSection field for dev post', ()
   const mockPost: PostData = {
     slug: 'test-dev-post',
     frontmatter: {
-      title: 'Development Test',
-      date: '2025-10-29',
+      title: "Development Test",
+      slug: "test-dev-post",
+      date: "2025-10-29T00:00:00Z",
       author: 'Marcus Gollahon',
-      excerpt: 'Test excerpt',
+      excerpt: "Test excerpt for dev post",
       tags: ['coding', 'typescript'],
-      featuredImage: '/images/test.png'
+      featuredImage: '/images/test.png',
+      draft: false,
+      contentType: "standard" as const
     },
     content: 'Test content for development post with multiple words here.'
   };
@@ -158,12 +164,15 @@ test('generateBlogPostingSchema: articleSection defaults to Blog for unknown tag
   const mockPost: PostData = {
     slug: 'test-general-post',
     frontmatter: {
-      title: 'General Test',
-      date: '2025-10-29',
+      title: "General Test",
+      slug: "test-general-post",
+      date: "2025-10-29T00:00:00Z",
       author: 'Marcus Gollahon',
-      excerpt: 'Test excerpt',
+      excerpt: "Test excerpt for general post",
       tags: ['random', 'other'],
-      featuredImage: '/images/test.png'
+      featuredImage: '/images/test.png',
+      draft: false,
+      contentType: "standard" as const
     },
     content: 'Test content for general post with multiple words here.'
   };
@@ -178,11 +187,15 @@ test('generateBlogPostingSchema: articleSection handles missing tags array', () 
   const mockPost: PostData = {
     slug: 'test-no-tags-post',
     frontmatter: {
-      title: 'No Tags Test',
-      date: '2025-10-29',
+      title: "No Tags Test",
+      slug: "test-no-tags-post",
+      date: "2025-10-29T00:00:00Z",
       author: 'Marcus Gollahon',
-      excerpt: 'Test excerpt',
-      featuredImage: '/images/test.png'
+      excerpt: "Test excerpt for no tags post",
+      featuredImage: '/images/test.png',
+      tags: [],
+      draft: false,
+      contentType: "standard" as const
     },
     content: 'Test content for post without tags field.'
   };
