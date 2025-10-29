@@ -242,5 +242,31 @@ This is NOT a new feature - it's **frontend integration and UX enhancement** of 
 
 **Status**: Footer + inline placements integrated, ready for manual testing
 
+### Batch 5: Dedicated Page (COMPLETED)
+- T030: NewsletterPage component created
+  - Hero section with value proposition
+  - 4 benefits grid (systematic thinking, dual-track, teaching quality, building in public)
+  - Comprehensive signup form (variant="comprehensive", source="dedicated-page")
+  - 6 FAQs (frequency, topic selection, content types, unsubscribe, privacy, pricing)
+  - Final CTA with smooth scroll to signup form
+  - SEO metadata with Open Graph and Twitter Card tags
+  - File created: app/newsletter/page.tsx
+
+**Status**: Dedicated /newsletter page created
+
+### Batch 6: Analytics Integration (COMPLETED)
+- T040: GA4 tracking integrated into NewsletterSignupForm
+  - Imported trackNewsletterSuccess from lib/analytics.ts
+  - Fires event after successful subscription with source parameter
+  - Event data: location (source), source (footer/post-inline/dedicated-page)
+  - File modified: components/newsletter/NewsletterSignupForm.tsx
+- T041: Source prop verification
+  - CompactNewsletterSignup: source="footer" ✓
+  - InlineNewsletterCTA: source="post-inline" ✓
+  - NewsletterPage: source="dedicated-page" ✓
+  - All placements have unique source values for analytics segmentation
+
+**Status**: Analytics tracking complete, ready for GA4 dashboard validation
+
 ## Last Updated
 2025-10-28T23:50:00Z

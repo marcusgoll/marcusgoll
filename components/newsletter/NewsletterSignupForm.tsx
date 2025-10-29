@@ -11,6 +11,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import type { NewsletterType } from '@/lib/newsletter/validation-schemas'
+import { trackNewsletterSuccess } from '@/lib/analytics'
 
 interface NewsletterSignupFormProps {
   /**
@@ -147,10 +148,17 @@ export function NewsletterSignupForm({
       // Success!
       setState({
         email: '',
-        newsletterTypes: [],
+        newsletterTypes: variant === 'compact' ? ['all'] : [],
         loading: false,
         error: null,
         success: true,
+      })
+
+      // Track newsletter signup success in GA4
+      trackNewsletterSuccess({
+        location: source,
+        source: source,
+        track: undefined, // Can be enhanced later with content track detection
       })
 
       // Reset success message after 5 seconds
