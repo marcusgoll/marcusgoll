@@ -13,12 +13,26 @@
  */
 
 import { visit } from 'unist-util-visit';
-import type { Root } from 'mdast';
+import type { Root, Heading, PhrasingContent, Text } from 'mdast';
 
-interface HeadingNode {
-  type: 'heading';
-  depth: number;
-  children: Array<{ value: string }>;
+/**
+ * Extract text content from heading node children
+ * Handles Text, Link, and other phrasing content types
+ */
+function extractHeadingText(children: PhrasingContent[]): string {
+  return children
+    .map((child) => {
+      if (child.type === 'text') {
+        return (child as Text).value;
+      }
+      // Handle other types like links, emphasis, etc.
+      if ('children' in child && Array.isArray(child.children)) {
+        return extractHeadingText(child.children as PhrasingContent[]);
+      }
+      return '';
+    })
+    .join('')
+    .trim();
 }
 
 /**
@@ -33,12 +47,9 @@ export function remarkValidateHeadings() {
     let previousLevel = 0;
     const violations: string[] = [];
 
-    visit(tree, 'heading', (node: HeadingNode) => {
+    visit(tree, 'heading', (node: Heading) => {
       const level = node.depth;
-      const headingText = node.children
-        .map((child) => child.value || '')
-        .join('')
-        .trim();
+      const headingText = extractHeadingText(node.children);
 
       // Check for single H1
       if (level === 1) {
