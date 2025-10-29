@@ -1,7 +1,5 @@
 import type { NextConfig } from "next";
 import createMDX from '@next/mdx';
-import rehypeShiki from './lib/rehype-shiki';
-import remarkGfm from 'remark-gfm';
 
 // Note: Environment variable validation moved to API routes and middleware
 // to avoid blocking Docker build process. Build-time validation is not needed
@@ -46,9 +44,10 @@ const nextConfig: NextConfig = {
 };
 
 const withMDX = createMDX({
+  extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypeShiki],
+    remarkPlugins: [],
+    rehypePlugins: [],
   },
 });
 

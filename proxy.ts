@@ -1,5 +1,5 @@
 /**
- * Next.js Edge Middleware: HTTPS Redirect & Maintenance Mode
+ * Next.js Edge Proxy: HTTPS Redirect & Maintenance Mode
  *
  * Purpose: Global request interception for HTTPS enforcement and maintenance mode
  * Runtime: Edge Runtime (Vercel Edge Functions)
@@ -22,7 +22,7 @@ import {
   logBypassAttempt,
 } from '@/lib/maintenance-utils'
 
-export function middleware(request: NextRequest): NextResponse {
+export function proxy(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl
 
   // ============================================================================
@@ -128,9 +128,9 @@ export function middleware(request: NextRequest): NextResponse {
 }
 
 /**
- * Middleware configuration
+ * Proxy configuration
  *
- * Matcher: Apply middleware to all routes except:
+ * Matcher: Apply proxy to all routes except:
  * - /_next/* (Next.js internals)
  * - /api/* (API routes - handled separately if needed)
  * - Static files with extensions (.png, .jpg, .ico, etc.)
