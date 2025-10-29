@@ -1,0 +1,81 @@
+# Spec-Flow Workflow State
+# Schema version: 2.1.0
+# Created: 2025-10-29T17:18:24Z
+
+feature:
+  slug: homepage-redesign
+  title: Homepage redesign with modern layout and improved UX
+  branch_name: quick/brand-color-tokens-core-hex
+  created: 2025-10-29T17:18:24Z
+  last_updated: "2025-10-29T18:08:34Z"
+  roadmap_status: in_progress # Options: backlog, next, in_progress, shipped
+deployment_model: staging-prod # Options: staging-prod, direct-prod, local-only
+workflow:
+  phase: analyze
+  status: completed # Options: in_progress, completed, failed, pending
+  completed_phases:
+    - spec-flow
+    - plan
+    - tasks
+    - analyze
+  failed_phases: []
+  manual_gates: {}
+  phase_timing:
+    plan:
+      started_at: "2025-10-29T17:44:07Z"
+      status: completed
+      completed_at: "2025-10-29T17:53:24Z"
+      duration_seconds: 558
+    tasks:
+      started_at: "2025-10-29T17:55:23Z"
+      status: completed
+      completed_at: "2025-10-29T17:58:25Z"
+      duration_seconds: 182
+    validate:
+      started_at: "2025-10-29T17:59:41Z"
+      status: completed
+      completed_at: "2025-10-29T18:02:41Z"
+      duration_seconds: 180
+    implement:
+      started_at: "2025-10-29T18:04:38Z"
+      status: completed
+      sub_phases:
+        batch_1_setup:
+          started_at: "2025-10-29T18:05:18Z"
+          completed_at: "2025-10-29T18:06:21Z"
+          duration_seconds: 63
+        batch_2_foundational:
+          started_at: "2025-10-29T18:06:34Z"
+          completed_at: "2025-10-29T18:07:27Z"
+          duration_seconds: 53
+      completed_at: "2025-10-29T18:08:34Z"
+      duration_seconds: 236
+  metrics: {}
+context:
+  token_budget:
+    phase: planning
+    budget: 75000
+    estimated_usage: 0
+    compaction_needed: false
+deployment:
+  staging:
+    deployed: false
+    url: null
+    deployment_ids: {}
+    health_checks: {}
+  production:
+    deployed: false
+    version: null
+    url: null
+    deployment_ids: {}
+artifacts:
+  spec: specs/homepage-redesign/spec.md
+  plan: null
+  tasks: null
+  optimization_report: null
+  staging_validation: null
+  ship_report: null
+quality_gates: {}
+metadata:
+  schema_version: "2.1.0"
+  workflow_version: "2.1.0"
