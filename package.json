@@ -65,5 +65,8 @@
     "ts-jest": "^29.4.5",
     "typescript": "^5.9.3",
     "whatwg-fetch": "^3.6.20"
+  },
+  "overrides": {
+    "tmp": "^0.2.4"
   }
 }
