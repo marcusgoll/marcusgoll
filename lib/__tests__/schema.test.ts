@@ -9,7 +9,13 @@
  * Coverage Target: 100% of new schema generation functions
  */
 
-import { mapTagsToCategory, generateBlogPostingSchema } from '../schema';
+import {
+  mapTagsToCategory,
+  generateBlogPostingSchema,
+  generateWebsiteSchema,
+  generatePersonSchema,
+  generateOrganizationSchema
+} from '../schema';
 import type { PostData } from '../mdx-types';
 
 // Simple test harness (no framework dependency)
@@ -185,6 +191,118 @@ test('generateBlogPostingSchema: articleSection handles missing tags array', () 
 
   assertTruthy(schema.articleSection, 'articleSection should be present even without tags');
   assertEqual(schema.articleSection, 'Blog', 'Missing tags should default to Blog category');
+});
+
+// =============================================================================
+// T020: generateWebsiteSchema() Tests
+// =============================================================================
+
+test('generateWebsiteSchema: includes all required Schema.org fields', () => {
+  const schema = generateWebsiteSchema();
+
+  assertEqual(schema['@context'], 'https://schema.org', '@context should be https://schema.org');
+  assertEqual(schema['@type'], 'WebSite', '@type should be WebSite');
+  assertTruthy(schema.name, 'name should be present');
+  assertTruthy(schema.url, 'url should be present');
+  assertTruthy(schema.description, 'description should be present');
+});
+
+test('generateWebsiteSchema: includes SearchAction for SERP search box', () => {
+  const schema = generateWebsiteSchema();
+
+  assertTruthy(schema.potentialAction, 'potentialAction should be present');
+  assertEqual(schema.potentialAction['@type'], 'SearchAction', 'potentialAction should be SearchAction');
+  assertTruthy(schema.potentialAction.target, 'SearchAction target should be present');
+  assertTruthy(schema.potentialAction.target.urlTemplate, 'SearchAction urlTemplate should be present');
+  assertTruthy(schema.potentialAction['query-input'], 'SearchAction query-input should be present');
+});
+
+test('generateWebsiteSchema: SearchAction target includes search_term_string placeholder', () => {
+  const schema = generateWebsiteSchema();
+
+  const urlTemplate = schema.potentialAction.target.urlTemplate;
+  assertTruthy(urlTemplate.includes('{search_term_string}'), 'urlTemplate should include {search_term_string} placeholder');
+});
+
+// =============================================================================
+// T030: generatePersonSchema() Tests
+// =============================================================================
+
+test('generatePersonSchema: includes all required Schema.org fields', () => {
+  const schema = generatePersonSchema();
+
+  assertEqual(schema['@context'], 'https://schema.org', '@context should be https://schema.org');
+  assertEqual(schema['@type'], 'Person', '@type should be Person');
+  assertTruthy(schema.name, 'name should be present');
+  assertEqual(schema.name, 'Marcus Gollahon', 'name should be Marcus Gollahon');
+  assertTruthy(schema.jobTitle, 'jobTitle should be present');
+  assertTruthy(schema.description, 'description should be present');
+  assertTruthy(schema.url, 'url should be present');
+});
+
+test('generatePersonSchema: includes sameAs social profile links', () => {
+  const schema = generatePersonSchema();
+
+  assertTruthy(schema.sameAs, 'sameAs should be present');
+  assertTruthy(Array.isArray(schema.sameAs), 'sameAs should be an array');
+  assertTruthy(schema.sameAs.length >= 3, 'sameAs should have at least 3 social links');
+});
+
+test('generatePersonSchema: includes knowsAbout expertise areas', () => {
+  const schema = generatePersonSchema();
+
+  assertTruthy(schema.knowsAbout, 'knowsAbout should be present');
+  assertTruthy(Array.isArray(schema.knowsAbout), 'knowsAbout should be an array');
+  assertIncludes(schema.knowsAbout, 'Aviation', 'knowsAbout should include Aviation');
+  assertIncludes(schema.knowsAbout, 'Software Development', 'knowsAbout should include Software Development');
+});
+
+// =============================================================================
+// T040: generateOrganizationSchema() Tests
+// =============================================================================
+
+test('generateOrganizationSchema: includes all required Schema.org fields', () => {
+  const schema = generateOrganizationSchema(false); // Test without founder first
+
+  assertEqual(schema['@context'], 'https://schema.org', '@context should be https://schema.org');
+  assertEqual(schema['@type'], 'Organization', '@type should be Organization');
+  assertTruthy(schema.name, 'name should be present');
+  assertTruthy(schema.url, 'url should be present');
+  assertTruthy(schema.logo, 'logo should be present');
+  assertEqual(schema.logo['@type'], 'ImageObject', 'logo @type should be ImageObject');
+  assertTruthy(schema.logo.url, 'logo url should be present');
+  assertTruthy(schema.description, 'description should be present');
+});
+
+test('generateOrganizationSchema: includes sameAs social links', () => {
+  const schema = generateOrganizationSchema(false);
+
+  assertTruthy(schema.sameAs, 'sameAs should be present');
+  assertTruthy(Array.isArray(schema.sameAs), 'sameAs should be an array');
+  assertTruthy(schema.sameAs.length >= 3, 'sameAs should have at least 3 social links');
+});
+
+test('generateOrganizationSchema: includes founder Person reference when includeFounder=true', () => {
+  const schema = generateOrganizationSchema(true);
+
+  assertTruthy(schema.founder, 'founder should be present when includeFounder=true');
+  assertEqual(schema.founder?.['@type'], 'Person', 'founder @type should be Person');
+  assertEqual(schema.founder?.name, 'Marcus Gollahon', 'founder name should match Person schema');
+});
+
+test('generateOrganizationSchema: excludes founder when includeFounder=false', () => {
+  const schema = generateOrganizationSchema(false);
+
+  assertEqual(schema.founder, undefined, 'founder should be undefined when includeFounder=false');
+});
+
+test('generateOrganizationSchema: founder matches Person schema data (consistency)', () => {
+  const orgSchema = generateOrganizationSchema(true);
+  const personSchema = generatePersonSchema();
+
+  assertEqual(orgSchema.founder?.name, personSchema.name, 'founder name should match Person schema');
+  assertEqual(orgSchema.founder?.jobTitle, personSchema.jobTitle, 'founder jobTitle should match Person schema');
+  assertEqual(orgSchema.founder?.url, personSchema.url, 'founder url should match Person schema');
 });
 
 // =============================================================================
