@@ -142,6 +142,13 @@ export default function Header() {
             Cross-Pollination
           </Link>
 
+          <Link
+            href="/projects"
+            className="text-white transition-colors hover:text-emerald-600"
+          >
+            Projects
+          </Link>
+
           {/* Theme Toggle - Desktop */}
           <ThemeToggle className="text-white" />
         </div>
@@ -254,6 +261,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Cross-Pollination
+            </Link>
+            <Link
+              href="/projects"
+              className="block py-2 text-white transition-colors hover:text-emerald-600"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Projects
             </Link>
 
             {/* Theme Toggle - Mobile */}

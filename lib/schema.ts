@@ -498,3 +498,58 @@ export function generateContactPageSchema(): ContactPageSchema {
     },
   };
 }
+
+/**
+ * CollectionPage schema type for Schema.org JSON-LD
+ * Used for projects portfolio page to appear in rich results
+ */
+export interface CollectionPageSchema {
+  '@context': 'https://schema.org';
+  '@type': 'CollectionPage';
+  name: string;
+  description: string;
+  url: string;
+  inLanguage: string;
+  isPartOf: {
+    '@type': 'WebSite';
+    '@id': string;
+  };
+  author: {
+    '@type': 'Person';
+    name: string;
+    url: string;
+  };
+}
+
+/**
+ * Generate CollectionPage JSON-LD schema for projects portfolio
+ * T011: CollectionPage schema for projects page
+ *
+ * Provides structured data for the projects portfolio page.
+ * Improves SEO and helps search engines understand the page as a collection.
+ *
+ * @returns CollectionPageSchema object for JSON-LD script tag
+ *
+ * @see https://schema.org/CollectionPage
+ */
+export function generateCollectionPageSchema(): CollectionPageSchema {
+  const brandData = getConstitutionData();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Projects Portfolio - Marcus Gollahon',
+    description: 'Portfolio of aviation and software development projects showcasing flight instruction platforms, developer tools, and systematic thinking applied across domains.',
+    url: `${brandData.url}/projects`,
+    inLanguage: 'en-US',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': `${brandData.url}/#website`,
+    },
+    author: {
+      '@type': 'Person',
+      name: brandData.name,
+      url: brandData.url,
+    },
+  };
+}

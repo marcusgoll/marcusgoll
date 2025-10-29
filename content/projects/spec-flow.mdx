@@ -1,0 +1,54 @@
+---
+title: "Spec-Flow - Specification-Driven Development Workflow"
+description: "Claude Code workflow automation toolkit that transforms product ideas into production releases through structured phases and AI agent orchestration."
+category: "cross-pollination"
+techStack: ["Bash", "PowerShell", "YAML", "Markdown", "Git", "GitHub Actions"]
+coverImage: "/images/projects/spec-flow.png"
+githubUrl: "https://github.com/marcusgoll/spec-flow"
+featured: true
+dateCreated: "2024-06-20"
+metrics:
+  users: "Open source community"
+  impact: "12-phase workflow system"
+  outcome: "Structured feature delivery"
+---
+
+## Problem
+
+AI coding assistants like Claude Code are powerful but lack systematic workflows for transforming product ideas into production features. Developers struggle with context management, consistent documentation, and coordination between planning and implementation phases. The result: incomplete specs, missing tests, and deployment surprises.
+
+## Solution
+
+Spec-Flow applies aviation's checklist methodology to software development. Just as pilots use pre-flight checklists to ensure safety, developers use Spec-Flow's phase-based workflow to ensure completeness. The system orchestrates 12 phases from specification through production deployment, with each phase producing auditable artifacts.
+
+## Tech Stack
+
+Cross-platform automation toolkit built for reliability:
+- **Bash scripts** (POSIX-compliant) for macOS/Linux automation
+- **PowerShell 7+** for Windows and cross-platform support
+- **YAML state files** for LLM-friendly workflow tracking
+- **Markdown templates** for consistent artifact generation
+- **Git integration** for version control and deployment
+- **GitHub Actions** for CI/CD automation
+- **Claude Code agents** with specialized briefs for different roles
+
+## Challenges & Lessons
+
+**Cross-Platform Compatibility**: Supporting both Unix-like systems and Windows. Solution: Parallel implementation in Bash and PowerShell with feature parity testing.
+
+**Context Budget Management**: AI models have token limits. Solution: Phase-based compaction strategies that preserve critical information while reducing context by 90%/60%/30% depending on phase.
+
+**Workflow State Tracking**: YAML vs JSON for state files. Solution: Migrated to YAML for LLM-friendly editing with fewer syntax errors, supporting comments for human documentation.
+
+**Deployment Model Detection**: Different projects need different deployment strategies. Solution: Automatic detection of staging-prod, direct-prod, or local-only workflows based on git configuration and CI files.
+
+## Results & Impact
+
+- **12-phase workflow system** covering specification → deployment → finalization
+- **50+ agent briefs** providing specialized context for different roles (backend, frontend, QA, release)
+- **Cross-platform scripts** supporting macOS, Linux, and Windows environments
+- **Automatic versioning** with semantic version bumps based on change types
+- **Quality gates system** preventing deployments with critical issues
+- **GitHub Issues integration** for ICE-scored roadmap management
+
+The project demonstrates cross-pollination between aviation safety culture and software development - applying the same rigorous processes that keep aircraft safe to building reliable software systems.
