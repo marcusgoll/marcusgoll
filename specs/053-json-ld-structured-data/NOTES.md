@@ -145,5 +145,53 @@ Source: package.json, lib/mdx.ts
 
 **Checkpoint**: Ready for Batch 3 (US2 Website schema)
 
+### Batch 3-5: All Schema Implementations (COMPLETED)
+
+Batches 3, 4, and 5 were completed together as the interfaces and generators were all added to lib/schema.ts in one pass for efficiency.
+
+**Batch 3 (US2 - Website Schema):**
+- ✅ T020: Unit tests for generateWebsiteSchema() - 3 tests (required fields, SearchAction, placeholder)
+- ✅ T025: Create WebsiteSchema interface in lib/schema.ts
+- ✅ T026: Create generateWebsiteSchema() function with SearchAction
+- ✅ T027: Embed Website schema in app/page.tsx (homepage)
+
+**Batch 4 (US3 - Person Schema):**
+- ✅ T030: Unit tests for generatePersonSchema() - 3 tests (required fields, sameAs, knowsAbout)
+- ✅ T035: Create PersonSchema interface in lib/schema.ts
+- ✅ T036: Create generatePersonSchema() function using getConstitutionData()
+- ✅ T037: Create app/about/page.tsx with content
+- ✅ T038: Embed Person schema in app/about/page.tsx
+
+**Batch 5 (US4 - Organization Schema):**
+- ✅ T040: Unit tests for generateOrganizationSchema() - 5 tests (required fields, sameAs, founder options, consistency)
+- ✅ T045: Create OrganizationSchema interface in lib/schema.ts
+- ✅ T046: Create generateOrganizationSchema() function with optional founder
+- ✅ T047: Embed Organization schema in app/blog/[slug]/page.tsx
+- ✅ T048: Embed Organization schema in app/page.tsx (homepage)
+
+**Test Results**: 26/26 tests passing (100% pass rate)
+- mapTagsToCategory: 11 tests
+- BlogPosting articleSection: 4 tests
+- Website schema: 3 tests
+- Person schema: 3 tests
+- Organization schema: 5 tests
+
+**Key Decisions**:
+- Added all 3 schema interfaces (Website, Person, Organization) to lib/schema.ts in single pass
+- WebsiteSchema uses SearchAction with EntryPoint for SERP search box eligibility
+- PersonSchema includes knowsAbout field for expertise areas (Aviation, Software Development, etc.)
+- OrganizationSchema has optional founder parameter - true on About page, false elsewhere
+- About page created as simple prose-styled content page with dual-track bio
+- Organization schema embedded on homepage and all blog posts for unified brand presence
+
+**Files Changed**:
+- lib/schema.ts (+119 lines - 3 interfaces, 3 generator functions)
+- lib/__tests__/schema.test.ts (+119 lines - 14 new tests for Website/Person/Organization)
+- app/page.tsx (+11 lines - Website + Organization schemas)
+- app/about/page.tsx (+143 lines - new file with Person + Organization schemas)
+- app/blog/[slug]/page.tsx (+8 lines - Organization schema addition)
+
+**Checkpoint**: Ready for Batch 6 (Manual validation and documentation)
+
 ## Last Updated
 2025-10-29T01:30:00-04:00

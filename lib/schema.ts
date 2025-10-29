@@ -101,6 +101,63 @@ export interface HowToStepSchema {
 }
 
 /**
+ * Website schema type for Schema.org JSON-LD
+ * T025: Website schema with SearchAction for homepage
+ * Used for site-level structured data and search box in SERPs
+ */
+export interface WebsiteSchema {
+  '@context': 'https://schema.org';
+  '@type': 'WebSite';
+  name: string;
+  url: string;
+  description: string;
+  potentialAction: {
+    '@type': 'SearchAction';
+    target: {
+      '@type': 'EntryPoint';
+      urlTemplate: string;
+    };
+    'query-input': string;
+  };
+}
+
+/**
+ * Person schema type for Schema.org JSON-LD
+ * T035: Person schema for About page
+ * Used for personal brand identity and professional profile
+ */
+export interface PersonSchema {
+  '@context': 'https://schema.org';
+  '@type': 'Person';
+  name: string;
+  jobTitle: string;
+  description: string;
+  url: string;
+  image?: string;
+  sameAs: string[];
+  knowsAbout: string[];
+}
+
+/**
+ * Organization schema type for Schema.org JSON-LD
+ * T045: Organization schema for brand entity
+ * Used for unified brand representation across all pages
+ */
+export interface OrganizationSchema {
+  '@context': 'https://schema.org';
+  '@type': 'Organization';
+  name: string;
+  url: string;
+  logo: {
+    '@type': 'ImageObject';
+    url: string;
+  };
+  description: string;
+  founder?: PersonSchema;
+  sameAs: string[];
+}
+
+/**
  * Brand data extracted from constitution.md
  * T006: Constitution data extraction for Person/Organization schemas
  */
@@ -300,4 +357,99 @@ export function generateBreadcrumbListSchema(
       item: segment.url,
     })),
   };
+}
+
+/**
+ * Generate Website JSON-LD schema for homepage
+ * T026: Website schema with SearchAction
+ * FR-007: Site-level structured data with search capability
+ *
+ * Provides site-wide metadata and enables SERP search box.
+ * SearchAction allows users to search directly from Google results.
+ *
+ * @returns WebsiteSchema object for JSON-LD script tag
+ *
+ * @see https://schema.org/WebSite
+ * @see https://schema.org/SearchAction
+ */
+export function generateWebsiteSchema(): WebsiteSchema {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Marcus Gollahon',
+    url: 'https://marcusgoll.com',
+    description: 'Software developer, flight instructor, and educator helping pilots and developers master systematic thinking.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://marcusgoll.com/search?q={search_term_string}'
+      },
+      'query-input': 'required name=search_term_string'
+    }
+  };
+}
+
+/**
+ * Generate Person JSON-LD schema for About page
+ * T036: Person schema with brand data from constitution
+ * FR-008: Personal brand identity schema
+ *
+ * Provides professional identity and social profile links.
+ * Data extracted from constitution.md via getConstitutionData().
+ *
+ * @returns PersonSchema object for JSON-LD script tag
+ *
+ * @see https://schema.org/Person
+ */
+export function generatePersonSchema(): PersonSchema {
+  const brandData = getConstitutionData();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: brandData.name,
+    jobTitle: brandData.jobTitle,
+    description: brandData.description,
+    url: brandData.url,
+    image: 'https://marcusgoll.com/images/marcus-profile.jpg',
+    sameAs: brandData.sameAs,
+    knowsAbout: ['Aviation', 'Software Development', 'Flight Instruction', 'Education', 'Systematic Thinking']
+  };
+}
+
+/**
+ * Generate Organization JSON-LD schema for brand entity
+ * T046: Organization schema with optional founder reference
+ * FR-009: Unified brand entity across all pages
+ *
+ * Provides organization-level metadata for personal brand.
+ * Optionally includes founder Person reference for About page.
+ *
+ * @param includeFounder - Whether to include founder Person schema (default: true)
+ * @returns OrganizationSchema object for JSON-LD script tag
+ *
+ * @see https://schema.org/Organization
+ */
+export function generateOrganizationSchema(includeFounder: boolean = true): OrganizationSchema {
+  const brandData = getConstitutionData();
+
+  const schema: OrganizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: brandData.name,
+    url: brandData.url,
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://marcusgoll.com/images/logo.png'
+    },
+    description: brandData.description,
+    sameAs: brandData.sameAs
+  };
+
+  if (includeFounder) {
+    schema.founder = generatePersonSchema();
+  }
+
+  return schema;
 }
