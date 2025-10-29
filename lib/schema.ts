@@ -50,6 +50,48 @@ export interface BreadcrumbListSchema {
 }
 
 /**
+ * FAQPage schema type for Schema.org JSON-LD
+ * T002: FAQ schema interfaces for LLM optimization
+ * Used for FAQ-style blog posts to appear in rich results
+ */
+export interface FAQPageSchema {
+  '@context': 'https://schema.org';
+  '@type': 'FAQPage';
+  mainEntity: QuestionSchema[];
+}
+
+export interface QuestionSchema {
+  '@type': 'Question';
+  name: string;
+  acceptedAnswer: AnswerSchema;
+}
+
+export interface AnswerSchema {
+  '@type': 'Answer';
+  text: string;
+}
+
+/**
+ * HowTo schema type for Schema.org JSON-LD
+ * T003: HowTo schema interfaces for LLM optimization
+ * Used for tutorial-style blog posts to appear in rich results
+ */
+export interface HowToSchema {
+  '@context': 'https://schema.org';
+  '@type': 'HowTo';
+  name: string;
+  description: string;
+  step: HowToStepSchema[];
+}
+
+export interface HowToStepSchema {
+  '@type': 'HowToStep';
+  name: string;
+  text: string;
+  position?: number;
+}
+
+/**
  * Generate BlogPosting JSON-LD schema for SEO
  * FR-003: Schema.org structured data generation
  * NFR-004: Must pass Google Rich Results Test
