@@ -6,10 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
-  // Supabase uses connection pooling via Supavisor
-  // Use direct URL for migrations: env("DIRECT_DATABASE_URL")
+  // Local development uses SQLite (file:./dev.db)
+  // Production (Dokploy) uses PostgreSQL (set DATABASE_URL to postgresql://...)
 }
 
 // Example model - customize based on your needs
@@ -25,29 +25,29 @@ model User {
 
 // Newsletter subscriber model
 model NewsletterSubscriber {
-  id               String   @id @default(cuid())
-  email            String   @unique
-  active           Boolean  @default(true)
-  subscribedAt     DateTime @default(now())
+  id               String    @id @default(cuid())
+  email            String    @unique
+  active           Boolean   @default(true)
+  subscribedAt     DateTime  @default(now())
   unsubscribedAt   DateTime?
-  unsubscribeToken String   @unique @db.VarChar(64)
-  source           String?  @db.VarChar(50)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  unsubscribeToken String    @unique
+  source           String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   preferences NewsletterPreference[]
 
-  @@map("newsletter_subscribers")
   @@index([email])
   @@index([active])
   @@index([unsubscribeToken])
+  @@map("newsletter_subscribers")
 }
 
 // Newsletter preference model (which newsletters user wants)
 model NewsletterPreference {
   id             String   @id @default(cuid())
   subscriberId   String
-  newsletterType String   @db.VarChar(50) // aviation, dev-startup, education, all
+  newsletterType String   // aviation, dev-startup, education, all
   subscribed     Boolean  @default(true)
   updatedAt      DateTime @updatedAt
   createdAt      DateTime @default(now())
@@ -55,7 +55,7 @@ model NewsletterPreference {
   subscriber NewsletterSubscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
 
   @@unique([subscriberId, newsletterType])
-  @@map("newsletter_preferences")
   @@index([subscriberId])
   @@index([newsletterType, subscribed])
+  @@map("newsletter_preferences")
 }

@@ -10,7 +10,7 @@ feature:
   last_updated: 2025-10-29T03:56:24Z
   roadmap_status: in_progress # Options: backlog, next, in_progress, shipped
   github_issue: 19
-deployment_model: staging-prod # Options: staging-prod, direct-prod, local-only
+deployment_model: direct-prod # Options: staging-prod, direct-prod, local-only
 workflow:
   phase: spec-flow
   status: in_progress # Options: in_progress, completed, failed, pending
@@ -45,3 +45,5 @@ quality_gates: {}
 metadata:
   schema_version: "2.0.0"
   workflow_version: "2.0.0"
+design_workflow:
+  enabled: false
