@@ -6,10 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-  // Local development uses SQLite (file:./dev.db)
-  // Production (Dokploy) uses PostgreSQL (set DATABASE_URL to postgresql://...)
+  // Supabase uses connection pooling via Supavisor
+  // Use direct URL for migrations: env("DIRECT_DATABASE_URL")
 }
 
 // Example model - customize based on your needs
@@ -30,8 +30,8 @@ model NewsletterSubscriber {
   active           Boolean   @default(true)
   subscribedAt     DateTime  @default(now())
   unsubscribedAt   DateTime?
-  unsubscribeToken String    @unique
-  source           String?
+  unsubscribeToken String    @unique @db.VarChar(64)
+  source           String?   @db.VarChar(50)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -47,7 +47,7 @@ model NewsletterSubscriber {
 model NewsletterPreference {
   id             String   @id @default(cuid())
   subscriberId   String
-  newsletterType String   // aviation, dev-startup, education, all
+  newsletterType String   @db.VarChar(50) // aviation, dev-startup, education, all
   subscribed     Boolean  @default(true)
   updatedAt      DateTime @updatedAt
   createdAt      DateTime @default(now())
