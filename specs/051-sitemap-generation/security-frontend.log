@@ -1,0 +1,26 @@
+# Frontend Dependency Security Audit
+# Feature: Sitemap Generation (specs/051-sitemap-generation)
+# Date: 2025-10-28
+# Command: npm audit --production
+
+## Summary
+Production dependencies: 303
+Total vulnerabilities: 0
+
+## Vulnerabilities by Severity
+- Critical: 0
+- High: 0
+- Moderate: 0
+- Low: 0
+- Info: 0
+
+## Status: PASSED ✓
+No vulnerabilities detected in production dependencies.
+
+## Notes
+- npm audit warning: "Use `--omit=dev` instead" (deprecation notice, non-blocking)
+- All 303 production dependencies are clean
+- No action required
+
+## Raw Audit Output
+See: specs/051-sitemap-generation/security-frontend-raw.json

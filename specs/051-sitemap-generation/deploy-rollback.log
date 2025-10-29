@@ -1,0 +1,32 @@
+=== Rollback Readiness Check ===
+
+1. Rollback procedure documented in plan.md:
+**Rollback Method**: Git revert
+1. Revert commit that adds `app/sitemap.ts` and removes `lib/generate-sitemap.ts`
+2. Manually run `npx tsx lib/generate-sitemap.ts` to regenerate `public/sitemap.xml`
+3. Redeploy from main branch
+4. Verify `https://marcusgoll.com/sitemap.xml` returns XML
+
+**Special Considerations**:
+- Keep `lib/generate-sitemap.ts` in Git history (don't force delete)
+- Keep `public/sitemap.xml` in Git history as backup
+- If Next.js sitemap fails, can restore old implementation quickly
+
+
+2. Rollback time documented:
+**Rollback Time**: <5 minutes
+- Git revert: <1 minute
+- Regenerate sitemap: <1 minute
+- Deploy: <3 minutes (Docker build + restart)
+
+3. Checking deprecated files in Git history:
+935ac64 feat: SEO & Analytics Infrastructure (Issue #35) (#44)
+132eab6 feat: SEO & Analytics Infrastructure (Issue #35) (#44)
+f06c93d fix: address 6 PR review comments from CodeAnt AI (#44)
+079ed7b feat: complete sitemap generation and fix blog post frontmatter (US3, T014-T015)
+4268b25 feat: Individual Post Page Enhancements (US1-US6)
+
+4. Rollback readiness status:
+✅ Rollback procedure documented (<5 minutes)
+✅ Simple Git revert + redeploy strategy
+✅ No complex migration or data loss risk

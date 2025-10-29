@@ -1,0 +1,121 @@
+# Environment Variable Security Review
+# Feature: Sitemap Generation (specs/051-sitemap-generation)
+# Date: 2025-10-28
+
+## Environment Variables Used
+
+### NEXT_PUBLIC_SITE_URL
+**Type**: Public environment variable (NEXT_PUBLIC_* prefix)
+**Purpose**: Canonical site URL for sitemap generation
+**Security Classification**: Public (non-sensitive)
+
+**Implementation**:
+- File: app/sitemap.ts (line 33)
+- Usage: `process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com'`
+- Fallback: Hard-coded production domain
+- Warning: Logged when not set (line 36-38)
+
+**Security Assessment**:
+- ✓ NEXT_PUBLIC_* variables are public (Next.js convention)
+- ✓ Value exposed in client bundle (expected behavior)
+- ✓ Contains no secrets or credentials
+- ✓ Appropriate for public domain names
+
+**Risk**: NONE - Public variable by design
+
+## New Environment Variables
+
+### Added in This Feature
+**Count**: 0 new secrets added
+
+**Verification**:
+- Command: `git diff main --name-only | grep -E "\.env|secrets|config"`
+- Result: No new environment or config files
+- Status: ✓ PASSED
+
+## Existing Environment Variables
+
+### Review of .env.example
+**File**: .env.example
+**Variable**: NEXT_PUBLIC_SITE_URL="http://localhost:3000"
+
+**Configuration**:
+- Example value: Development localhost URL
+- Production value: Set via deployment platform (Vercel/Dokploy)
+- Fallback: Hard-coded to 'https://marcusgoll.com'
+
+**Security**:
+- ✓ No secrets in .env.example
+- ✓ Development-safe default
+- ✓ Production override required (but has safe fallback)
+
+## Secret Management Review
+
+### No Secrets Required
+**Status**: ✓ PASSED
+
+**Rationale**:
+- Sitemap is public infrastructure (XML protocol requires public access)
+- No authentication needed
+- No API keys required
+- No database credentials needed
+- Site URL is public information
+
+### Environment Variable Best Practices
+
+**Followed**:
+- ✓ Public variables use NEXT_PUBLIC_* prefix (Next.js convention)
+- ✓ Sensitive data not in environment variables (none required)
+- ✓ Example file (.env.example) has safe defaults
+- ✓ Fallback values are production-safe
+
+**Not Applicable**:
+- Secrets rotation (no secrets)
+- Encryption at rest (public data)
+- Access control (public endpoint)
+
+## Security Verification Checklist
+
+### 1. New Secrets ✓ PASSED
+- No new secrets added
+- No new .env files created
+- No credentials in code
+
+### 2. Secret Exposure ✓ PASSED
+- No secrets in git history
+- No secrets in .env.example
+- No secrets in configuration files
+
+### 3. Environment Variable Security ✓ PASSED
+- Public variables properly prefixed (NEXT_PUBLIC_*)
+- No sensitive data in public variables
+- Fallback values are safe for production
+
+### 4. Configuration Management ✓ PASSED
+- Environment-specific configuration via deployment platform
+- Development defaults in .env.example
+- Production override via Vercel/Dokploy environment variables
+
+## Deployment Platform Configuration
+
+### Vercel/Dokploy Setup
+**Variable**: NEXT_PUBLIC_SITE_URL
+
+**Production Value**: https://marcusgoll.com
+**Staging Value**: (staging URL if applicable)
+**Development Value**: http://localhost:3000
+
+**Status**: ✓ Ready for deployment
+**Action**: Verify environment variable set in deployment platform UI
+
+## Status: PASSED ✓
+
+No environment variable security issues detected.
+
+## Risk Level: NONE
+
+Environment variable usage is minimal and secure:
+- Only 1 public variable used (NEXT_PUBLIC_SITE_URL)
+- No secrets required
+- Safe fallback values
+- No sensitive data exposure
