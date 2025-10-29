@@ -7,6 +7,7 @@ Personal blog and portfolio covering aviation, software development, education, 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4
+- **Theming**: next-themes with manual dark/light mode toggle
 - **Database**: Self-hosted Supabase (PostgreSQL)
 - **ORM**: Prisma
 - **Content**: Markdown/MDX for blog posts
