@@ -2,16 +2,39 @@
 
 import { Button } from '@/components/ui/Button';
 import Container from '@/components/ui/Container';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
+
+// Dynamic import for Dialog to reduce initial bundle size
+// Dialog is below-the-fold and only loaded when user interacts
+const Dialog = dynamic(
+  () => import('@/components/ui/dialog').then((mod) => mod.Dialog),
+  { ssr: false }
+);
+const DialogContent = dynamic(
+  () => import('@/components/ui/dialog').then((mod) => mod.DialogContent),
+  { ssr: false }
+);
+const DialogDescription = dynamic(
+  () => import('@/components/ui/dialog').then((mod) => mod.DialogDescription),
+  { ssr: false }
+);
+const DialogHeader = dynamic(
+  () => import('@/components/ui/dialog').then((mod) => mod.DialogHeader),
+  { ssr: false }
+);
+const DialogTitle = dynamic(
+  () => import('@/components/ui/dialog').then((mod) => mod.DialogTitle),
+  { ssr: false }
+);
+const DialogTrigger = dynamic(
+  () => import('@/components/ui/dialog').then((mod) => mod.DialogTrigger),
+  { ssr: false }
+);
+const DialogFooter = dynamic(
+  () => import('@/components/ui/dialog').then((mod) => mod.DialogFooter),
+  { ssr: false }
+);
 
 /**
  * Hero component - M2 Design hero section
