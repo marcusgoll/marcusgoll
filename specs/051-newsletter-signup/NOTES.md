@@ -228,5 +228,19 @@ This is NOT a new feature - it's **frontend integration and UX enhancement** of 
 
 **Status**: Components created, ready for integration into layouts
 
+### Batch 4: Layout Integration - US1 + US2 (COMPLETED)
+- T012: Footer integration
+  - Imported CompactNewsletterSignup into Footer component
+  - Added newsletter section after nav links, before copyright
+  - Responsive max-width container (centered on mobile, left-aligned on desktop)
+  - File modified: components/layout/Footer.tsx
+- T021: Blog post page integration
+  - Imported InlineNewsletterCTA into blog post page
+  - Positioned after MDX content, before PrevNextNav component
+  - Passes frontmatter.tags for context-aware headline generation
+  - File modified: app/blog/[slug]/page.tsx
+
+**Status**: Footer + inline placements integrated, ready for manual testing
+
 ## Last Updated
 2025-10-28T23:50:00Z
