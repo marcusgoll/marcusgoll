@@ -24,6 +24,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { mdxComponents } from '@/components/mdx/mdx-components';
 import rehypeShiki from '@/lib/rehype-shiki';
 import remarkGfm from 'remark-gfm';
+import { remarkValidateHeadings } from '@/lib/remark-validate-headings';
 import Image from 'next/image';
 import { RelatedPosts } from '@/components/blog/related-posts';
 import { PrevNextNav } from '@/components/blog/prev-next-nav';
@@ -262,7 +263,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           components={mdxComponents}
           options={{
             mdxOptions: {
-              remarkPlugins: [remarkGfm], // GitHub Flavored Markdown (tables, strikethrough, etc.)
+              remarkPlugins: [
+                remarkGfm, // GitHub Flavored Markdown (tables, strikethrough, etc.)
+                remarkValidateHeadings, // T012: Heading hierarchy validation for LLM optimization
+              ],
               rehypePlugins: [rehypeShiki], // Shiki syntax highlighting with dual themes
             },
           }}

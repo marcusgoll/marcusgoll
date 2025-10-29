@@ -349,3 +349,41 @@ Optimize marcusgoll.com content for AI-powered search engines and LLM crawlers (
 - ✅ T008: Verify existing BlogPosting schema (lib/schema.ts verified)
 - ✅ T009: Add mainEntityOfPage field (lib/schema.ts updated)
 - ✅ T010: Verify schema injection (app/blog/[slug]/page.tsx verified)
+
+### Batch 4: Heading Validation (COMPLETED)
+**Tasks**: T011, T012 (2 sequential tasks)
+**Status**: ✅ Complete
+**Duration**: ~10 minutes
+**Files Changed**:
+- lib/remark-validate-headings.ts: NEW - Remark plugin for build-time heading validation
+- app/blog/[slug]/page.tsx: Added remarkValidateHeadings to remarkPlugins array
+
+**Key Decisions**:
+- Build-time validation: Plugin throws error on heading hierarchy violations, failing the build
+- Validation rules: Single H1 per document, no skipped levels (H2 → H4 without H3)
+- Clear error messages: Shows file path, violation details, and guidance
+- Integration: Added to MDXRemote options in blog post page (runtime validation during SSG)
+
+**Remark Plugin Implementation (T011)**:
+✅ Created lib/remark-validate-headings.ts with:
+- visit() from unist-util-visit to traverse heading nodes
+- Single H1 enforcement (h1Count tracking)
+- Skipped level detection (previousLevel comparison)
+- Build error with violations array
+- Clear error formatting with file path and heading text
+
+**MDX Pipeline Integration (T012)**:
+✅ Added to app/blog/[slug]/page.tsx:
+- Import remarkValidateHeadings from lib
+- Added to remarkPlugins array after remarkGfm
+- Runs at build time during static generation (SSG)
+- Will fail build if any post has invalid heading hierarchy
+
+**Testing Strategy**:
+- Build will validate all existing posts automatically
+- Create test post with invalid hierarchy to verify error handling (optional)
+- Lighthouse SEO audit will verify heading structure post-deployment
+
+**Completed Tasks**:
+- ✅ T011: Create remark heading validation plugin (lib/remark-validate-headings.ts)
+- ✅ T012: Add plugin to MDX pipeline (app/blog/[slug]/page.tsx)
