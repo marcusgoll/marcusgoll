@@ -31,7 +31,7 @@ import { PrevNextNav } from '@/components/blog/prev-next-nav';
 import { SocialShare } from '@/components/blog/social-share';
 import { TableOfContents } from '@/components/blog/table-of-contents';
 import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
-import { generateBlogPostingSchema } from '@/lib/schema';
+import { generateBlogPostingSchema, generateOrganizationSchema } from '@/lib/schema';
 import { InlineNewsletterCTA } from '@/components/newsletter/InlineNewsletterCTA';
 import { TLDRSection } from '@/components/blog/tldr-section';
 
@@ -155,6 +155,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Generate BlogPosting JSON-LD schema for rich snippets (US3, FR-003)
   const blogPostingSchema = generateBlogPostingSchema(post);
 
+  // Generate Organization schema for brand entity (T047)
+  const organizationSchema = generateOrganizationSchema(false);
+
   // Generate breadcrumb segments for hierarchical navigation (US6, FR-007, T063)
   // Structure: Home > Blog > [Post Title]
   const breadcrumbSegments: BreadcrumbSegment[] = [
@@ -182,6 +185,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(blogPostingSchema),
+        }}
+      />
+      {/* Organization JSON-LD for brand entity - T047 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema),
         }}
       />
 
