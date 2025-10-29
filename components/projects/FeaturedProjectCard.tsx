@@ -86,7 +86,7 @@ export default function FeaturedProjectCard({ project, className = '' }: Feature
       <div className="relative aspect-video w-full overflow-hidden bg-gray-100 lg:aspect-auto lg:h-full">
         <Image
           src={project.coverImage}
-          alt={project.title}
+          alt={`${project.title} - Featured ${project.category} project showcasing ${project.description.split('.')[0].toLowerCase()}`}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 1024px) 100vw, 50vw"
@@ -148,7 +148,7 @@ export default function FeaturedProjectCard({ project, className = '' }: Feature
               variant="default"
               size="lg"
               asChild
-              className="flex-1"
+              className="flex-1 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
               <a
                 href={project.liveUrl}
@@ -166,7 +166,7 @@ export default function FeaturedProjectCard({ project, className = '' }: Feature
               variant="outline"
               size="lg"
               asChild
-              className="flex-1"
+              className="flex-1 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
               <a
                 href={project.githubUrl}

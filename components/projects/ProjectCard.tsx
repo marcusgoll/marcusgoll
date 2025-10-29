@@ -65,12 +65,13 @@ export default function ProjectCard({ project, className = '' }: ProjectCardProp
       <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
         <Image
           src={project.coverImage}
-          alt={project.title}
+          alt={`${project.title} screenshot showing ${project.category} project interface`}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           placeholder="blur"
           blurDataURL={shimmerDataURL(1200, 675)}
+          loading="lazy"
         />
       </div>
 
@@ -112,7 +113,7 @@ export default function ProjectCard({ project, className = '' }: ProjectCardProp
               variant="default"
               size="sm"
               asChild
-              className="flex-1"
+              className="flex-1 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
               <a
                 href={project.liveUrl}
@@ -130,7 +131,7 @@ export default function ProjectCard({ project, className = '' }: ProjectCardProp
               variant="outline"
               size="sm"
               asChild
-              className="flex-1"
+              className="flex-1 focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
               <a
                 href={project.githubUrl}
