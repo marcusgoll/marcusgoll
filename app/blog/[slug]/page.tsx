@@ -24,6 +24,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { mdxComponents } from '@/components/mdx/mdx-components';
 import rehypeShiki from '@/lib/rehype-shiki';
 import remarkGfm from 'remark-gfm';
+import { remarkValidateHeadings } from '@/lib/remark-validate-headings';
 import Image from 'next/image';
 import { RelatedPosts } from '@/components/blog/related-posts';
 import { PrevNextNav } from '@/components/blog/prev-next-nav';
@@ -32,6 +33,7 @@ import { TableOfContents } from '@/components/blog/table-of-contents';
 import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
 import { generateBlogPostingSchema } from '@/lib/schema';
 import { InlineNewsletterCTA } from '@/components/newsletter/InlineNewsletterCTA';
+import { TLDRSection } from '@/components/blog/tldr-section';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
 
@@ -241,6 +243,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         />
       </header>
 
+      {/* TL;DR Section - T013: LLM optimization summary (US5) */}
+      <TLDRSection excerpt={frontmatter.excerpt} />
+
       {/* Featured image - responsive with 16:9 aspect ratio, priority loading */}
       {frontmatter.featuredImage && (
         <div className="mb-8 relative aspect-video">
@@ -263,7 +268,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           components={mdxComponents}
           options={{
             mdxOptions: {
-              remarkPlugins: [remarkGfm], // GitHub Flavored Markdown (tables, strikethrough, etc.)
+              remarkPlugins: [
+                remarkGfm, // GitHub Flavored Markdown (tables, strikethrough, etc.)
+                remarkValidateHeadings, // T012: Heading hierarchy validation for LLM optimization
+              ],
               rehypePlugins: [rehypeShiki], // Shiki syntax highlighting with dual themes
             },
           }}

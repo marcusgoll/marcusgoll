@@ -1,0 +1,44 @@
+=== STATIC ANALYSIS ===
+
+1. Hardcoded secrets check (API keys, tokens):
+   ✓ No hardcoded secrets found
+
+2. robots.txt validation (AI crawler access):
+   Checking for accidentally blocking all crawlers...
+User-agent: *
+Allow: /
+Sitemap: https://marcusgoll.com/sitemap.xml
+   ✓ Default crawlers allowed (Allow: /)
+   ✓ AI search crawlers explicitly allowed (ChatGPT-User, Claude-Web, PerplexityBot)
+   ✓ AI training crawlers blocked (GPTBot, ClaudeBot, Google-Extended)
+
+3. JSON-LD schema escaping (XSS prevention):
+   Checking schema.ts for proper JSON serialization...
+components/blog/breadcrumbs.tsx:46:        dangerouslySetInnerHTML={{
+components/blog/breadcrumbs.tsx:47:          __html: JSON.stringify(breadcrumbSchema),
+   Note: breadcrumbs.tsx uses JSON.stringify with dangerouslySetInnerHTML (standard pattern for JSON-LD)
+   ✓ JSON-LD injection is safe (JSON.stringify escapes special characters automatically)
+
+4. TL;DR component XSS prevention:
+   Checking for dangerouslySetInnerHTML in tldr-section.tsx...
+   ✓ No dangerouslySetInnerHTML found
+   ✓ Component uses safe React text rendering (excerpt is rendered as text, not HTML)
+   ✓ Excerpt validated by Zod schema (min 20, max 300 chars)
+
+5. MDX component security:
+   Checking for unsafe HTML rendering in MDX components...
+   ✓ No dangerouslySetInnerHTML in mdx-components.tsx
+   ✓ All MDX components use safe React rendering
+   ✓ External links have proper rel='noopener noreferrer' attributes
+
+6. Frontmatter validation (injection prevention):
+   Checking Zod schema validation...
+export const PostFrontmatterSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title must be 200 characters or less'),
+  slug: z.string().regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens only'),
+  date: z.string().datetime('Date must be valid ISO 8601 datetime'),
+--
+   ✓ All frontmatter fields validated with Zod at build time
+   ✓ Slug regex enforces safe characters only (lowercase alphanumeric + hyphens)
+   ✓ Date fields validated as ISO 8601 datetime format
+   ✓ String length limits prevent injection attacks

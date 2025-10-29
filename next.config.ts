@@ -1,12 +1,16 @@
 import type { NextConfig } from "next";
 import createMDX from '@next/mdx';
-import rehypeShiki from './lib/rehype-shiki';
-import remarkGfm from 'remark-gfm';
 
 // Note: Environment variable validation moved to API routes and middleware
 // to avoid blocking Docker build process. Build-time validation is not needed
 // since NEXT_PUBLIC_* variables are available at build time, and runtime
 // variables are validated when the app starts.
+
+// Note: Blog posts use next-mdx-remote/rsc (runtime MDX compilation) with plugins
+// passed directly to <MDXRemote>. The @next/mdx config below is only for MDX files
+// in the app directory that need build-time compilation (if any).
+// Turbopack (default in Next.js 16) requires serializable plugin options, so
+// custom plugins like rehypeShiki and remarkGfm are applied at runtime instead.
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -45,10 +49,13 @@ const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
 };
 
+// Minimal MDX config for app directory .mdx files (if any)
+// Blog posts in /content/posts use next-mdx-remote with runtime plugins
 const withMDX = createMDX({
+  extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypeShiki],
+    remarkPlugins: [],
+    rehypePlugins: [],
   },
 });
 

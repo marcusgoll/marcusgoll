@@ -1,0 +1,152 @@
+# Code Security Review
+# Feature: Sitemap Generation (specs/051-sitemap-generation)
+# Date: 2025-10-28
+# Files Reviewed: app/sitemap.ts, lib/mdx.ts, lib/mdx-types.ts
+
+## Security Checklist
+
+### 1. Input Validation ✓ PASSED
+**Status**: Secure with defense-in-depth validation
+
+**Implementation**:
+- MDX frontmatter validated by Zod schema in lib/mdx-types.ts (lines 15-28)
+- Validation enforced at build time in lib/mdx.ts (lines 29-42)
+- PostFrontmatterSchema validates:
+  * title: max 200 chars
+  * slug: regex ^[a-z0-9-]+$ (prevents path traversal)
+  * date: ISO 8601 datetime format
+  * excerpt: 20-300 chars
+  * tags: 1-10 tags array
+  * All optional fields properly typed
+
+**Risk**: NONE - Input validation is comprehensive and enforced at build time
+
+### 2. Hardcoded Secrets ✓ PASSED
+**Status**: No hardcoded secrets detected
+
+**Implementation**:
+- NEXT_PUBLIC_SITE_URL loaded from environment variable (line 33)
+- Fallback to public domain 'https://marcusgoll.com' (appropriate for public variable)
+- Warning logged when env var missing (lines 36-38)
+
+**Files Checked**:
+- app/sitemap.ts: No secrets, API keys, or credentials
+- lib/mdx.ts: No secrets, only file system operations
+- lib/mdx-types.ts: Type definitions only
+
+**Risk**: NONE - No sensitive data in code
+
+### 3. SQL Injection ✓ N/A
+**Status**: Not applicable
+
+**Rationale**:
+- No database queries in sitemap generation
+- Data sourced from file system (MDX files) only
+- No SQL, ORM, or database connection code
+
+**Risk**: NONE - No database interaction
+
+### 4. Cross-Site Scripting (XSS) ✓ PASSED
+**Status**: Not applicable (server-side XML generation)
+
+**Implementation**:
+- Sitemap generated server-side at build time (line 31)
+- Output is XML (application/xml), not HTML
+- No user-controlled input rendered to HTML
+- All data from validated MDX frontmatter
+- Next.js MetadataRoute.Sitemap type-safe interface
+
+**Risk**: NONE - Server-side generation, no dynamic HTML rendering
+
+### 5. Path Traversal ✓ PASSED
+**Status**: Protected by slug validation
+
+**Implementation**:
+- Slug regex validation: ^[a-z0-9-]+$ (lib/mdx-types.ts line 17)
+- Prevents '../' or absolute paths in slugs
+- path.join() used for file paths (lib/mdx.ts line 89)
+- Content directory locked to CONTENT_DIR constant (lib/mdx.ts line 17)
+
+**Risk**: NONE - Path traversal not possible with validated slugs
+
+### 6. Error Handling ✓ PASSED
+**Status**: Secure error handling with fail-fast approach
+
+**Implementation**:
+- Try-catch wraps sitemap generation (lines 40-84)
+- Build fails explicitly on error (lines 80-83)
+- Error messages logged without sensitive data exposure
+- Console.error shows error object (development only)
+
+**Risk**: NONE - Errors fail build safely, no sensitive data leakage
+
+### 7. Data Integrity ✓ PASSED
+**Status**: Multiple validation layers
+
+**Implementation**:
+- Zod schema validation (lib/mdx-types.ts)
+- Slug-filename consistency check (lib/mdx.ts line 98-100)
+- Date format validation (ISO 8601)
+- Draft filtering in production (lib/mdx.ts line 65-67)
+
+**Risk**: NONE - Comprehensive data validation
+
+### 8. Denial of Service (DoS) ✓ PASSED
+**Status**: Protected by build-time generation
+
+**Implementation**:
+- Sitemap generated once at build time, not per request
+- No runtime processing or user-triggered generation
+- Static XML file served from file system
+- Related posts algorithm: O(n) complexity, <50ms target (lib/mdx.ts line 205)
+
+**Risk**: NONE - Static generation prevents DoS
+
+## Additional Security Features
+
+### Type Safety
+- TypeScript strict mode enforced
+- Next.js MetadataRoute.Sitemap interface (type-safe)
+- Zod runtime type validation
+- No 'any' types in security-critical paths
+
+### Principle of Least Privilege
+- File system access limited to CONTENT_DIR
+- No network requests
+- No external API calls
+- No user authentication (public sitemap per protocol)
+
+### Defense in Depth
+1. Zod schema validation (input layer)
+2. Slug-filename consistency check (data layer)
+3. Build-time error handling (deployment layer)
+4. Static generation (runtime layer)
+
+## Security Recommendations
+
+### 1. Content Security Policy (CSP)
+**Priority**: Low
+**Recommendation**: Consider adding CSP headers for sitemap.xml endpoint
+**Rationale**: XML sitemaps rarely targeted, but CSP adds defense-in-depth
+**Action**: Defer to broader CSP implementation (out of scope for this feature)
+
+### 2. Rate Limiting
+**Priority**: None
+**Recommendation**: Not applicable
+**Rationale**: Static file served by web server, not application runtime
+
+## Status: PASSED ✓
+
+No security vulnerabilities detected in code review.
+
+## Risk Level: MINIMAL
+
+All security vectors properly mitigated:
+- Input validation: ✓ Zod schema
+- Secret management: ✓ Environment variables
+- SQL injection: ✓ N/A (no database)
+- XSS: ✓ N/A (server-side XML)
+- Path traversal: ✓ Slug regex validation
+- Error handling: ✓ Fail-fast with safe logging
+- Data integrity: ✓ Multi-layer validation
+- DoS: ✓ Build-time generation
