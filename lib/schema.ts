@@ -453,3 +453,48 @@ export function generateOrganizationSchema(includeFounder: boolean = true): Orga
 
   return schema;
 }
+
+/**
+ * ContactPage schema type for Schema.org JSON-LD
+ * Used for contact pages to appear in rich results
+ */
+export interface ContactPageSchema {
+  '@context': 'https://schema.org';
+  '@type': 'ContactPage';
+  name: string;
+  description: string;
+  url: string;
+  inLanguage: string;
+  isPartOf: {
+    '@type': 'WebSite';
+    '@id': string;
+  };
+}
+
+/**
+ * Generate ContactPage JSON-LD schema
+ * T011: ContactPage schema for contact form page
+ *
+ * Provides structured data for the contact form page.
+ * Improves SEO and helps search engines understand the page purpose.
+ *
+ * @returns ContactPageSchema object for JSON-LD script tag
+ *
+ * @see https://schema.org/ContactPage
+ */
+export function generateContactPageSchema(): ContactPageSchema {
+  const brandData = getConstitutionData();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: `Contact ${brandData.name}`,
+    description: 'Get in touch with Marcus Gollahon about aviation consulting, dev/startup collaboration, or CFI training resources.',
+    url: `${brandData.url}/contact`,
+    inLanguage: 'en-US',
+    isPartOf: {
+      '@type': 'WebSite',
+      '@id': `${brandData.url}/#website`,
+    },
+  };
+}

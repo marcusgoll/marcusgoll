@@ -183,3 +183,20 @@ Options:
 - Email templates: Professional design with gradient headers, XSS protection via escapeHtml(), reply-to instructions
 - Pattern reuse: Followed newsletter validation schema patterns (Zod error messages, type inference)
 
+**Batch 3 (Core Form) - COMPLETED**:
+- T010: Created app/api/contact/route.ts (POST endpoint with Turnstile verification, honeypot check, dual email sending)
+- T011: Created app/contact/page.tsx (contact page with ContactPage schema, professional layout)
+- T012: Created components/contact/ContactForm.tsx (full-featured form with client validation, Turnstile integration, honeypot, character counter, success/error states)
+
+**Key Decisions**:
+- API Pattern: Followed newsletter/subscribe route pattern (rate limit → validate → verify → process → respond)
+- Email Flow: Admin notification (blocking, critical) + auto-reply (fire-and-forget, non-critical)
+- Form UX: All validation/spam protection/UX features implemented in single component (T012 covers T020-T032 partially)
+- Turnstile Integration: CDN script loading, invisible mode, dark theme, automatic token capture
+- Progressive Enhancement: Form includes proper HTML attributes (required, maxLength) for no-JS fallback
+
+**OPTIMIZATION NOTE**: ContactForm component (T012) already includes features from Batch 4-5:
+- Batch 4: Turnstile widget integration (T020), honeypot field (T021) - DONE
+- Batch 5: Client validation (T030), character counter (T031), success/error states (T032) - DONE
+This reduces redundant work and maintains UI cohesion.
+
