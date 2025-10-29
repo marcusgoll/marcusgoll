@@ -7,11 +7,42 @@ import { getPostsByTag } from '@/lib/posts';
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;
 
-// Static metadata
+// Site URL with fallback
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
+// Static metadata with Open Graph and Twitter Card
 export const metadata: Metadata = {
   title: 'Aviation | Marcus Gollahon',
   description:
     'Aviation career guidance, flight training resources, and CFI insights from Marcus Gollahon - helping pilots advance their aviation careers.',
+  alternates: {
+    canonical: `${SITE_URL}/aviation`,
+  },
+  openGraph: {
+    title: 'Aviation | Marcus Gollahon',
+    description:
+      'Aviation career guidance, flight training resources, and CFI insights from Marcus Gollahon - helping pilots advance their aviation careers.',
+    url: `${SITE_URL}/aviation`,
+    type: 'website',
+    siteName: 'Marcus Gollahon',
+    images: [
+      {
+        url: `${SITE_URL}/images/og/og-default.svg`,
+        width: 1200,
+        height: 630,
+        alt: 'Aviation - Marcus Gollahon',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@marcusgoll',
+    creator: '@marcusgoll',
+    title: 'Aviation | Marcus Gollahon',
+    description:
+      'Aviation career guidance, flight training resources, and CFI insights from Marcus Gollahon - helping pilots advance their aviation careers.',
+    images: [`${SITE_URL}/images/og/og-default.svg`],
+  },
 };
 
 /**

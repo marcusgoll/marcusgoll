@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  openGraph: {
+    siteName: "Marcus Gollahon",
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export const viewport: Viewport = {

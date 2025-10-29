@@ -9,17 +9,31 @@ import type { Metadata } from 'next'
  * SEO: Optimized metadata with Open Graph tags
  */
 
+// Site URL with fallback
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
 export const metadata: Metadata = {
   title: 'Newsletter - Marcus Gollahon',
   description:
     'Subscribe to get systematic thinking applied to aviation and software. Dual-track content: Aviation insights + Dev/Startup lessons delivered to your inbox.',
+  alternates: {
+    canonical: `${SITE_URL}/newsletter`,
+  },
   openGraph: {
     title: 'Newsletter - Marcus Gollahon',
     description:
       'Subscribe to get systematic thinking applied to aviation and software. Dual-track content: Aviation insights + Dev/Startup lessons delivered to your inbox.',
-    url: 'https://marcusgoll.com/newsletter',
+    url: `${SITE_URL}/newsletter`,
     type: 'website',
     siteName: 'Marcus Gollahon',
+    images: [
+      {
+        url: `${SITE_URL}/images/og/og-default.svg`,
+        width: 1200,
+        height: 630,
+        alt: 'Newsletter - Marcus Gollahon',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -28,6 +42,7 @@ export const metadata: Metadata = {
     title: 'Newsletter - Marcus Gollahon',
     description:
       'Subscribe to get systematic thinking applied to aviation and software. Dual-track content: Aviation insights + Dev/Startup lessons delivered to your inbox.',
+    images: [`${SITE_URL}/images/og/og-default.svg`],
   },
 }
 

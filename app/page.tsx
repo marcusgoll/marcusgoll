@@ -8,11 +8,42 @@ import { getAllPosts } from '@/lib/posts';
 // Enable ISR with 60-second revalidation
 export const revalidate = 60;
 
-// Static metadata
+// Site URL with fallback
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
+
+// Static metadata with Open Graph and Twitter Card
 export const metadata: Metadata = {
   title: 'Marcus Gollahon | Aviation & Software Development',
   description:
     'Teaching systematic thinking from 30,000 feet. Aviation career guidance and software development insights.',
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    title: 'Marcus Gollahon | Aviation & Software Development',
+    description:
+      'Teaching systematic thinking from 30,000 feet. Aviation career guidance and software development insights.',
+    url: SITE_URL,
+    type: 'website',
+    siteName: 'Marcus Gollahon',
+    images: [
+      {
+        url: `${SITE_URL}/images/og/og-default.svg`,
+        width: 1200,
+        height: 630,
+        alt: 'Marcus Gollahon - Teaching systematic thinking from 30,000 feet',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@marcusgoll',
+    creator: '@marcusgoll',
+    title: 'Marcus Gollahon | Aviation & Software Development',
+    description:
+      'Teaching systematic thinking from 30,000 feet. Aviation career guidance and software development insights.',
+    images: [`${SITE_URL}/images/og/og-default.svg`],
+  },
 };
 
 /**
