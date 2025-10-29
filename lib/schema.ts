@@ -4,6 +4,8 @@
  */
 
 import type { PostData } from './mdx-types';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 /**
  * BlogPosting schema type for Schema.org JSON-LD
@@ -94,6 +96,127 @@ export interface HowToStepSchema {
   name: string;
   text: string;
   position?: number;
+}
+
+/**
+ * Brand data extracted from constitution.md
+ * T006: Constitution data extraction for Person/Organization schemas
+ */
+interface BrandData {
+  name: string;
+  jobTitle: string;
+  description: string;
+  url: string;
+  sameAs: string[];
+}
+
+/**
+ * Cached brand data to avoid repeated file reads
+ */
+let brandDataCache: BrandData | null = null;
+
+/**
+ * Extract brand data from constitution.md at build time
+ * T006: Constitution data extraction utility
+ *
+ * Reads constitution.md once and caches the result.
+ * Used by generatePersonSchema() and generateOrganizationSchema().
+ *
+ * @returns Brand data including name, jobTitle, description, social links
+ */
+function getConstitutionData(): BrandData {
+  if (brandDataCache) {
+    return brandDataCache;
+  }
+
+  try {
+    const constitutionPath = join(process.cwd(), '.spec-flow', 'memory', 'constitution.md');
+    const content = readFileSync(constitutionPath, 'utf-8');
+
+    // Extract brand mission (line 19 based on research)
+    const missionMatch = content.match(/\*\*Brand Mission\*\*:\s*"([^"]+)"/);
+    const description = missionMatch
+      ? missionMatch[1]
+      : "Software developer, flight instructor, and educator helping pilots and developers master systematic thinking.";
+
+    // Static data from constitution research
+    brandDataCache = {
+      name: 'Marcus Gollahon',
+      jobTitle: 'Software Developer & Flight Instructor',
+      description,
+      url: 'https://marcusgoll.com',
+      sameAs: [
+        'https://twitter.com/marcusgoll',
+        'https://linkedin.com/in/marcusgollahon',
+        'https://github.com/marcusgoll'
+      ]
+    };
+
+    return brandDataCache;
+  } catch (error) {
+    // Fallback data if constitution.md is not accessible
+    console.warn('Could not read constitution.md, using fallback brand data');
+    brandDataCache = {
+      name: 'Marcus Gollahon',
+      jobTitle: 'Software Developer & Flight Instructor',
+      description: 'Software developer, flight instructor, and educator helping pilots and developers master systematic thinking.',
+      url: 'https://marcusgoll.com',
+      sameAs: [
+        'https://twitter.com/marcusgoll',
+        'https://linkedin.com/in/marcusgollahon',
+        'https://github.com/marcusgoll'
+      ]
+    };
+    return brandDataCache;
+  }
+}
+
+/**
+ * Map blog post tags to dual-track content categories
+ * T005: Category mapping utility for BlogPosting articleSection
+ *
+ * Maps tags to one of four categories based on priority order:
+ * Aviation > Development > Leadership > Blog (default)
+ *
+ * Case-insensitive matching. First matching category wins.
+ *
+ * @param tags - Array of tags from blog post frontmatter
+ * @returns Category string for Schema.org articleSection field
+ *
+ * @example
+ * mapTagsToCategory(['aviation', 'cfi']) // 'Aviation'
+ * mapTagsToCategory(['coding', 'typescript']) // 'Development'
+ * mapTagsToCategory(['leadership']) // 'Leadership'
+ * mapTagsToCategory(['random']) // 'Blog'
+ */
+export function mapTagsToCategory(tags: string[]): string {
+  const lowerTags = tags.map(t => t.toLowerCase());
+
+  // Priority order: Aviation > Development > Leadership > Blog
+  const aviationKeywords = ['aviation', 'flight', 'pilot', 'cfi', 'instructor', 'aircraft', 'flying'];
+  const devKeywords = ['development', 'coding', 'programming', 'typescript', 'react', 'next', 'software', 'dev', 'startup', 'tech'];
+  const leadershipKeywords = ['leadership', 'management', 'teaching', 'education', 'mentoring'];
+
+  for (const tag of lowerTags) {
+    if (aviationKeywords.some(k => tag.includes(k))) {
+      return 'Aviation';
+    }
+  }
+
+  for (const tag of lowerTags) {
+    if (devKeywords.some(k => tag.includes(k))) {
+      return 'Development';
+    }
+  }
+
+  for (const tag of lowerTags) {
+    if (leadershipKeywords.some(k => tag.includes(k))) {
+      return 'Leadership';
+    }
+  }
+
+  // Default fallback
+  return 'Blog';
 }
 
 /**
