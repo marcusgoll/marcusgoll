@@ -18,6 +18,7 @@ export interface Project {
   liveUrl?: string; // Optional live demo URL
   githubUrl?: string; // Optional GitHub repository URL
   featured: boolean; // Show in featured section
+  status: 'active' | 'paused' | 'archived'; // Project status
   dateCreated: string; // ISO 8601 date
   metrics?: {
     users?: string; // e.g., "500+ users"
@@ -104,6 +105,7 @@ export function getProjectBySlug(slug: string): Project {
     liveUrl: data.liveUrl,
     githubUrl: data.githubUrl,
     featured: data.featured || false,
+    status: (data.status as 'active' | 'paused' | 'archived') || 'active',
     dateCreated: data.dateCreated || new Date().toISOString(),
     metrics: data.metrics,
     content,

@@ -14,12 +14,26 @@ const config: Config = {
         foreground: "var(--foreground)",
         navy: {
           900: "#0F172A",
+          950: "#020617",
         },
         emerald: {
           600: "#059669",
+          700: "#047857",
         },
         sky: {
+          500: "#0EA5E9",
+          600: "#0284C7",
           blue: "#0EA5E9",
+        },
+        purple: {
+          600: "#9333EA",
+        },
+        gray: {
+          300: "#D1D5DB",
+          400: "#9CA3AF",
+          500: "#6B7280",
+          600: "#4B5563",
+          700: "#374151",
         },
       },
       fontFamily: {

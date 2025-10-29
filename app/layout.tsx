@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Teaching systematic thinking from 30,000 feet. Aviation career guidance and software development insights.",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/images/favicon.png",
     apple: "/apple-touch-icon.png",
   },
   openGraph: {

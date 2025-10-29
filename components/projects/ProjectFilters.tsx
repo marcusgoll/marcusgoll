@@ -14,10 +14,10 @@ type FilterOption = {
 };
 
 const filterOptions: FilterOption[] = [
-  { value: 'all', label: 'All Projects', colorClass: 'bg-gray-600 hover:bg-gray-700' },
+  { value: 'all', label: 'All', colorClass: 'bg-gray-600 hover:bg-gray-700' },
   { value: 'aviation', label: 'Aviation', colorClass: 'bg-sky-500 hover:bg-sky-600' },
-  { value: 'dev-startup', label: 'Dev/Startup', colorClass: 'bg-emerald-600 hover:bg-emerald-700' },
-  { value: 'cross-pollination', label: 'Cross-pollination', colorClass: 'bg-purple-600 hover:bg-purple-700' },
+  { value: 'dev-startup', label: 'Dev', colorClass: 'bg-emerald-600 hover:bg-emerald-700' },
+  { value: 'cross-pollination', label: 'Next.js', colorClass: 'bg-gray-700 hover:bg-gray-600' },
 ];
 
 /**
@@ -54,7 +54,7 @@ export default function ProjectFilters({ activeFilter, onFilterChange }: Project
     <div
       role="group"
       aria-label="Project category filters"
-      className="mb-8 flex flex-wrap gap-3"
+      className="flex flex-wrap gap-3"
     >
       {filterOptions.map((filter, index) => {
         const isActive = activeFilter === filter.value;
@@ -67,12 +67,12 @@ export default function ProjectFilters({ activeFilter, onFilterChange }: Project
             onKeyDown={(e) => handleKeyDown(e, index)}
             aria-pressed={isActive}
             className={`
-              rounded-md px-4 py-2 text-sm font-medium transition-all duration-200
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2
+              rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0F172A]
               ${
                 isActive
-                  ? `${filter.colorClass} text-navy-900 shadow-md`
-                  : 'border border-gray-500 bg-transparent text-gray-300 hover:border-gray-400 hover:bg-gray-800/50'
+                  ? `${filter.colorClass} text-white shadow-lg`
+                  : 'border border-gray-600 bg-transparent text-gray-300 hover:border-emerald-600/50 hover:bg-[#1e293b]'
               }
             `}
           >

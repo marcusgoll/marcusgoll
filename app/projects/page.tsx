@@ -36,22 +36,17 @@ export default async function ProjectsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
       />
 
-      <div className="min-h-screen bg-navy-950">
-        <Container className="py-16">
+      <div className="min-h-screen bg-[#0F172A]">
+        <Container className="max-w-5xl py-8 md:py-16">
           {/* Page Header */}
-          <header className="mb-12">
-            <h1 className="mb-4 text-4xl font-bold text-white md:text-5xl">
-              Projects
+          <header className="mb-10 md:mb-16">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white">
+              What I'm working on
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl">
-              A collection of my work across aviation and software development—from flight
-              training platforms to developer tools, showcasing the systematic thinking
-              that connects both worlds.
-            </p>
           </header>
 
-          {/* Client-side filtering wrapper (T021-T023, T032) */}
-          <ProjectsClient projects={projects} featuredProjects={featuredProjects} />
+          {/* Client-side filtering wrapper with sidebar layout */}
+          <ProjectsClient projects={projects} />
         </Container>
       </div>
     </>
