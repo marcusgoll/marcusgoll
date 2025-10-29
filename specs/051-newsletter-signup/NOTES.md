@@ -128,5 +128,32 @@ This is NOT a new feature - it's **frontend integration and UX enhancement** of 
 - Fast rollback via Git revert (<5 minutes)
 - No database migrations (schema exists)
 
+## Phase 2: Tasks (2025-10-28 23:45)
+
+**Summary**:
+- Total tasks: 22
+- User story tasks: 11
+- Parallel opportunities: 8
+- Setup tasks: 2
+- Task file: specs/051-newsletter-signup/tasks.md
+
+**Task Breakdown**:
+- Phase 1 (Setup): 2 tasks
+- Phase 2 (Foundational): 2 tasks (variant system, GA4 tracking)
+- Phase 3 (US1 - Footer): 3 tasks
+- Phase 4 (US2 - Inline): 3 tasks
+- Phase 5 (US5 - Dedicated page): 2 tasks
+- Phase 6 (US6 - Analytics): 3 tasks
+- Phase 7 (Polish): 7 tasks
+
+**MVP Strategy**: Phase 1-4 (10 tasks, ~8-12 hours) ships footer + inline placements. Enhancement phases 5-6 add dedicated page + analytics tracking.
+
+**Checkpoint**:
+- ✅ Tasks generated: 22 concrete tasks with no placeholders
+- ✅ User story organization: Complete (US1, US2, US5, US6)
+- ✅ Dependency graph: Created (Phase 2 blocks all stories)
+- ✅ MVP strategy: Defined (US1+US2 footer+inline only)
+- 📋 Ready for: /analyze
+
 ## Last Updated
-2025-10-28T23:15:00Z
+2025-10-28T23:45:00Z
