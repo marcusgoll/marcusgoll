@@ -5,6 +5,7 @@
  */
 
 import Image from 'next/image';
+import { shimmerDataURL } from '@/lib/utils/shimmer';
 
 interface MDXImageProps {
   src: string;
@@ -23,35 +24,17 @@ interface MDXImageProps {
  * Resolves relative paths and applies Next.js Image optimization
  */
 export function MDXImage({ src, alt, width = 800, height = 450, priority = false }: MDXImageProps) {
-  // Local images (start with /)
-  if (src.startsWith('/')) {
-    return (
-      <Image
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        priority={priority}
-        className="rounded-lg w-full h-auto my-6"
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
-      />
-    );
+  // Resolve src path based on type
+  let resolvedSrc = src;
+
+  // Relative paths: resolve to /images/posts/
+  if (src.startsWith('.')) {
+    resolvedSrc = src.replace(/^\.\.?\//, '/images/posts/');
   }
+  // Local paths (start with /) and external URLs (http/https): use as-is
 
-  // External images (HTTP/HTTPS)
-  if (src.startsWith('http://') || src.startsWith('https://')) {
-    return (
-      <img
-        src={src}
-        alt={alt}
-        className="rounded-lg w-full h-auto my-6"
-      />
-    );
-  }
-
-  // Fallback for relative paths (resolve to /images/posts/)
-  const resolvedSrc = src.startsWith('.') ? src.replace(/^\.\.?\//, '/images/posts/') : src;
-
+  // Single Image component (DRY principle - eliminates 47 lines of duplication)
+  // Note: External domains must be added to next.config.ts remotePatterns
   return (
     <Image
       src={resolvedSrc}
@@ -59,6 +42,8 @@ export function MDXImage({ src, alt, width = 800, height = 450, priority = false
       width={width}
       height={height}
       priority={priority}
+      placeholder="blur"
+      blurDataURL={shimmerDataURL(width, height)}
       className="rounded-lg w-full h-auto my-6"
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
     />
