@@ -244,3 +244,13 @@ npm run dev
 # Open DevTools → Network → Img filter
 # Check for /_next/image?url= requests
 ```
+
+### Entry 1: 2025-10-28 - React Hydration Mismatch from Browser Extensions
+
+**Failure**: React hydration warning in console during preview testing
+**Symptom**: Console error "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties" pointing to app/layout.tsx:28 body tag. Browser extensions (Grammarly) were injecting `data-gr-ext-installed` and `data-new-gr-c-s-check-loaded` attributes into the body tag on client side, causing mismatch with server-rendered HTML.
+**Learning**: Browser extensions can inject attributes/elements into the DOM, causing hydration mismatches. Solution is to add `suppressHydrationWarning` prop to elements that may be modified by extensions. The html tag already had this, but body tag was missing it.
+**Ghost Context Cleanup**: None - this is a new error encountered during preview phase
+
+**During preview phase** - Image optimization feature (050)
+
