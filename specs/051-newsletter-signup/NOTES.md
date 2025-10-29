@@ -214,5 +214,19 @@ This is NOT a new feature - it's **frontend integration and UX enhancement** of 
 
 **Status**: Foundational infrastructure complete, ready for placement implementation
 
+### Batch 3: Component Creation - US1 + US2 (COMPLETED)
+- T011: CompactNewsletterSignup component created
+  - Minimal footer variant with "Stay Updated" headline
+  - Wraps NewsletterSignupForm with variant="compact" and source="footer"
+  - File created: components/newsletter/CompactNewsletterSignup.tsx
+- T020: InlineNewsletterCTA component created
+  - Context-aware headline generation based on post tags
+  - 4 benefit bullets with checkmark icons
+  - Gradient background (navy-900 to emerald-600)
+  - Wraps NewsletterSignupForm with variant="inline" and source="post-inline"
+  - File created: components/newsletter/InlineNewsletterCTA.tsx
+
+**Status**: Components created, ready for integration into layouts
+
 ## Last Updated
 2025-10-28T23:50:00Z
