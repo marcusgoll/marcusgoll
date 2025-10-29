@@ -308,3 +308,44 @@ Optimize marcusgoll.com content for AI-powered search engines and LLM crawlers (
 **Completed Tasks**:
 - ✅ T006: robots.txt AI crawler strategy update (public/robots.txt)
 - ✅ T007: Semantic HTML verification (app/blog/[slug]/page.tsx - existing structure validated)
+
+### Batch 3: Schema Extension (COMPLETED)
+**Tasks**: T008, T009, T010 (3 sequential tasks)
+**Status**: ✅ Complete
+**Duration**: ~10 minutes
+**Files Changed**:
+- lib/schema.ts: Extended BlogPostingSchema interface with mainEntityOfPage field, updated generateBlogPostingSchema function
+
+**Key Decisions**:
+- mainEntityOfPage: Canonical URL using post.slug (https://marcusgoll.com/blog/{slug})
+- Verified existing schema includes all required fields: headline, author, datePublished, description, articleBody, wordCount
+- Schema injection already present in blog post page (lines 177-183 of app/blog/[slug]/page.tsx)
+
+**Schema Verification (T008)**:
+✅ Existing BlogPosting schema includes:
+- headline: post.frontmatter.title
+- author: Person schema with name and url
+- datePublished: post.frontmatter.date
+- dateModified: post.frontmatter.publishedAt || date
+- description: post.frontmatter.excerpt
+- articleBody: post.content
+- wordCount: calculated from content
+- publisher: Organization schema with logo
+- image: featured image with fallback
+
+**mainEntityOfPage Addition (T009)**:
+✅ Added to BlogPostingSchema interface
+✅ Implemented in generateBlogPostingSchema function
+✅ Uses canonical URL format: https://marcusgoll.com/blog/{slug}
+✅ Matches canonical URL in metadata (line 95 of page.tsx)
+
+**Schema Injection Verification (T010)**:
+✅ JSON-LD script tag present in page.tsx (lines 177-183)
+✅ generateBlogPostingSchema() called with post data (line 153)
+✅ Schema rendered with type="application/ld+json"
+✅ Post-deployment testing: Google Rich Results Test will validate
+
+**Completed Tasks**:
+- ✅ T008: Verify existing BlogPosting schema (lib/schema.ts verified)
+- ✅ T009: Add mainEntityOfPage field (lib/schema.ts updated)
+- ✅ T010: Verify schema injection (app/blog/[slug]/page.tsx verified)
