@@ -1,11 +1,12 @@
 /**
- * Next.js Edge Middleware: Maintenance Mode with Secret Bypass
+ * Next.js Edge Middleware: HTTPS Redirect & Maintenance Mode
  *
- * Purpose: Global request interception for maintenance mode
+ * Purpose: Global request interception for HTTPS enforcement and maintenance mode
  * Runtime: Edge Runtime (Vercel Edge Functions)
  * Performance: <10ms overhead per request
  *
  * Flow:
+ * 0. Force HTTPS redirect (production only)
  * 1. Check if path excluded (static assets, health checks)
  * 2. Check if maintenance mode enabled
  * 3. Check for bypass cookie
@@ -23,6 +24,23 @@ import {
 
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl
+
+  // ============================================================================
+  // Step 0: Force HTTPS redirect (production only)
+  // ============================================================================
+
+  // Check if request is HTTP and in production
+  if (
+    process.env.NODE_ENV === 'production' &&
+    request.headers.get('x-forwarded-proto') === 'http'
+  ) {
+    // Create HTTPS URL
+    const httpsUrl = new URL(request.url)
+    httpsUrl.protocol = 'https:'
+
+    // Permanent redirect (308) to HTTPS
+    return NextResponse.redirect(httpsUrl, 308)
+  }
 
   // ============================================================================
   // Step 1: Exclude static assets and health checks (skip all maintenance logic)
