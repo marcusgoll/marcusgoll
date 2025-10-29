@@ -21,33 +21,47 @@ interface TagArchivePageProps {
  * FR-014: Pre-render all tag pages
  */
 export async function generateStaticParams() {
-  const tags = await getAllTags();
-  return tags.map((tag) => ({
-    tag: tag.slug,
-  }));
+  try {
+    const tags = await getAllTags();
+    return tags.map((tag) => ({
+      tag: tag.slug,
+    }));
+  } catch (error) {
+    console.error('[generateStaticParams] Failed to generate tag params:', error);
+    // Return empty array to prevent build failure
+    // Tags will be generated dynamically at runtime
+    return [];
+  }
 }
 
 /**
  * Generate metadata for tag archive pages
  */
 export async function generateMetadata({ params }: TagArchivePageProps): Promise<Metadata> {
-  const { tag } = await params;
-  const posts = await getPostsByTag(tag);
+  try {
+    const { tag } = await params;
+    const posts = await getPostsByTag(tag);
 
-  if (posts.length === 0) {
+    if (posts.length === 0) {
+      return {
+        title: 'Tag Not Found',
+      };
+    }
+
+    const displayName = posts[0].frontmatter.tags.find(
+      (t) => t.toLowerCase().replace(/\s+/g, '-') === tag
+    ) || tag;
+
     return {
-      title: 'Tag Not Found',
+      title: `${displayName} | Blog`,
+      description: `Articles tagged with ${displayName}. ${posts.length} post${posts.length !== 1 ? 's' : ''} found.`,
+    };
+  } catch (error) {
+    console.error('[generateMetadata] Failed to generate tag metadata:', error);
+    return {
+      title: 'Blog Tags',
     };
   }
-
-  const displayName = posts[0].frontmatter.tags.find(
-    (t) => t.toLowerCase().replace(/\s+/g, '-') === tag
-  ) || tag;
-
-  return {
-    title: `${displayName} | Blog`,
-    description: `Articles tagged with ${displayName}. ${posts.length} post${posts.length !== 1 ? 's' : ''} found.`,
-  };
 }
 
 /**

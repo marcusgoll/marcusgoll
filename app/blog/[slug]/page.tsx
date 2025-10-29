@@ -32,6 +32,7 @@ import { SocialShare } from '@/components/blog/social-share';
 import { TableOfContents } from '@/components/blog/table-of-contents';
 import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
 import { generateBlogPostingSchema } from '@/lib/schema';
+import { InlineNewsletterCTA } from '@/components/newsletter/InlineNewsletterCTA';
 import { TLDRSection } from '@/components/blog/tldr-section';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
@@ -276,6 +277,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           }}
         />
       </div>
+
+      {/* Inline Newsletter CTA - context-aware signup prompt after post content */}
+      <InlineNewsletterCTA postTags={frontmatter.tags} />
 
           {/* Previous/Next Navigation - chronological post navigation (US2) */}
           <PrevNextNav currentSlug={slug} />
