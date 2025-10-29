@@ -1,0 +1,266 @@
+# Screens Inventory: Projects Showcase
+# Used by /design-variations to generate UI variants
+
+feature: "projects-showcase"
+created: "2025-10-29"
+
+# Screen definitions
+screens:
+  - id: "projects-grid"
+    name: "Projects Grid Page"
+    route: "/projects"
+    purpose: "Display portfolio of all projects with filtering by category (Aviation/Dev/Hybrid)"
+
+    # Primary user action on this screen
+    primary_action:
+      label: "View Project"
+      event: "projects.card_clicked"
+      outcome: "Navigate to project detail page (P2) or external URL"
+
+    # All possible states this screen can be in
+    states:
+      - id: "default"
+        description: "All projects displayed in grid, no filter active"
+        copy: "Projects - All Work"
+
+      - id: "filtered"
+        description: "Filtered view showing only selected category"
+        copy: "Aviation Projects" # or "Dev/Startup Projects", "Cross-pollination Projects"
+
+      - id: "loading"
+        description: "Initial page load or filter transition"
+        copy: "Loading projects..."
+        progress: true
+
+      - id: "empty"
+        description: "No projects match filter"
+        copy: "No projects found in this category"
+        recovery: "Try browsing all projects or select a different category"
+
+      - id: "error"
+        description: "Failed to load projects data"
+        copy: "Unable to load projects"
+        error_type: "server"
+        recovery: "Please refresh the page or try again later"
+
+    # Components needed (from ui-inventory.md)
+    components:
+      - "Container (page wrapper)"
+      - "Button (filter buttons)"
+      - "PostGrid pattern (adapted for projects)"
+      - "ProjectCard (custom, extends PostCard pattern)"
+      - "TrackBadge (category badges)"
+      - "TechStackBadge (technology badges)"
+      - "FeaturedProjectCard (hero section)"
+
+    # Copy for this screen (real content)
+    copy:
+      heading: "Projects"
+      subheading: "Portfolio of aviation, development, and cross-pollination work—systematic thinking applied across domains"
+      cta_primary: "View Live Demo"
+      cta_secondary: "View Source Code"
+      filter_labels:
+        all: "All Projects"
+        aviation: "Aviation"
+        dev: "Dev/Startup"
+        hybrid: "Cross-pollination"
+      empty_state: "No projects found in this category. Browse all projects or select a different category."
+      error_message: "Unable to load projects. Please refresh the page."
+
+    # Featured section copy
+    featured_section:
+      heading: "Featured Projects"
+      subheading: "Flagship work demonstrating systematic thinking and dual-track expertise"
+
+    # Accessibility requirements
+    a11y:
+      - "Filter buttons have visible labels (not icon-only)"
+      - "Active filter announced to screen readers ('Aviation filter active, showing 4 projects')"
+      - "Project cards keyboard navigable (Tab through cards and buttons)"
+      - "Images have descriptive alt text from project frontmatter"
+      - "Filter state visible (not color-only) with underline or border"
+      - "Focus visible on all interactive elements (2px emerald-600 outline)"
+      - "Skip link to main content (bypass filters)"
+
+    # Performance budget
+    performance:
+      fcp: "1.5s"  # First Contentful Paint
+      tti: "3.5s"  # Time to Interactive
+      lcp: "3.0s"  # Largest Contentful Paint (hero image)
+      cls: "0.15"  # Cumulative Layout Shift (images must have dimensions)
+      bundle: "80kb"  # Max JS bundle size for page
+
+  - id: "project-detail"
+    name: "Project Detail Page"
+    route: "/projects/[slug]"
+    purpose: "Display full project details, implementation approach, and metrics (Priority 2 story)"
+
+    primary_action:
+      label: "Visit Live Site"
+      event: "projects.live_site_clicked"
+      outcome: "Open project URL in new tab"
+
+    states:
+      - id: "default"
+        description: "Full project details loaded"
+        copy: "[Project Title]"
+
+      - id: "loading"
+        description: "Loading project content"
+        copy: "Loading project details..."
+        progress: true
+
+      - id: "not-found"
+        description: "Project slug doesn't exist"
+        copy: "Project not found"
+        error_type: "client"
+        recovery: "Return to projects page or check the URL"
+
+      - id: "error"
+        description: "Failed to load project"
+        copy: "Unable to load project details"
+        error_type: "server"
+        recovery: "Please refresh the page or try again later"
+
+    components:
+      - "Container (page wrapper)"
+      - "Button (CTAs)"
+      - "TrackBadge (category)"
+      - "TechStackBadge (technology list)"
+      - "Breadcrumbs (navigation)"
+      - "Markdown renderer (MDX content)"
+
+    copy:
+      cta_primary: "Visit Live Site"
+      cta_secondary: "View on GitHub"
+      back_link: "← Back to Projects"
+      section_headings:
+        problem: "Problem"
+        solution: "Solution"
+        tech_stack: "Tech Stack"
+        challenges: "Challenges & Lessons"
+        results: "Results & Impact"
+      not_found: "Project not found. Return to the projects page to browse all work."
+
+    a11y:
+      - "Breadcrumb navigation keyboard accessible"
+      - "Headings follow semantic hierarchy (h1 > h2 > h3)"
+      - "Code blocks syntax highlighted with good contrast"
+      - "External links indicated ('opens in new tab' announcement)"
+      - "Images in content have alt text from MDX"
+
+    performance:
+      fcp: "1.2s"
+      tti: "3.0s"
+      lcp: "2.5s"
+      bundle: "100kb"  # Larger due to MDX rendering
+
+# Component Specifications
+
+components:
+  - name: "ProjectCard"
+    purpose: "Display project preview in grid"
+    extends: "PostCard pattern"
+    props:
+      - "project: Project (type from lib/projects.ts)"
+      - "className?: string"
+    features:
+      - "Cover image (16:9 aspect ratio, lazy-loaded below fold)"
+      - "Category badge (TrackBadge component)"
+      - "Title (2xl, bold, 2-line clamp)"
+      - "Description (1-sentence excerpt, text-gray-300)"
+      - "Tech stack badges (max 4 visible, +N indicator)"
+      - "CTA buttons (Live Demo + GitHub, conditional on URLs)"
+      - "Hover effect (lift + image zoom)"
+    accessibility:
+      - "Card is clickable link wrapper"
+      - "Buttons have aria-label if icon-only"
+      - "Image has descriptive alt from project.title"
+
+  - name: "FeaturedProjectCard"
+    purpose: "Display flagship project with metrics"
+    extends: "ProjectCard"
+    props:
+      - "project: Project (with metrics field required)"
+      - "className?: string"
+    features:
+      - "Larger layout (full-width or 2-column)"
+      - "Expanded description (2-3 sentences)"
+      - "Metrics display (users, impact, outcome)"
+      - "Prominent CTAs (larger buttons)"
+      - "Visual distinction (border or shadow)"
+    accessibility:
+      - "Metrics labeled for screen readers"
+      - "Maintains card keyboard navigation"
+
+  - name: "TechStackBadge"
+    purpose: "Display technology/framework name as badge"
+    props:
+      - "tech: string (e.g., 'Next.js', 'TypeScript')"
+      - "colorScheme?: 'frontend' | 'backend' | 'database' | 'deployment'"
+    features:
+      - "Rounded badge (px-3 py-1, rounded-full)"
+      - "Color-coded by type: Blue (frontend), Green (backend), Purple (database), Orange (deployment)"
+      - "Small text (text-sm)"
+      - "Subtle background (e.g., bg-blue-900/30)"
+    accessibility:
+      - "Uses semantic color names in aria-label if needed"
+
+  - name: "ProjectFilters"
+    purpose: "Filter button group with active state"
+    props:
+      - "activeFilter: string ('all' | 'aviation' | 'dev' | 'hybrid')"
+      - "onFilterChange: (filter: string) => void"
+    features:
+      - "Horizontal button group (flex, gap-2)"
+      - "Active state: Navy 900 (Aviation), Emerald 600 (Dev), Purple (Hybrid)"
+      - "Inactive state: Gray outline"
+      - "Responsive: Stack on mobile or horizontal scroll"
+    accessibility:
+      - "Active filter has aria-pressed='true'"
+      - "Filter change announced to screen readers"
+      - "Keyboard navigation with arrow keys (optional enhancement)"
+
+# Design Tokens (from ui-inventory.md)
+
+design_tokens:
+  colors:
+    aviation: "Navy 900 (#1e3a5f)"
+    dev: "Emerald 600 (#059669)"
+    hybrid: "Purple (#9333ea)"
+    background: "Navy 950 (#0f1729)"
+    card_bg: "Navy 900 (#1e3a5f)"
+    text_primary: "White (#ffffff)"
+    text_secondary: "Gray 300 (#d1d5db)"
+
+  spacing:
+    grid_gap: "2rem (desktop), 1.5rem (tablet), 1rem (mobile)"
+    card_padding: "1.5rem"
+    section_spacing: "4rem"
+
+  typography:
+    project_title: "2xl, bold"
+    project_description: "base, regular"
+    section_heading: "3xl, bold"
+    badge_text: "sm, medium"
+
+  interactions:
+    transition: "250ms ease-in-out"
+    hover_lift: "translateY(-4px)"
+    hover_scale: "scale(1.05)"
+
+# Notes for /design-variations
+
+# Variant criteria for projects-grid screen:
+# 1. Layout: Magazine grid vs. Uniform grid vs. Masonry
+# 2. Featured section: Hero banner vs. Sidebar vs. Separate section
+# 3. Filtering: Button group vs. Dropdown vs. Sidebar
+# 4. Card density: Compact (more projects visible) vs. Spacious (more whitespace)
+# 5. Image treatment: Full bleed vs. Inset vs. Overlay gradient
+
+# Expected variants:
+# v1: Magazine-style grid with hero featured section
+# v2: Uniform grid with sidebar filters
+# v3: Masonry layout with inline featured cards
+# v4: List view with large previews
+# v5: Card-focused with prominent tech badges
