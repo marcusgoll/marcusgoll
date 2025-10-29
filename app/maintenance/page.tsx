@@ -10,7 +10,6 @@
  * Auto-deployment: Enabled via GitHub Actions → Dokploy
  */
 
-import type { Metadata } from 'next'
 import Image from 'next/image'
 import { useState } from 'react'
 

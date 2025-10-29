@@ -1,0 +1,12 @@
+Package               Current   Wanted   Latest  Location                           Depended by
+@next/mdx              16.0.0   16.0.1   16.0.1  node_modules/@next/mdx             marcusgoll
+@prisma/client         6.17.1   6.18.0   6.18.0  node_modules/@prisma/client        marcusgoll
+@tailwindcss/postcss   4.1.15   4.1.16   4.1.16  node_modules/@tailwindcss/postcss  marcusgoll
+@types/node            24.9.1   24.9.2   24.9.2  node_modules/@types/node           marcusgoll
+eslint-config-next     15.5.6   15.5.6   16.0.1  node_modules/eslint-config-next    marcusgoll
+lucide-react          0.546.0  0.546.0  0.548.0  node_modules/lucide-react          marcusgoll
+next                   15.5.6   15.5.6   16.0.1  node_modules/next                  marcusgoll
+prisma                 6.17.1   6.18.0   6.18.0  node_modules/prisma                marcusgoll
+resend                  4.8.0    4.8.0    6.3.0  node_modules/resend                marcusgoll
+shiki                  1.29.2   1.29.2   3.14.0  node_modules/shiki                 marcusgoll
+tailwindcss            4.1.15   4.1.16   4.1.16  node_modules/tailwindcss           marcusgoll
