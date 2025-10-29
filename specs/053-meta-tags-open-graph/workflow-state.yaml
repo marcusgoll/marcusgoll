@@ -7,12 +7,12 @@ feature:
   title: Meta Tags & Open Graph
   branch_name: feature/053-meta-tags-open-graph
   created: 2025-10-29T07:00:43Z
-  last_updated: "2025-10-29T09:45:00Z"
+  last_updated: "2025-10-29T12:06:24Z"
   roadmap_status: in_progress # Options: backlog, next, in_progress, shipped
   github_issue: 13
 deployment_model: staging-prod # Options: staging-prod, direct-prod, local-only
 workflow:
-  phase: implement
+  phase: ship:preview
   status: completed # Options: in_progress, completed, failed, pending
   completed_phases:
     - spec-flow
@@ -20,8 +20,13 @@ workflow:
     - tasks
     - analyze
     - implement
+    - optimize
+    - ship:preview
   failed_phases: []
-  manual_gates: {}
+  manual_gates:
+    preview:
+      status: pending
+      started_at: "2025-10-29T12:05:51Z"
   implementation:
     completed_tasks: 17
     total_tasks: 32
