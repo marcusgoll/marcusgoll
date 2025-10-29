@@ -125,5 +125,25 @@ Source: package.json, lib/mdx.ts
 
 **Checkpoint**: Ready for Batch 2 (US1 implementation)
 
+### Batch 2: US1 BlogPosting Schema (4 tasks - COMPLETED)
+
+- ✅ T010: Unit tests for mapTagsToCategory() - 11 tests, all passing (priority order, case-insensitive, edge cases)
+- ✅ T011: Unit tests for BlogPosting articleSection - 4 tests, all passing (aviation, dev, unknown tags, missing tags)
+- ✅ T015: Extend BlogPostingSchema interface with articleSection field
+- ✅ T016: Extend generateBlogPostingSchema() to use mapTagsToCategory()
+
+**Test Results**: 15/15 tests passing (100% pass rate)
+
+**Key Decisions**:
+- Added 4 comprehensive tests for articleSection field covering all tag categories
+- Used mock PostData objects following existing mdx-types interface
+- Verified edge case: missing tags array defaults to Blog category
+
+**Files Changed**:
+- lib/schema.ts (+5 lines - interface extension, +3 lines - implementation)
+- lib/__tests__/schema.test.ts (+91 lines - new file)
+
+**Checkpoint**: Ready for Batch 3 (US2 Website schema)
+
 ## Last Updated
 2025-10-29T01:30:00-04:00

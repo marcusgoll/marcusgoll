@@ -11,6 +11,7 @@ import { join } from 'path';
  * BlogPosting schema type for Schema.org JSON-LD
  * Used for rich snippets in search engines
  * T008, T009: Extended with mainEntityOfPage for LLM optimization
+ * T015: Extended with articleSection for dual-track categories
  */
 export interface BlogPostingSchema {
   '@context': 'https://schema.org';
@@ -27,6 +28,7 @@ export interface BlogPostingSchema {
   articleBody: string;
   wordCount: number;
   description: string;
+  articleSection: string;
   publisher: {
     '@type': 'Organization';
     name: string;
@@ -224,6 +226,7 @@ export function mapTagsToCategory(tags: string[]): string {
  * FR-003: Schema.org structured data generation
  * NFR-004: Must pass Google Rich Results Test
  * T008, T009: Extended with mainEntityOfPage for canonical URL
+ * T016: Extended with articleSection for dual-track categories
  *
  * @param post - Post data including frontmatter and content
  * @returns BlogPosting schema object for JSON-LD script tag
@@ -242,6 +245,9 @@ export function generateBlogPostingSchema(post: PostData): BlogPostingSchema {
   // Canonical URL for mainEntityOfPage (T009)
   const canonicalUrl = `https://marcusgoll.com/blog/${post.slug}`;
 
+  // Map tags to dual-track category (T016)
+  const articleSection = mapTagsToCategory(post.frontmatter.tags || []);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -257,6 +263,7 @@ export function generateBlogPostingSchema(post: PostData): BlogPostingSchema {
     articleBody: post.content,
     wordCount,
     description: post.frontmatter.excerpt,
+    articleSection,
     publisher: {
       '@type': 'Organization',
       name: 'Marcus Gollahon',
