@@ -2,7 +2,7 @@
 
 ## ✅ Completed
 
-- [x] DNS A records configured (marcusgoll.com → 178.156.129.179)
+- [x] DNS A records configured at registrar
 - [x] Maintenance mode implemented
 - [x] Sitemap uses marcusgoll.com
 - [x] Robots.txt uses marcusgoll.com
@@ -78,12 +78,12 @@ curl -I https://www.marcusgoll.com
 ```bash
 # Verify DNS resolution
 dig marcusgoll.com +short
-# Expected: 178.156.129.179
+# Expected: [VPS_IP]
 
 # Check global propagation
 # Visit: https://dnschecker.org
 # Enter: marcusgoll.com
-# Verify: All regions show 178.156.129.179
+# Verify: All regions show [VPS_IP]
 ```
 
 ### 6. Disable Maintenance Mode (When Ready)
@@ -98,7 +98,7 @@ Then restart the application.
 ## 📝 Notes
 
 - **Traefik**: Handles all reverse proxy and SSL automatically
-- **No Caddy**: Caddyfile in repo not used with Dokploy
+
 - **SSL**: Auto-issued by Traefik via Let's Encrypt
 - **Restart Required**: After environment variable changes
 
