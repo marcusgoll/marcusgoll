@@ -124,7 +124,7 @@ export default function NewsletterPage() {
         </section>
 
         {/* Signup Form */}
-        <section className="mb-16 p-8 rounded-lg bg-gray-50 dark:bg-gray-800">
+        <section id="get-started" className="mb-16 p-8 rounded-lg bg-gray-50 dark:bg-gray-800">
           <h2 className="text-2xl font-bold mb-6 text-center">Get Started</h2>
           <div className="max-w-xl mx-auto">
             <NewsletterSignupForm variant="comprehensive" source="dedicated-page" />
@@ -158,12 +158,6 @@ export default function NewsletterPage() {
           <a
             href="#get-started"
             className="inline-block px-8 py-3 bg-white text-navy-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-            onClick={(e) => {
-              e.preventDefault()
-              document.querySelector('section.p-8.rounded-lg.bg-gray-50')?.scrollIntoView({
-                behavior: 'smooth',
-              })
-            }}
           >
             Subscribe Now
           </a>
