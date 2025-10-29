@@ -30,6 +30,7 @@ type FormData = {
   subject: ContactSubject | ''
   message: string
   honeypot: string
+  turnstileToken?: string
 }
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error'
@@ -120,10 +121,10 @@ export default function ContactForm() {
       if (error instanceof z.ZodError) {
         const errors: ValidationErrors = {}
         error.issues.forEach((issue) => {
-          const field = issue.path[0] as keyof FormData
-          if (field !== 'turnstileToken') {
+          const field = issue.path[0] as string
+          if (field !== 'turnstileToken' && field in formData) {
             // Don't show Turnstile errors to user (handled separately)
-            errors[field] = issue.message
+            errors[field as keyof FormData] = issue.message
           }
         })
         setValidationErrors(errors)
