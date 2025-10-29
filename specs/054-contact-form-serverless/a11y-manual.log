@@ -1,0 +1,486 @@
+# WCAG 2.1 AA Manual Testing Checklist - Contact Form Feature
+**Date**: 2025-10-29
+**Feature**: specs/054-contact-form-serverless
+**Target**: WCAG 2.1 AA compliance
+**URL**: http://localhost:3000/contact (local testing)
+
+---
+
+## Manual Testing Instructions
+
+This checklist must be completed during the `/preview` phase with the local development server running.
+
+---
+
+## 1. Keyboard Navigation Test
+**WCAG Criterion**: 2.1.1 (Keyboard), 2.4.7 (Focus Visible), 2.1.2 (No Keyboard Trap)
+
+### Test Steps:
+1. Navigate to http://localhost:3000/contact
+2. Use only keyboard (no mouse)
+3. Press Tab to move through interactive elements
+4. Verify tab order and focus indicators
+
+### Expected Results:
+- [ ] Tab order follows visual order:
+  1. Name input
+  2. Email input
+  3. Subject dropdown
+  4. Message textarea
+  5. Submit button
+- [ ] All interactive elements show visible focus indicator (emerald ring)
+- [ ] Honeypot field is NOT in tab order
+- [ ] Can navigate backwards with Shift+Tab
+- [ ] No keyboard trap (can navigate out of form)
+- [ ] Focus indicator has sufficient contrast (visible against navy background)
+
+### Focus Indicator Visual Check:
+- [ ] Name input: Emerald ring visible when focused
+- [ ] Email input: Emerald ring visible when focused
+- [ ] Subject dropdown: Emerald ring visible when focused
+- [ ] Message textarea: Emerald ring visible when focused
+- [ ] Submit button: Focus state visible
+
+### Keyboard Interaction:
+- [ ] Enter key submits form from any input field
+- [ ] Arrow keys navigate subject dropdown options
+- [ ] Space/Enter activates submit button when focused
+- [ ] Tab key moves focus (not trapped in any field)
+
+---
+
+## 2. Color Contrast Test
+**WCAG Criterion**: 1.4.3 (Contrast Minimum - 4.5:1 for normal text, 3:1 for large text)
+
+### Test Tools:
+- Chrome DevTools Lighthouse (Accessibility audit)
+- Manual contrast checker (optional): https://webaim.org/resources/contrastchecker/
+
+### Lighthouse Audit:
+1. Open Chrome DevTools (F12)
+2. Navigate to Lighthouse tab
+3. Select "Accessibility" category
+4. Generate report
+5. Review "Contrast" issues
+
+### Expected Results:
+- [ ] Lighthouse contrast check: PASS (no contrast issues reported)
+- [ ] Lighthouse accessibility score: >= 95
+- [ ] All text readable against backgrounds
+
+### Manual Visual Check:
+- [ ] White text on navy background: Clear and readable
+- [ ] Gray text (labels, descriptions): Readable
+- [ ] Red error text: Readable against navy background
+- [ ] Green success text: Readable against navy background
+- [ ] Character counter text: Readable in all states (red/gray)
+- [ ] Button text: Readable (white on emerald)
+
+### Critical Color Pairs to Verify:
+1. White (#ffffff) on navy-950 - Page heading, input text
+2. Gray-300 (#d1d5db) on navy-950 - Labels
+3. Red-400 (#f87171) on navy-950 - Error messages
+4. Emerald-300 on emerald-900/20 - Success message
+5. White on emerald-600 - Submit button
+
+---
+
+## 3. Screen Reader Test
+**WCAG Criterion**: 1.3.1 (Info and Relationships), 4.1.2 (Name, Role, Value)
+
+### Test Setup:
+- **Windows**: NVDA (free) or JAWS
+- **macOS**: VoiceOver (built-in, Cmd+F5)
+- **Linux**: Orca
+
+### VoiceOver Test (macOS):
+1. Enable VoiceOver: Cmd+F5
+2. Navigate to http://localhost:3000/contact
+3. Use VO+Right Arrow to navigate through form
+
+### Expected Screen Reader Announcements:
+
+**Page Load**:
+- [ ] Heading announced: "Get in Touch, heading level 1"
+- [ ] Description announced
+
+**Form Navigation**:
+- [ ] Name field: "Name, required, edit text" or similar
+- [ ] Email field: "Email, required, edit text"
+- [ ] Subject field: "Subject, required, combo box" or "select"
+- [ ] Message field: "Message, required, edit text, 8 rows"
+- [ ] Submit button: "Send Message, button"
+
+**Field Labels**:
+- [ ] All fields have labels announced before the field
+- [ ] Required indicator communicated (asterisk or "required" announcement)
+
+**Error Messages**:
+- [ ] Validation error announced when field loses focus (or on submit)
+- [ ] Error text read after field label
+- [ ] Example: "Name, required, invalid entry. Name is required."
+
+**Success/Error States**:
+- [ ] Success message announced automatically after submission
+- [ ] Error message announced automatically after failed submission
+
+**Honeypot Field**:
+- [ ] Honeypot field NOT announced (has aria-hidden="true")
+- [ ] Honeypot field NOT in tab order
+
+---
+
+## 4. Progressive Enhancement Test (Without JavaScript)
+**WCAG Criterion**: General accessibility principle
+
+### Test Steps:
+1. Open Chrome DevTools (F12)
+2. Open Command Palette (Ctrl+Shift+P or Cmd+Shift+P)
+3. Type "Disable JavaScript"
+4. Select "Debugger: Disable JavaScript"
+5. Reload page
+
+### Expected Results:
+- [ ] Form still renders and displays
+- [ ] HTML5 validation attributes present (required, type="email")
+- [ ] Form has method="POST" and action attribute (or submits to same URL)
+- [ ] Submit button functional
+- [ ] Browser native validation kicks in (e.g., "Please fill out this field")
+- [ ] Turnstile widget doesn't break page (graceful degradation)
+
+### Test Without JavaScript:
+1. Try submitting empty form:
+   - [ ] Browser shows native validation error
+2. Try submitting with invalid email:
+   - [ ] Browser shows native email validation error
+3. Try submitting valid form:
+   - [ ] Form submits to server
+   - [ ] Server-side validation catches errors
+
+**Note**: Without JavaScript, client-side validation is replaced by HTML5 validation and server-side validation.
+
+---
+
+## 5. Mobile Responsive Test
+**WCAG Criterion**: 1.4.4 (Resize Text), 1.4.10 (Reflow)
+
+### Test Steps:
+1. Open Chrome DevTools (F12)
+2. Toggle device toolbar (Ctrl+Shift+M or Cmd+Shift+M)
+3. Select device: iPhone SE (375px width - spec minimum from plan.md line 127)
+4. Test form interaction
+
+### Expected Results (375px width):
+- [ ] All fields visible without horizontal scroll
+- [ ] Text readable (no tiny text)
+- [ ] Submit button fully visible and tappable
+- [ ] Error messages visible and readable
+- [ ] Character counter doesn't wrap awkwardly
+- [ ] Form padding appropriate for mobile
+- [ ] Touch targets at least 44x44px (WCAG 2.5.5 AAA, but good practice)
+
+### Test Text Zoom (200%):
+1. Set browser zoom to 200% (Ctrl/Cmd + "+")
+2. Check form usability
+
+- [ ] All text readable at 200% zoom
+- [ ] No text cut off or hidden
+- [ ] No horizontal scrolling required (or acceptable if needed)
+- [ ] Layout reflows appropriately
+
+---
+
+## 6. Form States Test
+**WCAG Criterion**: 1.3.1 (Info and Relationships), 3.3.1 (Error Identification)
+
+### Test States:
+
+**1. Idle State (Initial Load)**:
+- [ ] All fields empty and interactive
+- [ ] Submit button enabled
+- [ ] No error messages visible
+- [ ] Turnstile widget loads (invisible mode)
+
+**2. Validating State (Client-Side)**:
+1. Fill name with 1 character
+2. Tab out of field
+   - [ ] No error displayed yet (validation on submit)
+
+**3. Submitting State**:
+1. Fill form with valid data
+2. Click Submit
+   - [ ] Submit button shows "Sending..." text
+   - [ ] Loading spinner visible
+   - [ ] Submit button disabled
+   - [ ] All input fields disabled
+   - [ ] No form fields editable during submission
+
+**4. Success State**:
+1. After successful submission:
+   - [ ] Green success message displays
+   - [ ] Success icon visible
+   - [ ] Message: "Message sent successfully!"
+   - [ ] Subtext: "I'll respond within 24-48 hours..."
+   - [ ] Form remains visible
+   - [ ] Form clears after 3 seconds
+   - [ ] Returns to idle state after clear
+
+**5. Error State (Validation)**:
+1. Submit form with invalid data (empty name):
+   - [ ] Red error message displays below name field
+   - [ ] Name field border turns red
+   - [ ] Error text: "Name is required."
+   - [ ] Form remains interactive
+   - [ ] Other valid fields retain their values
+
+2. Submit form with short message (< 500 characters):
+   - [ ] Red error message displays below message field
+   - [ ] Error text: "Message must be at least 500 characters."
+   - [ ] Character counter shows red
+   - [ ] Minimum requirement displayed
+
+**6. Error State (Network/Server)**:
+1. Simulate network error (disconnect internet, submit):
+   - [ ] Red error banner displays at top of form
+   - [ ] Error icon visible
+   - [ ] Error message: "Network error. Please check your connection..."
+   - [ ] Form remains interactive
+   - [ ] Form values retained
+   - [ ] Turnstile resets
+
+**7. Rate Limited State**:
+1. Submit form 4 times in 15 minutes:
+   - [ ] 4th submission shows error
+   - [ ] Error message indicates rate limit
+   - [ ] Retry time displayed (if provided by API)
+
+---
+
+## 7. Character Counter Accessibility Test
+**WCAG Criterion**: 1.3.1 (Info and Relationships), 3.3.3 (Error Suggestion)
+
+### Test Steps:
+1. Focus on message textarea
+2. Type characters and observe counter
+
+### Expected Results:
+- [ ] Counter displays current character count
+- [ ] Counter displays maximum (10,000 characters)
+- [ ] Counter updates in real-time as user types
+
+**Insufficient Characters (< 500)**:
+- [ ] Counter text: "Minimum 500 characters required"
+- [ ] Counter color: Red
+- [ ] Count display: Red (e.g., "250 / 10,000")
+
+**Valid Characters (500-10,000)**:
+- [ ] Counter text: "Character count"
+- [ ] Counter color: Gray
+- [ ] Count display: Gray (e.g., "750 / 10,000")
+
+**Exceeded Characters (> 10,000)**:
+- [ ] Counter text: "Maximum 10,000 characters"
+- [ ] Counter color: Red
+- [ ] Count display: Red (e.g., "10,500 / 10,000")
+- [ ] Field prevents further input (maxLength attribute)
+
+### Screen Reader Test:
+- [ ] Counter updates announced? (May require aria-live, currently not implemented)
+- [ ] User can understand character requirements from labels alone
+
+---
+
+## 8. Error Recovery Test
+**WCAG Criterion**: 3.3.3 (Error Suggestion), 3.3.4 (Error Prevention)
+
+### Test Scenarios:
+
+**1. Empty Form Submission**:
+1. Submit empty form
+   - [ ] Multiple errors displayed (name, email, subject, message)
+   - [ ] Errors appear below respective fields
+   - [ ] Each error has clear, actionable message
+   - [ ] Form remains usable
+
+**2. Invalid Email Format**:
+1. Enter "notanemail" in email field
+2. Submit form
+   - [ ] Error: "Invalid email format. Please provide a valid email address."
+   - [ ] Example of valid format provided in error message
+
+**3. Short Message**:
+1. Enter 250 characters in message
+2. Submit form
+   - [ ] Error: "Message must be at least 500 characters."
+   - [ ] Character counter shows deficit
+   - [ ] User can continue typing to fix
+
+**4. Honeypot Filled (Bot Detection)**:
+1. Use DevTools to fill honeypot field
+2. Submit form
+   - [ ] Submission rejected
+   - [ ] Error message displayed (generic, not revealing honeypot)
+   - [ ] No emails sent
+
+**5. Turnstile Pending**:
+1. Submit form before Turnstile loads
+   - [ ] Error: "Security verification pending. Please wait..."
+   - [ ] User can retry after a moment
+
+---
+
+## 9. Accessibility Tree Inspection (DevTools)
+**WCAG Criterion**: 4.1.2 (Name, Role, Value)
+
+### Test Steps:
+1. Open Chrome DevTools (F12)
+2. Go to Elements tab
+3. Open Accessibility panel (bottom drawer)
+4. Inspect each form element
+
+### Expected Accessibility Properties:
+
+**Name Input**:
+- [ ] Role: textbox
+- [ ] Name: "Name *" or "Name, required"
+- [ ] Required: true
+- [ ] Disabled: false (when idle)
+
+**Email Input**:
+- [ ] Role: textbox
+- [ ] Name: "Email *" or "Email, required"
+- [ ] Required: true
+- [ ] Input type: email
+
+**Subject Dropdown**:
+- [ ] Role: combobox or select
+- [ ] Name: "Subject *" or "Subject, required"
+- [ ] Required: true
+- [ ] Options accessible
+
+**Message Textarea**:
+- [ ] Role: textbox
+- [ ] Name: "Message *" or "Message, required"
+- [ ] Required: true
+- [ ] Multiline: true
+
+**Submit Button**:
+- [ ] Role: button
+- [ ] Name: "Send Message" or "Sending..."
+- [ ] Disabled: false (when idle), true (when submitting)
+
+**Honeypot Field**:
+- [ ] Hidden: true (aria-hidden="true")
+- [ ] NOT in accessibility tree (or marked as hidden)
+
+---
+
+## 10. Lighthouse Accessibility Audit (Automated)
+**WCAG Target**: Score >= 95 (from plan.md line 129)
+
+### Test Steps:
+1. Navigate to http://localhost:3000/contact
+2. Open Chrome DevTools (F12)
+3. Go to Lighthouse tab
+4. Configuration:
+   - Mode: Navigation
+   - Device: Desktop (or Mobile)
+   - Categories: Accessibility only (faster)
+5. Click "Analyze page load"
+
+### Expected Results:
+- [ ] **Accessibility Score**: >= 95 (target)
+- [ ] **Color contrast**: PASS (no contrast issues)
+- [ ] **ARIA attributes**: PASS (valid ARIA usage)
+- [ ] **Form labels**: PASS (all inputs have labels)
+- [ ] **Image alt text**: PASS (or N/A if no images in form)
+- [ ] **Heading order**: PASS (proper hierarchy)
+
+### Common Issues to Watch For:
+- [ ] No "Form elements must have labels" errors
+- [ ] No "Background and foreground colors do not have sufficient contrast ratio" errors
+- [ ] No "IDs used in ARIA attributes must be unique" errors
+- [ ] No "ARIA roles must have required attributes" errors
+
+### Additional Lighthouse Checks (From Spec):
+- [ ] **Performance**: >= 85 (from plan.md line 128)
+- [ ] **Best Practices**: >= 90 (from plan.md line 130)
+- [ ] **SEO**: >= 90 (from plan.md line 131)
+
+---
+
+## 11. Browser Compatibility Test
+**WCAG Principle**: Works across assistive technologies
+
+### Browsers to Test (Minimum):
+1. **Chrome/Edge** (Chromium-based):
+   - [ ] Keyboard navigation works
+   - [ ] Focus indicators visible
+   - [ ] NVDA/JAWS screen reader compatible (Windows)
+   - [ ] Lighthouse audit passes
+
+2. **Firefox**:
+   - [ ] Keyboard navigation works
+   - [ ] Focus indicators visible
+   - [ ] NVDA screen reader compatible (Windows)
+
+3. **Safari** (macOS):
+   - [ ] Keyboard navigation works
+   - [ ] Focus indicators visible
+   - [ ] VoiceOver screen reader compatible
+
+### Known Compatibility Notes:
+- Turnstile widget requires JavaScript
+- Form falls back to HTML5 validation without JavaScript
+- Cloudflare Turnstile supported on all modern browsers
+
+---
+
+## Summary Checklist
+
+### Core WCAG 2.1 AA Criteria (Manual Verification):
+- [ ] **Keyboard navigation**: All interactive elements accessible via keyboard
+- [ ] **Focus visible**: Focus indicators visible on all elements
+- [ ] **Color contrast**: All text has >= 4.5:1 contrast (Lighthouse confirmed)
+- [ ] **Screen reader**: All form elements properly labeled and announced
+- [ ] **Error identification**: Errors clearly identified and described
+- [ ] **Progressive enhancement**: Form works without JavaScript
+
+### Lighthouse Requirements:
+- [ ] **Accessibility score**: >= 95
+- [ ] **No critical accessibility issues**
+
+### Edge Cases Tested:
+- [ ] Honeypot field hidden from screen readers and keyboard
+- [ ] Character counter provides clear feedback
+- [ ] Form states clearly communicated
+- [ ] Error recovery intuitive
+
+---
+
+## Testing Completion
+
+**Date Completed**: _______________
+**Tester Name**: _______________
+**Browser(s) Used**: _______________
+**Screen Reader Used**: _______________
+
+**Overall Result**: PASS / FAIL / NEEDS REVIEW
+
+**Notes**:
+(Add any issues found, browser-specific quirks, or recommendations)
+
+---
+
+## Next Steps
+
+If all manual tests PASS:
+1. Document Lighthouse score in optimization-accessibility.md
+2. Mark accessibility validation as PASSED in optimization-accessibility.md
+3. Proceed with /preview phase completion
+
+If any tests FAIL:
+1. Document failing tests in optimization-accessibility.md
+2. Create GitHub issue for accessibility fixes
+3. Block deployment until issues resolved
+4. Re-test after fixes
