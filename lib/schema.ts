@@ -8,6 +8,7 @@ import type { PostData } from './mdx-types';
 /**
  * BlogPosting schema type for Schema.org JSON-LD
  * Used for rich snippets in search engines
+ * T008, T009: Extended with mainEntityOfPage for LLM optimization
  */
 export interface BlogPostingSchema {
   '@context': 'https://schema.org';
@@ -32,6 +33,10 @@ export interface BlogPostingSchema {
       url: string;
     };
   };
+  mainEntityOfPage: {
+    '@type': 'WebPage';
+    '@id': string;
+  };
 }
 
 /**
@@ -50,9 +55,52 @@ export interface BreadcrumbListSchema {
 }
 
 /**
+ * FAQPage schema type for Schema.org JSON-LD
+ * T002: FAQ schema interfaces for LLM optimization
+ * Used for FAQ-style blog posts to appear in rich results
+ */
+export interface FAQPageSchema {
+  '@context': 'https://schema.org';
+  '@type': 'FAQPage';
+  mainEntity: QuestionSchema[];
+}
+
+export interface QuestionSchema {
+  '@type': 'Question';
+  name: string;
+  acceptedAnswer: AnswerSchema;
+}
+
+export interface AnswerSchema {
+  '@type': 'Answer';
+  text: string;
+}
+
+/**
+ * HowTo schema type for Schema.org JSON-LD
+ * T003: HowTo schema interfaces for LLM optimization
+ * Used for tutorial-style blog posts to appear in rich results
+ */
+export interface HowToSchema {
+  '@context': 'https://schema.org';
+  '@type': 'HowTo';
+  name: string;
+  description: string;
+  step: HowToStepSchema[];
+}
+
+export interface HowToStepSchema {
+  '@type': 'HowToStep';
+  name: string;
+  text: string;
+  position?: number;
+}
+
+/**
  * Generate BlogPosting JSON-LD schema for SEO
  * FR-003: Schema.org structured data generation
  * NFR-004: Must pass Google Rich Results Test
+ * T008, T009: Extended with mainEntityOfPage for canonical URL
  *
  * @param post - Post data including frontmatter and content
  * @returns BlogPosting schema object for JSON-LD script tag
@@ -67,6 +115,9 @@ export function generateBlogPostingSchema(post: PostData): BlogPostingSchema {
       ? post.frontmatter.featuredImage
       : `https://marcusgoll.com${post.frontmatter.featuredImage}`
     : 'https://marcusgoll.com/images/og-default.png';
+
+  // Canonical URL for mainEntityOfPage (T009)
+  const canonicalUrl = `https://marcusgoll.com/blog/${post.slug}`;
 
   return {
     '@context': 'https://schema.org',
@@ -90,6 +141,10 @@ export function generateBlogPostingSchema(post: PostData): BlogPostingSchema {
         '@type': 'ImageObject',
         url: 'https://marcusgoll.com/images/logo.png',
       },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalUrl,
     },
   };
 }

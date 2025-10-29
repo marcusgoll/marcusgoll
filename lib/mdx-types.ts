@@ -11,6 +11,7 @@ import type { MDXContent } from 'mdx/types';
 /**
  * Zod schema for MDX frontmatter validation
  * Build fails if validation fails (NFR-009)
+ * T004: Extended with contentType field for LLM optimization
  */
 export const PostFrontmatterSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be 200 characters or less'),
@@ -25,6 +26,12 @@ export const PostFrontmatterSchema = z.object({
   readingTime: z.number().optional(),
   modified: z.string().datetime('Modified must be valid ISO 8601 datetime').optional(),
   updated: z.string().datetime('Updated must be valid ISO 8601 datetime').optional(),
+  // T004: LLM SEO Optimization fields
+  contentType: z.enum(['standard', 'faq', 'tutorial']).optional().default('standard'),
+  faq: z.array(z.object({
+    question: z.string().min(5, 'FAQ question must be at least 5 characters'),
+    answer: z.string().min(10, 'FAQ answer must be at least 10 characters'),
+  })).optional(),
 });
 
 /**
