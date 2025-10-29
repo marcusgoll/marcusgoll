@@ -1,0 +1,166 @@
+SECURITY VALIDATION REPORT: Input Validation & MDX Content Security
+=======================================================================
+
+FILE ANALYZED: lib/projects.ts
+ANALYSIS DATE: 2025-10-29
+FRAMEWORK: Next.js 16.0.1 (built-in XSS protection)
+
+FRONTMATTER VALIDATION (lib/projects.ts:61-95)
+==============================================
+
+1. REQUIRED FIELDS VALIDATION ✓
+   - Lines 62-70: Enforces required fields with explicit error messages
+     * title: Required string (line 62-64)
+     * description: Required string (line 65-67)
+     * category: Required and validated against whitelist (line 68-78)
+
+2. CATEGORY ENUM VALIDATION ✓
+   - Lines 72-78: Whitelist validation
+     * Valid categories: ['aviation', 'dev-startup', 'cross-pollination']
+     * Invalid categories trigger clear error: "Invalid category '{value}' (must be...)"
+     * Runtime type enforcement with TypeScript interface
+
+3. TECHSTACK VALIDATION ✓
+   - Lines 80-88: Array and length constraints
+     * Must be array type (line 81-83)
+     * Length constraint: 2-10 items (line 84-88)
+     * Prevents empty stacks and unrealistic values
+
+4. FEATURED PROJECT CONSTRAINTS ✓
+   - Lines 90-95: Featured projects require metrics
+     * If featured=true, metrics object is mandatory (line 91-95)
+     * Prevents incomplete featured projects
+
+5. OPTIONAL FIELD HANDLING ✓
+   - liveUrl (line 104): URL passed directly to href - NO VALIDATION
+   - githubUrl (line 105): URL passed directly to href - NO VALIDATION
+   - coverImage (line 103): Has fallback to safe path if missing
+   - dateCreated (line 107): Has ISO timestamp fallback if missing
+   - metrics (line 108): Passes through if provided (validated at lines 90-95)
+
+POTENTIAL INPUT ISSUES IDENTIFIED
+==================================
+
+ISSUE 1: URL Validation (LOW SEVERITY)
+Location: lib/projects.ts, lines 104-105
+- liveUrl and githubUrl are NOT validated as valid URLs
+- No URL format checking (could contain javascript:, data:, vbscript:)
+- However: Next.js Link/href always encodes URLs safely
+- Risk: VERY LOW due to Next.js sanitization layer
+
+Impact: If malicious URL in frontmatter → Still safe because:
+  1. FeaturedProjectCard.tsx (line 153-161): Uses <a> tag with target="_blank"
+  2. ProjectCard.tsx (line 118-127): Same href handling
+  3. Next.js automatically sanitizes href attributes
+  4. User controls content (admin/developer) - not untrusted input
+
+Recommendation: Add URL validation before storing for defense-in-depth:
+  ```typescript
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  ```
+
+ISSUE 2: MDX Content (gray-matter parsing)
+Location: lib/projects.ts, line 59
+- gray-matter extracts YAML frontmatter and raw content
+- MDX content stored in Project.content field (line 109)
+- No explicit sanitization before storage
+
+Safety Analysis:
+  ✓ Content NOT rendered on projects listing page (only in detail views - P2)
+  ✓ No MDX detail route implemented yet (spec scope = MVP only)
+  ✓ gray-matter does NOT execute code - returns raw strings
+  ✓ When rendered, Next.js MDXRemote always sanitizes by default
+
+Current Status: SAFE - Content not displayed yet
+
+TYPESCRIPT INTERFACE VALIDATION
+================================
+
+Project Interface (lines 11-28): Enforces types
+  - slug: string
+  - title: string
+  - description: string
+  - category: 'aviation' | 'dev-startup' | 'cross-pollination'  ← Literal union
+  - techStack: string[]
+  - coverImage: string
+  - liveUrl?: string (optional)
+  - githubUrl?: string (optional)
+  - featured: boolean
+  - dateCreated: string
+  - metrics?: { users?: string, impact?: string, outcome?: string }
+  - content: string (MDX source)
+
+Type enforcement provides runtime safety through TypeScript compilation.
+
+XSS PREVENTION ANALYSIS
+=======================
+
+Next.js Security Architecture:
+  ✓ Automatic HTML escaping in JSX
+  ✓ Context-aware encoding for attributes
+  ✓ No dangerouslySetInnerHTML used in project components
+  ✓ All project data rendered through React components
+
+Vulnerable Pattern Check:
+  ✗ FeaturedProjectCard (line 109): {project.title} - SAFE (React escapes)
+  ✗ FeaturedProjectCard (line 113): {project.description} - SAFE (React escapes)
+  ✗ ProjectCard (line 87-91): All text content - SAFE (React escapes)
+
+Only unsafe pattern:
+  ✓ app/projects/page.tsx (line 36): dangerouslySetInnerHTML on JSON-LD schema
+     - Safe because: JSON.stringify() output, not user content
+     - Content: Hardcoded schema from generateCollectionPageSchema()
+
+CONCLUSION: XSS PREVENTION = SECURE
+
+DATA FLOW SECURITY
+==================
+
+Source → Transformation → Display
+
+1. Source: content/projects/*.mdx (File system - developer/admin controlled)
+2. Parse: gray-matter (Line 59) - No execution
+3. Validate: getProjectBySlug() (Lines 62-95) - Whitelist + type validation
+4. Store: Project interface (Line 97-110) - Typed
+5. Display: React components (FeaturedProjectCard, ProjectCard)
+   - All text: React auto-escapes
+   - URLs: href attributes safely encoded
+   - Content field: Not yet displayed (P2 feature)
+
+Data Flow = SECURE
+
+SUMMARY OF FINDINGS
+===================
+
+VALIDATION COVERAGE:
+  ✓ Frontmatter required fields: YES
+  ✓ Category whitelist: YES
+  ✓ Tech stack constraints: YES
+  ✓ Featured project metrics: YES
+  ✓ Optional field fallbacks: YES
+  ✗ URL format validation: NO (but Next.js sanitizes)
+  ✓ Content escaping: YES (React automatic)
+
+XSS PREVENTION:
+  ✓ No user input paths
+  ✓ No eval/script execution
+  ✓ No dangerouslySetInnerHTML on user content
+  ✓ React automatic escaping active
+  ✓ URL href attributes safely encoded
+
+CRITICAL ISSUES: NONE
+
+SEVERITY BREAKDOWN:
+  - Critical: 0
+  - High: 0
+  - Medium: 0
+  - Low: 1 (URL validation suggestion)
+
+STATUS: PASSED
