@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getAllProjects } from '@/lib/projects';
+import { getAllProjects, getFeaturedProjects } from '@/lib/projects';
 import { generateCollectionPageSchema } from '@/lib/schema';
 import Container from '@/components/ui/Container';
 import ProjectsClient from '@/components/projects/ProjectsClient';
@@ -18,10 +18,12 @@ export const dynamic = 'force-static';
  * T010: Created projects page with SSG
  * T011: Embedded CollectionPage schema for SEO
  * T021-T023: Integrated client-side filtering with URL params
+ * T032: Integrated featured projects section
  */
 export default async function ProjectsPage() {
-  // Fetch all projects at build time (SSG)
+  // Fetch all projects and featured projects at build time (SSG)
   const projects = await getAllProjects();
+  const featuredProjects = await getFeaturedProjects();
 
   // Generate schema for SEO (T011)
   const collectionSchema = generateCollectionPageSchema();
@@ -48,8 +50,8 @@ export default async function ProjectsPage() {
             </p>
           </header>
 
-          {/* Client-side filtering wrapper (T021-T023) */}
-          <ProjectsClient projects={projects} />
+          {/* Client-side filtering wrapper (T021-T023, T032) */}
+          <ProjectsClient projects={projects} featuredProjects={featuredProjects} />
         </Container>
       </div>
     </>

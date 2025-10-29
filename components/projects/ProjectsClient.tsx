@@ -5,9 +5,11 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Project } from '@/lib/projects';
 import ProjectFilters from './ProjectFilters';
 import ProjectGrid from './ProjectGrid';
+import FeaturedProjectCard from './FeaturedProjectCard';
 
 interface ProjectsClientProps {
   projects: Project[];
+  featuredProjects: Project[];
 }
 
 /**
@@ -18,8 +20,9 @@ interface ProjectsClientProps {
  * - Filters projects client-side
  * - Shows empty state if no projects match
  * - Announces filter changes to screen readers (T022)
+ * - Renders featured projects section above filters (T032)
  */
-export default function ProjectsClient({ projects }: ProjectsClientProps) {
+export default function ProjectsClient({ projects, featuredProjects }: ProjectsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -74,25 +77,49 @@ export default function ProjectsClient({ projects }: ProjectsClientProps) {
         {announcement}
       </div>
 
-      {/* Category Filters */}
-      <ProjectFilters
-        activeFilter={activeFilter}
-        onFilterChange={handleFilterChange}
-      />
-
-      {/* Projects Grid or Empty State */}
-      {filteredProjects.length > 0 ? (
-        <ProjectGrid projects={filteredProjects} />
-      ) : (
-        <div className="py-16 text-center">
-          <p className="text-xl text-gray-400">
-            No projects found in this category.
-          </p>
-          <p className="mt-2 text-sm text-gray-500">
-            Try selecting a different filter or browse all projects.
-          </p>
-        </div>
+      {/* Featured Projects Section (T032) */}
+      {featuredProjects.length > 0 && (
+        <section className="mb-16">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-white mb-2">Featured Projects</h2>
+            <p className="text-gray-400">
+              Flagship work demonstrating systematic thinking and dual-track expertise
+            </p>
+          </div>
+          <div className="grid gap-8 lg:gap-12">
+            {featuredProjects.map((project) => (
+              <FeaturedProjectCard key={project.slug} project={project} />
+            ))}
+          </div>
+        </section>
       )}
+
+      {/* All Projects Section */}
+      <section>
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4">All Projects</h2>
+        </div>
+
+        {/* Category Filters */}
+        <ProjectFilters
+          activeFilter={activeFilter}
+          onFilterChange={handleFilterChange}
+        />
+
+        {/* Projects Grid or Empty State */}
+        {filteredProjects.length > 0 ? (
+          <ProjectGrid projects={filteredProjects} />
+        ) : (
+          <div className="py-16 text-center">
+            <p className="text-xl text-gray-400">
+              No projects found in this category.
+            </p>
+            <p className="mt-2 text-sm text-gray-500">
+              Try selecting a different filter or browse all projects.
+            </p>
+          </div>
+        )}
+      </section>
     </>
   );
 }
