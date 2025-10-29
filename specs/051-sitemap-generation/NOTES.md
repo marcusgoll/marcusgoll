@@ -171,3 +171,36 @@ Migrate from custom build-time sitemap generator to Next.js App Router native si
 
 ## Last Updated
 2025-10-29T04:15:00Z
+
+## Phase 2: Tasks (2025-10-28 23:15)
+
+**Summary**:
+- Total tasks: 21
+- User story tasks: 14
+- Parallel opportunities: 13
+- Setup tasks: 3
+- Task file: specs/051-sitemap-generation/tasks.md
+
+**Task Breakdown**:
+- Phase 1 (Setup): 3 tasks - Environment validation
+- Phase 2 (US1 - Framework route): 4 tasks - Next.js App Router sitemap.ts
+- Phase 3 (US2 - Blog posts): 3 tasks - MDX posts in sitemap
+- Phase 4 (US3 - Static pages): 2 tasks - Homepage + blog list
+- Phase 5 (US4 - Deprecate): 3 tasks - Remove lib/generate-sitemap.ts
+- Phase 6 (US5 - Metadata): 2 tasks - Priority/frequency refinement
+- Phase 7 (Validation): 6 tasks - Google Search Console + XML validation
+
+**Checkpoint**:
+- ✅ Tasks generated: 21 concrete tasks
+- ✅ User story organization: Complete (US1-US5)
+- ✅ Dependency graph: Created (US1 blocks US2-US3, US1+US2+US3 block US4-US5)
+- ✅ MVP strategy: Defined (Phases 1-4: US1+US2+US3 only)
+- ✅ Parallel opportunities: 13 tasks marked [P] for concurrent execution
+- 📋 Ready for: /analyze
+
+**Key Decisions**:
+- Manual testing approach (no automated test framework configured)
+- Reuse existing MDX infrastructure (getAllPosts, PostData)
+- Framework-native implementation (Next.js App Router metadata route)
+- Incremental delivery: MVP (US1-US3) → validate → enhancement (US4-US5)
+
