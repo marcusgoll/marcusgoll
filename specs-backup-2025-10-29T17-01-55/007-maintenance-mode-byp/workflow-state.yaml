@@ -1,0 +1,65 @@
+# Spec-Flow Workflow State
+# Schema version: 2.0.0
+# Created: 2025-10-27T05:20:14Z
+
+feature:
+  slug: maintenance-mode-byp
+  title: maintenance-mode-bypass
+  branch_name: feature/007-maintenance-mode-byp
+  created: 2025-10-27T05:20:14Z
+  last_updated: 2025-10-28T14:05:00Z
+  roadmap_status: shipped  # Options: backlog, next, in_progress, shipped
+  shipped_version: "1.2.0"
+  shipped_date: 2025-10-28T14:05:00Z
+
+deployment_model: direct-prod  # Options: staging-prod, direct-prod, local-only
+
+workflow:
+  phase: finalize
+  status: completed  # Options: in_progress, completed, failed, pending
+  completed_phases: [spec-flow, clarify, plan, tasks, validate, implement, optimize, preview, ship, finalize]
+  failed_phases: []
+  manual_gates: {}
+
+context:
+  token_budget:
+    phase: optimization
+    budget: 125000
+    estimated_usage: 45000
+    compaction_needed: false
+
+deployment:
+  staging:
+    deployed: false
+    url: null
+    deployment_ids: {}
+    health_checks: {}
+  production:
+    deployed: true
+    version: "1.2.0"
+    url: "https://test.marcusgoll.com"
+    deployment_ids:
+      docker_service: "marcusgoll-nextjs:latest"
+      docker_swarm: "93mk5tkviugx"
+    health_checks:
+      homepage: "https://test.marcusgoll.com/ → 200 OK"
+      maintenance_page: "https://test.marcusgoll.com/maintenance → 200 OK"
+      api_health: "https://test.marcusgoll.com/api/health → 200 OK"
+    deployment_date: 2025-10-28T14:05:00Z
+    deployment_platform: "Docker Swarm (Hetzner VPS)"
+
+artifacts:
+  spec: specs/007-maintenance-mode-byp/spec.md
+  plan: specs/007-maintenance-mode-byp/plan.md
+  tasks: specs/007-maintenance-mode-byp/tasks.md
+  analysis_report: specs/007-maintenance-mode-byp/analysis-report.md
+  optimization_report: specs/007-maintenance-mode-byp/optimization-report.md
+  preview_report: specs/007-maintenance-mode-byp/preview-report.md
+  ship_report: specs/007-maintenance-mode-byp/ship-report.md
+  finalization_report: specs/007-maintenance-mode-byp/FINALIZATION-REPORT.md
+
+quality_gates: {}
+
+metadata:
+  schema_version: "2.0.0"
+  workflow_version: "2.0.0"

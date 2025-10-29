@@ -1,0 +1,58 @@
+=== robots.txt Integration Check ===
+
+Checking robots.txt content:
+
+# robots.txt for marcusgoll.com
+# SEO & Analytics Infrastructure - US7, T023
+
+# Default crawlers (allow all)
+User-agent: *
+Allow: /
+Sitemap: https://marcusgoll.com/sitemap.xml
+
+# AI Training Crawlers - Selective blocking per US7
+# These crawlers are used to train large language models
+
+# OpenAI GPTBot - Block training, allow ChatGPT search
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic Claude - Block training crawler
+User-agent: ClaudeBot
+Disallow: /
+
+# Google Extended - Block Gemini/Bard training
+User-agent: Google-Extended
+Disallow: /
+
+# Common Crawl - Block general web scraping for training
+User-agent: CCBot
+Disallow: /
+
+# Perplexity AI - Block training
+User-agent: PerplexityBot
+Disallow: /
+
+# Bytedance/TikTok - Block training
+User-agent: Bytespider
+Disallow: /
+
+# Meta AI - Block training
+User-agent: FacebookBot
+Disallow: /
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1
+
+=== Verification ===
+
+Sitemap: https://marcusgoll.com/sitemap.xml
+
+Status:
+✅ robots.txt references /sitemap.xml (line 7)
+✅ Sitemap URL correct: https://marcusgoll.com/sitemap.xml
+✅ AI crawler blocking rules intact (ClaudeBot, GPTBot, etc.)
+✅ No changes required to robots.txt

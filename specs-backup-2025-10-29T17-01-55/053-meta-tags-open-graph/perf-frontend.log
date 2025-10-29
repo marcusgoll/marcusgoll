@@ -1,0 +1,57 @@
+
+> marcusgoll@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.6
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 2.1s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/32) ...
+   Generating static pages (8/32) 
+   Generating static pages (16/32) 
+   Generating static pages (24/32) 
+ ✓ Generating static pages (32/32)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                  Size  First Load JS  Revalidate  Expire
+┌ ○ /                                     24.9 kB         144 kB          1m      1y
+├ ○ /_not-found                             990 B         103 kB
+├ ƒ /api/health                             141 B         102 kB
+├ ƒ /api/newsletter/preferences             141 B         102 kB
+├ ƒ /api/newsletter/preferences/[token]     141 B         102 kB
+├ ƒ /api/newsletter/subscribe               141 B         102 kB
+├ ƒ /api/newsletter/unsubscribe             141 B         102 kB
+├ ○ /aviation                               713 B         111 kB          1m      1y
+├ ○ /blog                                   164 B         106 kB
+├ ● /blog/[slug]                          4.46 kB         127 kB
+├   ├ /blog/interactive-mdx-demo
+├   ├ /blog/welcome-to-mdx
+├   ├ /blog/from-cockpit-to-code
+├   └ [+2 more paths]
+├ ● /blog/tag/[tag]                         164 B         106 kB
+├   ├ /blog/tag/dev
+├   ├ /blog/tag/mdx
+├   ├ /blog/tag/systematic-thinking
+├   └ [+8 more paths]
+├ ○ /dev-startup                            713 B         111 kB          1m      1y
+├ ○ /maintenance                          1.87 kB         109 kB
+├ ○ /newsletter                             163 B         114 kB
+├ ƒ /newsletter/preferences/[token]       2.49 kB         113 kB
+├ ○ /newsletter/unsubscribe/confirmation  2.21 kB         116 kB
+├ ○ /sitemap.xml                            141 B         102 kB
+├ ○ /styleguide                           9.93 kB         124 kB
+└ ƒ /tag/[slug]                             172 B         111 kB
++ First Load JS shared by all              102 kB
+  ├ chunks/255-cf2e1d3491ac955b.js        45.7 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js   54.2 kB
+  └ other shared chunks (total)              2 kB
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

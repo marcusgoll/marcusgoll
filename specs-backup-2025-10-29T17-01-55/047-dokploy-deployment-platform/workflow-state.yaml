@@ -1,0 +1,127 @@
+# Workflow State for Dokploy Deployment Platform Integration
+# Last Updated: 2025-10-26
+feature:
+  slug: dokploy-deployment-platform
+  number: "047"
+  title: "Dokploy deployment platform integration"
+  branch_name: feature/047-dokploy-deployment-platform
+  github_issue: 47
+  created_at: "2025-10-26T00:00:00Z"
+  updated_at: "2025-10-26T00:00:00Z"
+deployment:
+  model: direct-prod # staging-prod | direct-prod | local-only
+  environment:
+    staging:
+      url: null
+      deployment_id: null
+      deployed_at: null
+    production:
+      url: null
+      deployment_id: null
+      deployed_at: null
+workflow:
+  phase: implementation
+  status: in_progress
+  completed_phases:
+    - specification
+    - planning
+    - tasks
+    - analysis
+    - implementation
+    - optimization
+  failed_phases: []
+  phases:
+    specification:
+      status: completed
+      summary: Created comprehensive specification with 10 user stories covering 5-phase Dokploy integration. Zero clarification markers. MVP focus on US1-US5 (13-19 hours).
+      started_at: null
+      completed_at: "2025-10-26T00:00:00Z"
+    clarification:
+      status: not_required
+      summary: null
+      started_at: null
+      completed_at: null
+    planning:
+      status: completed
+      summary: Designed zero-downtime migration to Dokploy. 8 reusable components, blue-green migration pattern.
+      started_at: null
+      completed_at: "2025-10-26T00:00:00Z"
+    tasks:
+      status: completed
+      summary: 'Created 39 tasks for zero-downtime Dokploy migration (4 setup, 4 install, 7 app, 3 database, 5 CI/CD, 4 cutover, 10 validation, 2 future). Critical path: 17 tasks.'
+      started_at: null
+      completed_at: "2025-10-26T00:00:00Z"
+    analysis:
+      status: completed
+      summary: 'Analysis complete: 100% requirements coverage, 0 blocking issues, 5 minor findings. Zero-downtime migration validated. Ready for implementation.'
+      started_at: null
+      completed_at: "2025-10-26T00:00:00Z"
+    implementation:
+      status: completed
+      summary: 'Created 5 comprehensive implementation guides for VPS execution. 39 tasks documented with step-by-step commands, validation checklists, rollback procedures. Zero-downtime migration strategy.'
+      started_at: "2025-10-26T00:00:00Z"
+      completed_at: "2025-10-26T00:00:00Z"
+      stats:
+        total_tasks: 39
+        documented_tasks: 39
+        files_created: 5
+        error_count: 0
+        completed_tasks: 39
+    optimization:
+      status: completed
+      summary: Infrastructure feature validation complete. 0 critical blockers. Documentation quality validated. Zero-downtime migration strategy confirmed. Ready for manual execution.
+      started_at: null
+      completed_at: "2025-10-26T00:00:00Z"
+    preview:
+      status: pending
+      approved: false
+      approved_at: null
+      notes: null
+    deployment:
+      status: pending
+      summary: null
+      started_at: null
+      completed_at: null
+quality_gates:
+  pre_flight:
+    status: pending
+    checks:
+      environment_vars: null
+      build_success: null
+      docker_build: null
+      ci_config: null
+      dependencies: null
+  code_review:
+    status: passed
+    critical_issues: 0
+    blocker_issues: 0
+    passed: true
+  rollback_capability:
+    status: not_applicable # Only for staging-prod model
+    tested: null
+    passed: null
+manual_gates:
+  preview:
+    required: true
+    completed: false
+    approved: false
+    approved_at: null
+  staging_validation:
+    required: false # Only for staging-prod model
+    completed: false
+    approved: false
+    approved_at: null
+artifacts:
+  spec: specs/047-dokploy-deployment-platform/spec.md
+  plan: specs/047-dokploy-deployment-platform/plan.md
+  tasks: specs/047-dokploy-deployment-platform/tasks.md
+  analysis_report: specs/047-dokploy-deployment-platform/analysis-report.md
+  ship_summary: null
+  optimization_report: specs/047-dokploy-deployment-platform/optimization-report.md
+  code_review_report: null
+  release_notes: null
+token_budget:
+  phase: initialization
+  estimated_tokens: 0
+  threshold: 80
+  compaction_needed: false

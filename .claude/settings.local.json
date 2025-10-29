@@ -6,7 +6,10 @@
       "Bash(head:*)",
       "Bash(test:*)",
       "Bash(gh milestone:*)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Read(//c/Users/Marcus Gollahon/**)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
