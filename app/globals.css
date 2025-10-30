@@ -315,3 +315,17 @@ code:not(pre code) {
     @apply bg-background text-foreground;
   }
 }
+
+/* Retro grid animation */
+@keyframes grid {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(calc(-100% + 100vh));
+  }
+}
+
+.animate-grid {
+  animation: grid 20s linear infinite;
+}

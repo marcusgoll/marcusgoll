@@ -1,12 +1,16 @@
 import Link from 'next/link';
+import { RetroGrid } from '@/components/ui/RetroGrid';
 
 /**
- * ContactSection - Huge text CTA to contact page
+ * ContactSection - Huge text CTA to contact page with retro grid background
  */
 export default function ContactSection() {
   return (
-    <div className="bg-white py-24 sm:py-32 dark:bg-gray-900">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="relative overflow-hidden bg-white py-24 sm:py-32 dark:bg-gray-900">
+      {/* Retro grid background */}
+      <RetroGrid />
+
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
         <Link
           href="/contact"
           className="block text-center group transition-colors"

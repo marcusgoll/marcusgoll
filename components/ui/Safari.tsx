@@ -23,22 +23,22 @@ export function Safari({
   return (
     <div
       className={cn(
-        'relative w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-100 shadow-2xl dark:border-gray-700 dark:bg-gray-800',
+        'relative w-full overflow-hidden rounded-xl border-2 border-gray-300 bg-white shadow-2xl dark:border-gray-600 dark:bg-gray-800',
         className
       )}
     >
       {/* Browser chrome - top bar with traffic lights and address bar */}
-      <div className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-900">
+      <div className="flex items-center gap-3 border-b-2 border-gray-300 bg-gradient-to-b from-gray-50 to-gray-100 px-4 py-3 dark:border-gray-600 dark:from-gray-800 dark:to-gray-900">
         {/* Traffic light buttons */}
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-red-500" />
-          <div className="h-3 w-3 rounded-full bg-yellow-500" />
-          <div className="h-3 w-3 rounded-full bg-green-500" />
+          <div className="h-3 w-3 rounded-full bg-[#FF5F57] shadow-sm" />
+          <div className="h-3 w-3 rounded-full bg-[#FEBC2E] shadow-sm" />
+          <div className="h-3 w-3 rounded-full bg-[#28C840] shadow-sm" />
         </div>
 
         {/* Address bar */}
         <div className="flex-1">
-          <div className="mx-auto max-w-md rounded-md bg-gray-100 px-3 py-1.5 text-center text-sm text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+          <div className="mx-auto max-w-md rounded-md border border-gray-300 bg-white px-3 py-1.5 text-center text-sm text-gray-700 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300">
             {url}
           </div>
         </div>
