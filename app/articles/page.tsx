@@ -55,10 +55,13 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
   const endIndex = startIndex + POSTS_PER_PAGE;
   const posts = allPosts.slice(startIndex, endIndex);
 
-  // Split posts: featured (first) + middle column (next 4) + right column (last 4)
+  // Split posts: featured (first) + evenly distribute remaining across columns 2 and 3
   const [featuredPost, ...remainingPosts] = posts;
-  const middlePosts = remainingPosts.slice(0, 4);
-  const rightPosts = remainingPosts.slice(4, 8);
+
+  // Split remaining posts evenly between middle and right columns
+  const midPoint = Math.ceil(remainingPosts.length / 2);
+  const middlePosts = remainingPosts.slice(0, midPoint);
+  const rightPosts = remainingPosts.slice(midPoint);
 
   return (
     <div className="min-h-screen bg-navy-900 py-16 sm:py-24">
