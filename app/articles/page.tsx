@@ -1,15 +1,16 @@
 /**
  * Articles index page
- * Navy background with 3-column equal grid layout
+ * Navy background with 3-column layout (featured + 2 grid columns with full-height dividers)
  */
 
 import { getAllPosts } from '@/lib/mdx';
 import type { Metadata } from 'next';
+import { FeaturedArticleCard } from '@/components/blog/featured-article-card';
 import { CompactArticleCard } from '@/components/blog/compact-article-card';
 import { Pagination } from '@/components/blog/pagination';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
-const POSTS_PER_PAGE = 9; // 3 columns x 3 rows
+const POSTS_PER_PAGE = 9; // 1 featured + 4 + 4
 
 export const metadata: Metadata = {
   title: 'Articles',
@@ -54,6 +55,11 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
   const endIndex = startIndex + POSTS_PER_PAGE;
   const posts = allPosts.slice(startIndex, endIndex);
 
+  // Split posts: featured (first) + middle column (next 4) + right column (last 4)
+  const [featuredPost, ...remainingPosts] = posts;
+  const middlePosts = remainingPosts.slice(0, 4);
+  const rightPosts = remainingPosts.slice(4, 8);
+
   return (
     <div className="min-h-screen bg-navy-900 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -73,21 +79,32 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
           </div>
         ) : (
           <>
-            {/* 3-Column Equal Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
-              {posts.map((post, index) => {
-                // Add left border to columns 2 and 3 (index % 3 === 1 or 2)
-                const columnIndex = index % 3;
-                const showLeftBorder = columnIndex === 1 || columnIndex === 2;
+            {/* 3-Column Layout with Full-Height Dividers */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+              {/* Left Column - Featured Post */}
+              {featuredPost && (
+                <div>
+                  <FeaturedArticleCard post={featuredPost} />
+                </div>
+              )}
 
-                return (
-                  <CompactArticleCard
-                    key={post.slug}
-                    post={post}
-                    showLeftBorder={showLeftBorder}
-                  />
-                );
-              })}
+              {/* Middle Column - With Full-Height Left Border */}
+              {middlePosts.length > 0 && (
+                <div className="lg:border-l lg:border-gray-700 lg:pl-8 space-y-12">
+                  {middlePosts.map((post) => (
+                    <CompactArticleCard key={post.slug} post={post} />
+                  ))}
+                </div>
+              )}
+
+              {/* Right Column - With Full-Height Left Border */}
+              {rightPosts.length > 0 && (
+                <div className="lg:border-l lg:border-gray-700 lg:pl-8 space-y-12">
+                  {rightPosts.map((post) => (
+                    <CompactArticleCard key={post.slug} post={post} />
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Pagination */}

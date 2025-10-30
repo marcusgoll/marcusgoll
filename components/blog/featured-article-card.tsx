@@ -1,5 +1,5 @@
 /**
- * Featured article card - large card with image for hero placement
+ * Featured article card - large card with image above for left column
  */
 
 import Link from 'next/link';
@@ -15,38 +15,32 @@ export function FeaturedArticleCard({ post }: FeaturedArticleCardProps) {
   return (
     <article className="group">
       <Link href={`/articles/${post.slug}`} className="block">
-        {/* Featured Image */}
-        <div className="relative aspect-[16/9] overflow-hidden rounded-lg mb-6 bg-gray-800">
-          {post.frontmatter.featuredImage ? (
+        {/* Featured Image - Only if available */}
+        {post.frontmatter.featuredImage && (
+          <div className="relative aspect-[16/9] overflow-hidden rounded-lg mb-6 bg-gray-800">
             <Image
               src={post.frontmatter.featuredImage}
               alt={post.frontmatter.title}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900">
-              <span className="text-gray-500 text-4xl font-bold">
-                {post.frontmatter.title.charAt(0)}
-              </span>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Content */}
         <div>
-          <h2 className="text-3xl font-bold text-white mb-4 group-hover:text-emerald-400 transition-colors">
+          <h2 className="text-2xl font-bold text-white mb-3">
             {post.frontmatter.title}
           </h2>
 
-          <p className="text-gray-400 mb-6 text-lg leading-relaxed">
+          <p className="text-gray-400 mb-4 line-clamp-3 text-base leading-relaxed">
             {post.frontmatter.excerpt}
           </p>
 
           {/* Read More Link */}
-          <div className="flex items-center gap-2 text-blue-500 font-medium group-hover:text-blue-400 transition-colors">
+          <div className="flex items-center gap-2 text-blue-500 font-medium group-hover:text-blue-400 transition-colors text-sm">
             <span>Read more</span>
-            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </div>
         </div>
       </Link>
