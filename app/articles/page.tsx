@@ -60,7 +60,7 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
 
   return (
     <div className="min-h-screen bg-navy-900 py-16 sm:py-24">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="container mx-auto sm:px-6 lg:px-8">
         {/* Header - Left Aligned */}
         <header className="mb-12">
           <h1 className="text-5xl font-black text-white mb-4">
