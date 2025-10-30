@@ -8,17 +8,18 @@ import { ArrowRight } from 'lucide-react';
 
 interface CompactArticleCardProps {
   post: PostData;
+  showLeftBorder?: boolean;
 }
 
-export function CompactArticleCard({ post }: CompactArticleCardProps) {
+export function CompactArticleCard({ post, showLeftBorder = false }: CompactArticleCardProps) {
   return (
-    <article className="group">
+    <article className={`group ${showLeftBorder ? 'lg:border-l lg:border-gray-700 lg:pl-8' : ''}`}>
       <Link href={`/articles/${post.slug}`} className="block">
-        <h3 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">
+        <h3 className="text-2xl font-bold text-white mb-3">
           {post.frontmatter.title}
         </h3>
 
-        <p className="text-gray-400 mb-4 line-clamp-2 text-sm leading-relaxed">
+        <p className="text-gray-400 mb-4 line-clamp-3 text-base leading-relaxed">
           {post.frontmatter.excerpt}
         </p>
 
