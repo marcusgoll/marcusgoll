@@ -27,7 +27,7 @@ export default function Header() {
         {/* Desktop Navigation */}
         <div className="hidden items-center space-x-8 md:flex">
           <Link
-            href="/blog"
+            href="/articles"
             className="text-white transition-colors hover:text-emerald-600"
           >
             Articles
@@ -52,7 +52,7 @@ export default function Header() {
           </Link>
 
           {/* Theme Toggle - Desktop */}
-          <ThemeToggle className="text-white" />
+          <ThemeToggle className="text-white cursor-pointer" />
         </div>
 
         {/* Mobile Menu Button */}
@@ -91,7 +91,7 @@ export default function Header() {
         <div className="border-t border-gray-700 bg-navy-900 md:hidden">
           <div className="space-y-1 px-4 py-3">
             <Link
-              href="/blog"
+              href="/articles"
               className="block py-2 text-white transition-colors hover:text-emerald-600"
               onClick={() => setMobileMenuOpen(false)}
             >

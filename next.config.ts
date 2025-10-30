@@ -15,6 +15,26 @@ import createMDX from '@next/mdx';
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
+  // Redirect /blog to /articles
+  async redirects() {
+    return [
+      {
+        source: '/blog',
+        destination: '/articles',
+        permanent: true,
+      },
+      {
+        source: '/blog/:slug',
+        destination: '/articles/:slug',
+        permanent: true,
+      },
+      {
+        source: '/blog/tag/:tag',
+        destination: '/articles/tag/:tag',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     // Modern image formats (AVIF first for best compression, WebP fallback)
     formats: ['image/avif', 'image/webp'],
