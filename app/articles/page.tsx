@@ -69,7 +69,7 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
         {/* Header - Left Aligned */}
         <header className="mb-12">
           <h1 className="text-5xl font-black text-white mb-4">
-            Our Blog
+            My Articles
           </h1>
           <p className="text-lg text-gray-400 max-w-2xl">
             We use an agile approach to test assumptions and connect with the needs of your audience early and often.
