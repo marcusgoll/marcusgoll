@@ -2,6 +2,7 @@
 
 import { CheckCircle2, Plane, Code } from 'lucide-react';
 import Link from 'next/link';
+import { Safari } from '@/components/ui/Safari';
 
 const features = [
   {
@@ -67,13 +68,14 @@ export default function WhatImBuilding() {
             href="https://cfipros.com"
             target="_blank"
             rel="noopener noreferrer"
+            className="block"
           >
-            <img
-              alt="CFIPros - Decode FAA Knowledge Tests Instantly"
+            <Safari
+              url="cfipros.com"
               src="/images/CFIPros.png"
               width={2432}
               height={1442}
-              className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0 dark:ring-white/10"
+              className="w-[48rem] max-w-none sm:w-[57rem] md:-ml-4 lg:-ml-0"
             />
           </Link>
         </div>

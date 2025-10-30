@@ -60,20 +60,6 @@ export default function HeroSplitHorizon() {
         <rect fill="url(#hero-grid-pattern)" width="100%" height="100%" strokeWidth={0} />
       </svg>
 
-      {/* Gradient Blur */}
-      <div
-        aria-hidden="true"
-        className="absolute top-10 left-[calc(50%-4rem)] -z-10 transform-gpu blur-3xl sm:left-[calc(50%-18rem)] lg:top-[calc(50%-30rem)] lg:left-48 xl:left-[calc(50%-24rem)]"
-      >
-        <div
-          style={{
-            clipPath:
-              'polygon(73.6% 51.7%, 91.7% 11.8%, 100% 46.4%, 97.4% 82.2%, 92.5% 84.9%, 75.7% 64%, 55.3% 47.5%, 46.5% 49.4%, 45% 62.9%, 50.3% 87.2%, 21.3% 64.1%, 0.1% 100%, 5.4% 51.1%, 21.4% 63.9%, 58.9% 0.2%, 73.6% 51.7%)',
-          }}
-          className="aspect-[1108/632] w-[69.25rem] bg-gradient-to-r from-emerald-400 to-emerald-600 opacity-20"
-        />
-      </div>
-
       <motion.div
         className="w-full lg:w-3/5 flex flex-col justify-center px-8 lg:px-16 py-16 lg:py-0 lg:min-h-screen"
         initial="hidden"
@@ -143,13 +129,7 @@ export default function HeroSplitHorizon() {
           animate={{ y: 0, opacity: 1, rotate: 20 }}
           transition={{ duration: 1.5, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="absolute -right-[0%] top-[45%] -translate-y-1/2 w-[120%] h-[120%] md:w-[120%] md:h-[120%] lg:w-[110%] lg:h-[110%] hidden lg:block"
-          style={{
-            filter: 'drop-shadow(0 0 30px rgba(16, 185, 129, 0.2))'
-          }}
         >
-          {/* Subtle gradient glow */}
-          <div className="absolute inset-0 bg-gradient-to-l from-emerald-500/8  blur-3xl" />
-
           {/* Light mode aircraft */}
           <div className="relative w-full h-full dark:hidden">
             <Image
@@ -200,12 +180,6 @@ export default function HeroSplitHorizon() {
           </div>
         </motion.div>
       </motion.div>
-
-      {/* Bottom gradient for smooth transition */}
-      <div
-        aria-hidden="true"
-        className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-gray-900 to-transparent pointer-events-none"
-      />
     </section>
   );
 }
