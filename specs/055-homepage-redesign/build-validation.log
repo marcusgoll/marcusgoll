@@ -1,0 +1,55 @@
+
+> marcusgoll@1.0.0 build
+> next build
+
+   ▲ Next.js 16.0.1 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 57s
+   Running TypeScript ...
+   Collecting page data ...
+   Generating static pages (0/34) ...
+   Generating static pages (8/34) 
+   Generating static pages (16/34) 
+   Generating static pages (25/34) 
+ ✓ Generating static pages (34/34) in 1071.3ms
+   Finalizing page optimization ...
+
+Route (app)                               Revalidate  Expire
+┌ ○ /                                             1m      1y
+├ ○ /_not-found
+├ ○ /about
+├ ƒ /api/contact
+├ ƒ /api/health
+├ ƒ /api/newsletter/preferences
+├ ƒ /api/newsletter/preferences/[token]
+├ ƒ /api/newsletter/subscribe
+├ ƒ /api/newsletter/unsubscribe
+├ ○ /aviation                                     1m      1y
+├ ○ /blog
+├ ● /blog/[slug]
+│ ├ /blog/interactive-mdx-demo
+│ ├ /blog/welcome-to-mdx
+│ ├ /blog/from-cockpit-to-code
+│ └ [+2 more paths]
+├ ● /blog/tag/[tag]
+│ ├ /blog/tag/dev
+│ ├ /blog/tag/mdx
+│ ├ /blog/tag/systematic-thinking
+│ └ [+8 more paths]
+├ ○ /contact
+├ ○ /dev-startup                                  1m      1y
+├ ○ /maintenance
+├ ○ /newsletter
+├ ƒ /newsletter/preferences/[token]
+├ ○ /newsletter/unsubscribe/confirmation
+├ ○ /sitemap.xml
+├ ○ /styleguide
+└ ƒ /tag/[slug]
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

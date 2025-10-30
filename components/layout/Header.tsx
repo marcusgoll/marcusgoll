@@ -5,15 +5,13 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 /**
- * Header component - Site navigation with dropdown menus
- * - Desktop: Full navigation with category dropdowns
+ * Header component - Simple site navigation
+ * - Desktop: Articles, Projects, About, Contact
  * - Mobile: Hamburger menu
  * - Sticky header with Navy 900 background
  */
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [aviationDropdownOpen, setAviationDropdownOpen] = useState(false);
-  const [devDropdownOpen, setDevDropdownOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-navy-900 shadow-md">
@@ -27,119 +25,30 @@ export default function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center space-x-6 md:flex">
+        <div className="hidden items-center space-x-8 md:flex">
           <Link
-            href="/"
+            href="/blog"
             className="text-white transition-colors hover:text-emerald-600"
           >
-            Home
+            Articles
           </Link>
-
-          {/* Aviation Dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setAviationDropdownOpen(true)}
-            onMouseLeave={() => setAviationDropdownOpen(false)}
-          >
-            <Link
-              href="/aviation"
-              className="flex items-center text-white transition-colors hover:text-emerald-600"
-            >
-              Aviation
-              <svg
-                className="ml-1 h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </Link>
-
-            {aviationDropdownOpen && (
-              <div className="absolute left-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg">
-                <Link
-                  href="/tag/flight-training"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Flight Training
-                </Link>
-                <Link
-                  href="/tag/cfi-resources"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  CFI Resources
-                </Link>
-                <Link
-                  href="/tag/career-path"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Career Path
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* Dev/Startup Dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setDevDropdownOpen(true)}
-            onMouseLeave={() => setDevDropdownOpen(false)}
-          >
-            <Link
-              href="/dev-startup"
-              className="flex items-center text-white transition-colors hover:text-emerald-600"
-            >
-              Dev/Startup
-              <svg
-                className="ml-1 h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </Link>
-
-            {devDropdownOpen && (
-              <div className="absolute left-0 mt-2 w-48 rounded-md bg-white py-2 shadow-lg">
-                <Link
-                  href="/tag/software-development"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Software Development
-                </Link>
-                <Link
-                  href="/tag/systematic-thinking"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Systematic Thinking
-                </Link>
-                <Link
-                  href="/tag/startup-insights"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Startup Insights
-                </Link>
-              </div>
-            )}
-          </div>
-
           <Link
-            href="/tag/cross-pollination"
+            href="/projects"
             className="text-white transition-colors hover:text-emerald-600"
           >
-            Cross-Pollination
+            Projects
+          </Link>
+          <Link
+            href="/about"
+            className="text-white transition-colors hover:text-emerald-600"
+          >
+            About
+          </Link>
+          <Link
+            href="/contact"
+            className="text-white transition-colors hover:text-emerald-600"
+          >
+            Contact
           </Link>
 
           {/* Theme Toggle - Desktop */}
@@ -182,78 +91,32 @@ export default function Header() {
         <div className="border-t border-gray-700 bg-navy-900 md:hidden">
           <div className="space-y-1 px-4 py-3">
             <Link
-              href="/"
+              href="/blog"
               className="block py-2 text-white transition-colors hover:text-emerald-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Home
+              Articles
             </Link>
             <Link
-              href="/aviation"
+              href="/projects"
               className="block py-2 text-white transition-colors hover:text-emerald-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Aviation
+              Projects
             </Link>
-            <div className="pl-4 space-y-1">
-              <Link
-                href="/tag/flight-training"
-                className="block py-1 text-sm text-gray-300 transition-colors hover:text-emerald-600"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Flight Training
-              </Link>
-              <Link
-                href="/tag/cfi-resources"
-                className="block py-1 text-sm text-gray-300 transition-colors hover:text-emerald-600"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                CFI Resources
-              </Link>
-              <Link
-                href="/tag/career-path"
-                className="block py-1 text-sm text-gray-300 transition-colors hover:text-emerald-600"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Career Path
-              </Link>
-            </div>
             <Link
-              href="/dev-startup"
+              href="/about"
               className="block py-2 text-white transition-colors hover:text-emerald-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Dev/Startup
+              About
             </Link>
-            <div className="pl-4 space-y-1">
-              <Link
-                href="/tag/software-development"
-                className="block py-1 text-sm text-gray-300 transition-colors hover:text-emerald-600"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Software Development
-              </Link>
-              <Link
-                href="/tag/systematic-thinking"
-                className="block py-1 text-sm text-gray-300 transition-colors hover:text-emerald-600"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Systematic Thinking
-              </Link>
-              <Link
-                href="/tag/startup-insights"
-                className="block py-1 text-sm text-gray-300 transition-colors hover:text-emerald-600"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Startup Insights
-              </Link>
-            </div>
             <Link
-              href="/tag/cross-pollination"
+              href="/contact"
               className="block py-2 text-white transition-colors hover:text-emerald-600"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Cross-Pollination
+              Contact
             </Link>
 
             {/* Theme Toggle - Mobile */}

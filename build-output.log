@@ -1,0 +1,36 @@
+
+> marcusgoll@1.0.0 build
+> next build
+
+   ▲ Next.js 16.0.1 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 2.2s
+   Running TypeScript ...
+Failed to compile.
+
+./components/home/HeroCockpit.tsx:126:13
+Type error: Type '{ hidden: { clipPath: string; opacity: number; }; visible: { clipPath: string; opacity: number; transition: { duration: number; ease: number[]; }; }; }' is not assignable to type 'Variants'.
+  Property 'visible' is incompatible with index signature.
+    Type '{ clipPath: string; opacity: number; transition: { duration: number; ease: number[]; }; }' is not assignable to type 'Variant'.
+      Type '{ clipPath: string; opacity: number; transition: { duration: number; ease: number[]; }; }' is not assignable to type 'TargetAndTransition'.
+        Type '{ clipPath: string; opacity: number; transition: { duration: number; ease: number[]; }; }' is not assignable to type '{ transition?: Transition<any> | undefined; transitionEnd?: ResolvedValues | undefined; }'.
+          Types of property 'transition' are incompatible.
+            Type '{ duration: number; ease: number[]; }' is not assignable to type 'Transition<any> | undefined'.
+              Type '{ duration: number; ease: number[]; }' is not assignable to type 'TransitionWithValueOverrides<any>'.
+                Type '{ duration: number; ease: number[]; }' is not assignable to type 'ValueAnimationTransition<any>'.
+                  Types of property 'ease' are incompatible.
+                    Type 'number[]' is not assignable to type 'Easing | Easing[] | undefined'.
+                      Type 'number[]' is not assignable to type 'EasingFunction | Easing[]'.
+                        Type 'number[]' is not assignable to type 'Easing[]'.
+                          Type 'number' is not assignable to type 'Easing'.
+
+[0m [90m 124 |[39m           {[90m/* Name with text reveal */[39m}
+ [90m 125 |[39m           [33m<[39m[33mmotion[39m[33m.[39mh1
+[31m[1m>[22m[39m[90m 126 |[39m             variants[33m=[39m{textRevealVariants}
+ [90m     |[39m             [31m[1m^[22m[39m
+ [90m 127 |[39m             initial[33m=[39m[32m"hidden"[39m
+ [90m 128 |[39m             animate[33m=[39m[32m"visible"[39m
+ [90m 129 |[39m             className[33m=[39m[32m"text-6xl lg:text-8xl xl:text-9xl font-semibold text-navy-900"[39m[0m
+Next.js build worker exited with code: 1 and signal: null

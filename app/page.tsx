@@ -1,7 +1,10 @@
 import { Metadata } from 'next';
-import { Suspense } from 'react';
 import Hero from '@/components/home/Hero';
-import HomePageClient from '@/components/home/HomePageClient';
+import WhatImBuilding from '@/components/home/WhatImBuilding';
+import RecentPosts from '@/components/home/RecentPosts';
+import Newsletter from '@/components/home/Newsletter';
+import ContactSection from '@/components/home/ContactSection';
+import Footer from '@/components/layout/Footer';
 import PageViewTracker from '@/components/analytics/PageViewTracker';
 import { getAllPosts } from '@/lib/posts';
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/schema';
@@ -85,10 +88,18 @@ export default async function Home() {
         {/* Hero Section */}
         <Hero />
 
-        {/* M2 Layout (Sidebar + Magazine Masonry) */}
-        <Suspense fallback={<div className="min-h-screen" />}>
-          <HomePageClient allPosts={allPosts} />
-        </Suspense>
+        {/* What I'm Building Section */}
+        <WhatImBuilding />
+
+        {/* Recent Posts Section */}
+        <RecentPosts posts={allPosts} />
+
+        {/* Newsletter Section */}
+        <Newsletter />
+
+        {/* Contact Section */}
+        <ContactSection />
+
       </div>
     </>
   );

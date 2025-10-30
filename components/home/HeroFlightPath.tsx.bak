@@ -1,0 +1,155 @@
+'use client';
+
+import { Button } from '@/components/ui/Button';
+import Container from '@/components/ui/Container';
+import Link from 'next/link';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+
+/**
+ * HeroFlightPath - Diagonal brutalist typography with parallax
+ * Concept: Flight path metaphor with cascading diagonal text
+ * Personality: Bold, confident, technical precision
+ */
+export default function HeroFlightPath() {
+  const { scrollY } = useScroll();
+  const nameY = useTransform(scrollY, [0, 300], [0, -50]);
+  const subtitleY = useTransform(scrollY, [0, 300], [0, 25]);
+  const statsY = useTransform(scrollY, [0, 300], [0, 40]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20, rotateX: -10 },
+    show: {
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
+  };
+
+  return (
+    <section className="relative min-h-screen bg-navy-900 overflow-hidden">
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-radial from-emerald-600/20 via-transparent to-transparent" />
+
+      <Container className="relative z-10 py-20">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="relative"
+        >
+          {/* Small badge */}
+          <motion.div variants={itemVariants} className="mb-8">
+            <span className="inline-block px-4 py-2 text-xs font-mono font-medium uppercase tracking-widest text-white bg-emerald-600 rounded">
+              CFI · Developer
+            </span>
+          </motion.div>
+
+          {/* Main name - large and rotated */}
+          <motion.h1
+            style={{ y: nameY }}
+            className="text-[120px] lg:text-[180px] xl:text-[240px] font-bold -rotate-3 text-white leading-none mb-8"
+          >
+            MARCUS
+            <br />
+            GOLLAHON
+          </motion.h1>
+
+          {/* Supporting text - diagonal offset */}
+          <motion.div
+            style={{ y: subtitleY }}
+            variants={itemVariants}
+            className="mt-12 ml-8 lg:ml-32 max-w-md"
+          >
+            <p className="text-xl lg:text-2xl text-gray-300 leading-relaxed">
+              Building at 30,000 feet—where systematic thinking meets the skies
+            </p>
+          </motion.div>
+
+          {/* Stats - monospace, further diagonal offset */}
+          <motion.div
+            style={{ y: statsY }}
+            variants={itemVariants}
+            className="mt-16 ml-16 lg:ml-48"
+          >
+            <div className="font-mono text-5xl lg:text-6xl font-semibold text-emerald-400 mb-2">
+              1700+ HOURS
+            </div>
+            <div className="font-mono text-lg text-gray-400 uppercase tracking-wide">
+              Flight Experience
+            </div>
+          </motion.div>
+
+          {/* CTA - further down the diagonal */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-12 ml-24 lg:ml-64"
+          >
+            <Link href="/blog">
+              <Button
+                size="lg"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-6 text-lg font-semibold group shadow-lg hover:shadow-xl transition-all"
+              >
+                Explore Articles
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </motion.div>
+
+          {/* Diagonal arrow - animated */}
+          <motion.div
+            className="absolute bottom-8 right-8 lg:bottom-16 lg:right-16"
+            animate={{
+              x: [0, 20, 0],
+              y: [0, 20, 0],
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 2,
+              ease: 'easeInOut',
+            }}
+          >
+            <svg
+              width="120"
+              height="120"
+              viewBox="0 0 120 120"
+              fill="none"
+              className="text-emerald-600/40"
+            >
+              <path
+                d="M20 20L100 100M100 100L100 60M100 100L60 100"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </motion.div>
+
+          {/* Label at bottom */}
+          <motion.div
+            variants={itemVariants}
+            className="absolute bottom-8 left-8 lg:bottom-12 lg:left-12 font-mono text-xs text-emerald-600 uppercase tracking-wide"
+          >
+            Aviation · Technology · Education
+          </motion.div>
+        </motion.div>
+      </Container>
+    </section>
+  );
+}
