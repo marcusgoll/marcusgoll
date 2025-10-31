@@ -1,6 +1,21 @@
 # marcusgoll.com
 
+![Version](https://img.shields.io/badge/version-v1.3.0-blue)
+
 Personal blog and portfolio covering aviation, software development, education, and startups.
+
+## Features
+
+- 🎨 **Brand Token System** - Unified theming with CSS custom properties and automatic dark mode (v1.3.0)
+- 📝 **RecentPosts Component** - Enhanced homepage blog display with featured posts and category badges (v1.3.0)
+- 📬 **Serverless Contact Form** - Spam-protected form with Supabase backend (v1.3.0)
+- 🔗 **Meta Tags & Open Graph** - Social media optimization with dynamic og:images (v1.3.0)
+- 📧 **Newsletter Signup** - Multi-track subscriptions (Aviation, Dev/Startup) (v1.3.0)
+- 🤖 **LLM SEO Optimization** - AI crawler support with TL;DR sections and structured data (v1.3.0)
+- 🗺️ **Sitemap Generation** - Automatic XML sitemap for search engines (v1.3.0)
+- 🔒 **Maintenance Mode** - Secret bypass with edge middleware and token-based developer access (v1.2.0)
+- 📄 **Individual Post Pages** - Related posts, table of contents, social sharing, breadcrumbs (v1.1.0)
+- 📚 **MDX Content System** - File-based CMS with three content tracks (Aviation, Dev/Startup, Cross-pollination) (v1.0.0)
 
 ## Tech Stack
 

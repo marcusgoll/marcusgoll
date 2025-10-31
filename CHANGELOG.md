@@ -13,6 +13,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] Custom maintenance messages per environment
 
 ---
+## [1.3.0] - 2025-10-30
+
+### Added
+
+- **Brand Token System** - Comprehensive theming and design consistency infrastructure
+  - CSS custom properties for colors, typography, spacing, and shadows
+  - Automatic dark mode support via `prefers-color-scheme`
+  - 420+ color token replacements across 67 files
+  - Migration across 7 phases: Core Layout, Homepage, Articles, Blog, Pages, Forms, MDX
+  - Zero runtime performance impact (CSS variables)
+  - Type-safe token definitions with IntelliSense support
+
+- **RecentPosts Component Redesign** - Enhanced homepage blog post display
+  - Two-column layout: featured post + 3 recent posts grid
+  - Category badges with track-specific icons (Aviation/Plane, Dev/Code, Education/GraduationCap, Cross-pollination/Lightbulb)
+  - Clickable featured images with hover effects
+  - 3-line excerpt clamping with proper typography
+  - Brand token integration for consistent theming
+
+- **Serverless Contact Form** - Production-ready form with spam protection
+  - Server-side spam detection (honeypot + timestamp validation)
+  - Supabase backend integration with email notifications
+  - Client-side validation with real-time feedback
+  - WCAG 2.1 AA accessible form controls
+  - Rate limiting and error handling
+
+- **Meta Tags & Open Graph** - Complete social media optimization
+  - Dynamic OpenGraph tags for Twitter, Facebook, LinkedIn
+  - Automatic og:image generation for blog posts
+  - Twitter Card support with large image previews
+  - Canonical URLs and meta descriptions
+  - Schema.org integration
+
+- **Newsletter Signup Integration** - Multi-track subscription system
+  - Aviation and Dev/Startup track selection
+  - Supabase backend with subscriber management
+  - Email validation and duplicate prevention
+  - Thank you page with confirmation
+  - Privacy-focused (no tracking cookies)
+
+- **LLM SEO Optimization** - Search engine and AI crawler enhancements
+  - TL;DR sections in blog posts for featured snippets
+  - Heading hierarchy validation at build-time
+  - Extended BlogPosting schema with mainEntityOfPage
+  - robots.txt updated to allow AI search crawlers (ChatGPT, Perplexity, Claude)
+  - Structured summaries for LLM comprehension
+
+- **Sitemap Generation** - Automatic XML sitemap for SEO
+  - Next.js App Router sitemap.ts implementation
+  - Dynamic post discovery from MDX files
+  - Priority and changefreq hints for search engines
+  - Automatic sitemap.xml generation on build
+
+### Changed
+
+- **Deployment Infrastructure** - Migrated from VPS SSH to Dokploy
+  - Webhook-based deployment (replaced direct SSH)
+  - GitHub Actions CI/CD with Docker containerization
+  - Traefik reverse proxy (replaced Caddy)
+  - GitHub Container Registry for images
+  - Health check validation after deployment
+
+### Fixed
+
+- Next.js 16 middleware compatibility (removed middleware.ts in favor of edge functions)
+- Featured image display in RecentPosts (fixed MDX frontmatter parsing)
+- TypeScript type mismatches in Post interface (feature_image: string | null)
+- Git mmap errors with large commits (batched staging)
+- Schema test mocks missing required fields
+
+### Technical Details
+
+- **Brand Tokens**: 67 files changed, +2,110/-3,930 lines, 52 components migrated
+- **Dependencies**: 0 new runtime dependencies
+- **Performance**: <10ms CSS variable lookup, zero JavaScript overhead
+- **Quality**: All TypeScript checks passing, ESLint compliant
+- **Security**: 0 vulnerabilities (npm audit)
+
+---
 
 ## [1.2.0] - 2025-10-27
 
