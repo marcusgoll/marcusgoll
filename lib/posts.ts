@@ -117,7 +117,7 @@ export function getPostBySlug(slug: string): Post {
     slug,
     html,
     excerpt: data.excerpt || data.description || '',
-    feature_image: data.image || data.coverImage || null,
+    feature_image: data.feature_image || data.image || data.coverImage || null,
     featured: data.featured || false,
     visibility: 'public',
     created_at: data.date || new Date().toISOString(),
