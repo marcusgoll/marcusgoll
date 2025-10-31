@@ -33,11 +33,11 @@ export default function HeroSplitHorizon() {
   ];
 
   return (
-    <section className="relative isolate lg:min-h-screen flex flex-col lg:flex-row overflow-hidden bg-white dark:bg-gray-900 lg:p-8 lg:gap-8">
+    <section className="relative isolate lg:min-h-screen flex flex-col lg:flex-row overflow-hidden bg-[var(--bg)] lg:p-8 lg:gap-8">
       {/* SVG Grid Background */}
       <svg
         aria-hidden="true"
-        className="absolute inset-0 -z-10 size-full stroke-gray-200 dark:stroke-white/10"
+        className="absolute inset-0 -z-10 size-full stroke-[var(--border)]"
       >
         <defs>
           <pattern
@@ -51,7 +51,7 @@ export default function HeroSplitHorizon() {
             <path d="M.5 200V.5H200" fill="none" />
           </pattern>
         </defs>
-        <svg x="50%" y={-1} className="overflow-visible fill-gray-50 dark:fill-gray-800/20">
+        <svg x="50%" y={-1} className="overflow-visible fill-[var(--surface-muted)]">
           <path
             d="M-200 0h201v201h-201Z M600 0h201v201h-201Z M-400 600h201v201h-201Z M200 800h201v201h-201Z"
             strokeWidth={0}
@@ -72,26 +72,26 @@ export default function HeroSplitHorizon() {
               key={i}
               custom={i}
               variants={lineVariants}
-              className={`text-6xl sm:text-7xl lg:text-8xl xl:text-9xl ${line.weight} text-gray-900 dark:text-white leading-none mb-1`}
+              className={`text-6xl sm:text-7xl lg:text-8xl xl:text-9xl ${line.weight} text-[var(--text)] leading-none mb-1`}
             >
               {line.text}
-              <span className="text-emerald-600 dark:text-emerald-400">.</span>
+              <span className="text-[var(--primary)]">.</span>
             </motion.h1>
           ))}
 
           <motion.p
             custom={3}
             variants={lineVariants}
-            className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mt-12 max-w-xl leading-relaxed"
+            className="text-xl lg:text-2xl text-[var(--text-muted)] mt-12 max-w-2xl leading-relaxed"
           >
-            Practical lessons from flying, teaching, and shipping web development.
+            Practical lessons from flying, teaching, and building things.
           </motion.p>
 
           <motion.div custom={4} variants={lineVariants} className="flex gap-4 mt-12 flex-wrap">
             <Link href="/blog">
               <Button
                 size="lg"
-                className="px-8 py-6 bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white text-lg font-semibold shadow-lg hover:shadow-xl transition-all group cursor-pointer"
+                className="px-8 py-6 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--primary-foreground)] text-lg font-semibold shadow-lg hover:shadow-xl transition-all group cursor-pointer"
               >
                 Read Articles
                 <motion.span
@@ -107,7 +107,7 @@ export default function HeroSplitHorizon() {
               <Button
                 size="lg"
                 variant="outline"
-                className="px-8 py-6 border-2 bg-transparent dark:hover:bg-slate-800 hover:ring-2 ring-gray-300 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100  text-lg font-semibold transition-all cursor-pointer"
+                className="px-8 py-6 border-2 bg-transparent hover:bg-[var(--surface)] hover:ring-2 ring-[var(--border)] border-[var(--border)] text-[var(--text)] text-lg font-semibold transition-all cursor-pointer"
               >
                 Visit CFiPros
               </Button>

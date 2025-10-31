@@ -6,7 +6,7 @@ import { RetroGrid } from '@/components/ui/RetroGrid';
  */
 export default function ContactSection() {
   return (
-    <div className="relative overflow-hidden bg-white py-24 sm:py-32 dark:bg-gray-900">
+    <div className="relative overflow-hidden bg-[var(--bg)] py-24 sm:py-32">
       {/* Retro grid background */}
       <RetroGrid />
 
@@ -15,7 +15,7 @@ export default function ContactSection() {
           href="/contact"
           className="block text-center group transition-colors"
         >
-          <h2 className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight text-gray-900 group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-400 transition-colors underline decoration-4 underline-offset-8">
+          <h2 className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight text-[var(--text)] group-hover:text-[var(--primary)] transition-colors underline decoration-4 underline-offset-8">
             Contact Marcus
           </h2>
         </Link>

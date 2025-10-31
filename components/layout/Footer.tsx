@@ -48,14 +48,14 @@ const navigation = {
  */
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-gray-900">
+    <footer className="bg-[var(--bg)]">
       <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
-        <nav aria-label="Footer" className="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-base/7">
+        <nav aria-label="Footer" className="-mb-6 flex format flex-wrap justify-center gap-x-12 gap-y-3 text-base/7">
           {navigation.main.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-medium"
+              className="text-[var(--text-muted)] hover:text-[var(--text)] font-medium"
             >
               {item.name}
             </Link>
@@ -68,14 +68,14 @@ export default function Footer() {
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white"
+              className="text-[var(--text-muted)] hover:text-[var(--text)]"
             >
               <span className="sr-only">{item.name}</span>
               <item.icon aria-hidden="true" className="size-8" />
             </a>
           ))}
         </div>
-        <p className="mt-10 text-center text-base/7 text-gray-600 dark:text-gray-400">
+        <p className="mt-10 text-center text-base/7 format text-[var(--text-muted)]">
           &copy; {new Date().getFullYear()} Marcus Gollahon. All rights reserved.
         </p>
       </div>

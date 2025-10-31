@@ -179,7 +179,7 @@ export function NewsletterSignupForm({
     return (
       <div className={`newsletter-signup-form-compact ${className}`}>
         {state.success ? (
-          <div className="text-sm text-green-600">
+          <div className="text-sm text-[var(--success)]">
             Successfully subscribed! Check your email.
           </div>
         ) : (
@@ -192,7 +192,7 @@ export function NewsletterSignupForm({
               onChange={(e) => setState((prev) => ({ ...prev, email: e.target.value }))}
               placeholder="your@email.com"
               disabled={state.loading}
-              className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-3 py-2 text-sm border border-[var(--border)] rounded-md focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               required
               aria-label="Email address"
             />
@@ -204,7 +204,7 @@ export function NewsletterSignupForm({
               {state.loading ? 'Subscribing...' : 'Subscribe'}
             </Button>
             {state.error && (
-              <p className="text-xs text-red-600 mt-1 w-full">{state.error}</p>
+              <p className="text-xs text-[var(--danger)] mt-1 w-full">{state.error}</p>
             )}
           </form>
         )}
@@ -220,8 +220,8 @@ export function NewsletterSignupForm({
           <h3 className="text-xl font-semibold mb-4">{headline}</h3>
         )}
         {state.success ? (
-          <div className="rounded-lg bg-green-50 p-4 border border-green-200">
-            <p className="text-green-700 font-medium">
+          <div className="rounded-lg bg-[var(--success)]/10 p-4 border border-[var(--success)]">
+            <p className="text-[var(--success)] font-medium">
               Successfully subscribed! Check your email for a welcome message.
             </p>
           </div>
@@ -236,7 +236,7 @@ export function NewsletterSignupForm({
                 onChange={(e) => setState((prev) => ({ ...prev, email: e.target.value }))}
                 placeholder="Enter your email"
                 disabled={state.loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 required
                 aria-label="Email address"
               />
@@ -253,10 +253,10 @@ export function NewsletterSignupForm({
                     checked={state.newsletterTypes.includes(option.value)}
                     onChange={() => handleCheckboxChange(option.value)}
                     disabled={state.loading}
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed"
+                    className="mt-1 h-4 w-4 rounded border-[var(--border)] text-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)] disabled:cursor-not-allowed"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium group-hover:text-emerald-600 transition-colors">
+                    <div className="text-sm font-medium group-hover:text-[var(--primary)] transition-colors">
                       {option.label}
                     </div>
                   </div>
@@ -265,8 +265,8 @@ export function NewsletterSignupForm({
             </div>
 
             {state.error && (
-              <div className="rounded-lg bg-red-50 p-3 border border-red-200">
-                <p className="text-sm text-red-700">{state.error}</p>
+              <div className="rounded-lg bg-[var(--danger)]/10 p-3 border border-[var(--danger)]">
+                <p className="text-sm text-[var(--danger)]">{state.error}</p>
               </div>
             )}
 
@@ -287,9 +287,9 @@ export function NewsletterSignupForm({
   return (
     <div className={`newsletter-signup-form ${className}`}>
       {state.success ? (
-        <div className="rounded-lg bg-green-50 p-6 border border-green-200">
-          <h3 className="text-lg font-semibold text-green-900 mb-2">Successfully subscribed!</h3>
-          <p className="text-green-700">
+        <div className="rounded-lg bg-[var(--success)]/10 p-6 border border-[var(--success)]">
+          <h3 className="text-lg font-semibold text-[var(--success)] mb-2">Successfully subscribed!</h3>
+          <p className="text-[var(--success)]">
             Check your email for a welcome message with a link to manage your preferences.
           </p>
         </div>
@@ -307,7 +307,7 @@ export function NewsletterSignupForm({
               onChange={(e) => setState((prev) => ({ ...prev, email: e.target.value }))}
               placeholder="you@example.com"
               disabled={state.loading}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-2 border border-[var(--border)] rounded-md focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               required
             />
           </div>
@@ -325,13 +325,13 @@ export function NewsletterSignupForm({
                     checked={state.newsletterTypes.includes(option.value)}
                     onChange={() => handleCheckboxChange(option.value)}
                     disabled={state.loading}
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed"
+                    className="mt-1 h-4 w-4 rounded border-[var(--border)] text-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)] disabled:cursor-not-allowed"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium group-hover:text-emerald-600 transition-colors">
+                    <div className="text-sm font-medium group-hover:text-[var(--primary)] transition-colors">
                       {option.label}
                     </div>
-                    <div className="text-xs text-gray-600">{option.description}</div>
+                    <div className="text-xs text-[var(--text-muted)]">{option.description}</div>
                   </div>
                 </label>
               ))}
@@ -339,8 +339,8 @@ export function NewsletterSignupForm({
           </div>
 
           {state.error && (
-            <div className="rounded-lg bg-red-50 p-4 border border-red-200">
-              <p className="text-sm text-red-700">{state.error}</p>
+            <div className="rounded-lg bg-[var(--danger)]/10 p-4 border border-[var(--danger)]">
+              <p className="text-sm text-[var(--danger)]">{state.error}</p>
             </div>
           )}
 
@@ -352,7 +352,7 @@ export function NewsletterSignupForm({
             {state.loading ? 'Subscribing...' : 'Subscribe'}
           </Button>
 
-          <p className="text-xs text-gray-600 text-center">
+          <p className="text-xs text-[var(--text-muted)] text-center">
             You can unsubscribe anytime. No spam, ever.
           </p>
         </form>

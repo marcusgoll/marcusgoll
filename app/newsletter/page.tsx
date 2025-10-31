@@ -115,7 +115,7 @@ export default function NewsletterPage() {
           <h1 className="text-5xl font-bold tracking-tight mb-6">
             Subscribe to the Newsletter
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--text-muted)] max-w-2xl mx-auto">
             Get systematic thinking applied to aviation and software. Dual-track content
             combining flight training insights with dev/startup lessons.
           </p>
@@ -128,18 +128,18 @@ export default function NewsletterPage() {
             {BENEFITS.map((benefit) => (
               <div
                 key={benefit.title}
-                className="p-6 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-emerald-500 transition-colors"
+                className="p-6 rounded-lg border border-[var(--border)] hover:border-[var(--primary)] transition-colors"
               >
                 <div className="text-4xl mb-4">{benefit.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400">{benefit.description}</p>
+                <p className="text-[var(--text-muted)]">{benefit.description}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Signup Form */}
-        <section id="get-started" className="mb-16 p-8 rounded-lg bg-gray-50 dark:bg-gray-800">
+        <section id="get-started" className="mb-16 p-8 rounded-lg bg-[var(--surface)]">
           <h2 className="text-2xl font-bold mb-6 text-center">Get Started</h2>
           <div className="max-w-xl mx-auto">
             <NewsletterSignupForm variant="comprehensive" source="dedicated-page" />
@@ -155,24 +155,24 @@ export default function NewsletterPage() {
             {FAQS.map((faq) => (
               <div
                 key={faq.question}
-                className="p-6 rounded-lg border border-gray-200 dark:border-gray-700"
+                className="p-6 rounded-lg border border-[var(--border)]"
               >
                 <h3 className="text-lg font-semibold mb-2">{faq.question}</h3>
-                <p className="text-gray-600 dark:text-gray-400">{faq.answer}</p>
+                <p className="text-[var(--text-muted)]">{faq.answer}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* Final CTA */}
-        <section className="text-center p-8 rounded-lg bg-gradient-to-r from-navy-900 to-emerald-600 text-white">
+        <section className="text-center p-8 rounded-lg bg-gradient-to-r from-[var(--bg-dark)] to-[var(--primary)] text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Join?</h2>
           <p className="text-lg mb-6">
             Join hundreds of pilots and developers learning systematic thinking.
           </p>
           <a
             href="#get-started"
-            className="inline-block px-8 py-3 bg-white text-navy-900 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+            className="inline-block px-8 py-3 bg-white text-[var(--bg-dark)] font-semibold rounded-lg hover:bg-gray-100 transition-colors"
           >
             Subscribe Now
           </a>

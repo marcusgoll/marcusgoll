@@ -99,6 +99,11 @@ export async function getPostBySlug(slug: string): Promise<PostData | null> {
       throw new Error(`[${slug}.mdx] Slug mismatch: frontmatter slug "${frontmatter.slug}" does not match filename "${slug}"`);
     }
 
+    // Normalize snake_case image fields to camelCase for consistent component usage
+    if (frontmatter.feature_image && !frontmatter.featuredImage) {
+      frontmatter.featuredImage = frontmatter.feature_image;
+    }
+
     // Calculate reading time if not provided
     if (!frontmatter.readingTime) {
       frontmatter.readingTime = calculateReadingTime(content);

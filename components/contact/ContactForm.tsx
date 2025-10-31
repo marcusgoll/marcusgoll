@@ -226,7 +226,7 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit} className="p-8 space-y-6">
       {/* Success Message */}
       {formState === 'success' && (
-        <div className="bg-emerald-900/20 border border-emerald-500/50 rounded-lg p-4 text-emerald-300">
+        <div className="bg-[var(--success)]/10 border border-[var(--success)] rounded-lg p-4 text-[var(--success)]">
           <div className="flex items-start gap-3">
             <svg
               className="w-5 h-5 mt-0.5 flex-shrink-0"
@@ -241,7 +241,7 @@ export default function ContactForm() {
             </svg>
             <div>
               <p className="font-medium">Message sent successfully!</p>
-              <p className="text-sm text-emerald-400 mt-1">
+              <p className="text-sm text-[var(--success)] mt-1">
                 I'll respond within 24-48 hours. Check your email for a confirmation.
               </p>
             </div>
@@ -251,7 +251,7 @@ export default function ContactForm() {
 
       {/* Error Message */}
       {formState === 'error' && errorMessage && (
-        <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 text-red-300">
+        <div className="bg-[var(--danger)]/10 border border-[var(--danger)] rounded-lg p-4 text-[var(--danger)]">
           <div className="flex items-start gap-3">
             <svg
               className="w-5 h-5 mt-0.5 flex-shrink-0"
@@ -266,7 +266,7 @@ export default function ContactForm() {
             </svg>
             <div>
               <p className="font-medium">Error</p>
-              <p className="text-sm text-red-400 mt-1">{errorMessage}</p>
+              <p className="text-sm text-[var(--danger)] mt-1">{errorMessage}</p>
             </div>
           </div>
         </div>
@@ -274,8 +274,8 @@ export default function ContactForm() {
 
       {/* Name Field */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-          Name <span className="text-red-400">*</span>
+        <label htmlFor="name" className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+          Name <span className="text-[var(--danger)]">*</span>
         </label>
         <input
           type="text"
@@ -285,21 +285,21 @@ export default function ContactForm() {
           onChange={handleChange}
           maxLength={VALIDATION.NAME_MAX}
           disabled={formState === 'submitting'}
-          className={`w-full px-4 py-2 bg-navy-950 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors ${
-            validationErrors.name ? 'border-red-500' : 'border-navy-700'
+          className={`w-full px-4 py-2 bg-[var(--surface)] border rounded-lg text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-colors ${
+            validationErrors.name ? 'border-[var(--danger)]' : 'border-[var(--border)]'
           }`}
           placeholder="Your name"
           required
         />
         {validationErrors.name && (
-          <p className="text-red-400 text-sm mt-1">{validationErrors.name}</p>
+          <p className="text-[var(--danger)] text-sm mt-1">{validationErrors.name}</p>
         )}
       </div>
 
       {/* Email Field */}
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-          Email <span className="text-red-400">*</span>
+        <label htmlFor="email" className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+          Email <span className="text-[var(--danger)]">*</span>
         </label>
         <input
           type="email"
@@ -308,21 +308,21 @@ export default function ContactForm() {
           value={formData.email}
           onChange={handleChange}
           disabled={formState === 'submitting'}
-          className={`w-full px-4 py-2 bg-navy-950 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors ${
-            validationErrors.email ? 'border-red-500' : 'border-navy-700'
+          className={`w-full px-4 py-2 bg-[var(--surface)] border rounded-lg text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-colors ${
+            validationErrors.email ? 'border-[var(--danger)]' : 'border-[var(--border)]'
           }`}
           placeholder="your.email@example.com"
           required
         />
         {validationErrors.email && (
-          <p className="text-red-400 text-sm mt-1">{validationErrors.email}</p>
+          <p className="text-[var(--danger)] text-sm mt-1">{validationErrors.email}</p>
         )}
       </div>
 
       {/* Subject Dropdown */}
       <div>
-        <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
-          Subject <span className="text-red-400">*</span>
+        <label htmlFor="subject" className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+          Subject <span className="text-[var(--danger)]">*</span>
         </label>
         <select
           id="subject"
@@ -330,8 +330,8 @@ export default function ContactForm() {
           value={formData.subject}
           onChange={handleChange}
           disabled={formState === 'submitting'}
-          className={`w-full px-4 py-2 bg-navy-950 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors ${
-            validationErrors.subject ? 'border-red-500' : 'border-navy-700'
+          className={`w-full px-4 py-2 bg-[var(--surface)] border rounded-lg text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-colors ${
+            validationErrors.subject ? 'border-[var(--danger)]' : 'border-[var(--border)]'
           }`}
           required
         >
@@ -344,14 +344,14 @@ export default function ContactForm() {
           <option value="Other">Other</option>
         </select>
         {validationErrors.subject && (
-          <p className="text-red-400 text-sm mt-1">{validationErrors.subject}</p>
+          <p className="text-[var(--danger)] text-sm mt-1">{validationErrors.subject}</p>
         )}
       </div>
 
       {/* Message Field */}
       <div>
-        <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
-          Message <span className="text-red-400">*</span>
+        <label htmlFor="message" className="block text-sm font-medium text-[var(--text-muted)] mb-2">
+          Message <span className="text-[var(--danger)]">*</span>
         </label>
         <textarea
           id="message"
@@ -361,8 +361,8 @@ export default function ContactForm() {
           maxLength={VALIDATION.MESSAGE_MAX}
           disabled={formState === 'submitting'}
           rows={8}
-          className={`w-full px-4 py-2 bg-navy-950 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors resize-y ${
-            validationErrors.message ? 'border-red-500' : 'border-navy-700'
+          className={`w-full px-4 py-2 bg-[var(--surface)] border rounded-lg text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] transition-colors resize-y ${
+            validationErrors.message ? 'border-[var(--danger)]' : 'border-[var(--border)]'
           }`}
           placeholder="Please provide details about your inquiry (minimum 500 characters)..."
           required
@@ -372,10 +372,10 @@ export default function ContactForm() {
           <span
             className={
               messageStatus === 'insufficient'
-                ? 'text-red-400'
+                ? 'text-[var(--danger)]'
                 : messageStatus === 'exceeded'
-                  ? 'text-red-400'
-                  : 'text-gray-500'
+                  ? 'text-[var(--danger)]'
+                  : 'text-[var(--text-muted)]'
             }
           >
             {messageStatus === 'insufficient' &&
@@ -386,17 +386,17 @@ export default function ContactForm() {
           <span
             className={
               messageStatus === 'insufficient'
-                ? 'text-red-400'
+                ? 'text-[var(--danger)]'
                 : messageStatus === 'exceeded'
-                  ? 'text-red-400'
-                  : 'text-gray-400'
+                  ? 'text-[var(--danger)]'
+                  : 'text-[var(--text-muted)]'
             }
           >
             {messageLength.toLocaleString()} / {VALIDATION.MESSAGE_MAX.toLocaleString()}
           </span>
         </div>
         {validationErrors.message && (
-          <p className="text-red-400 text-sm mt-1">{validationErrors.message}</p>
+          <p className="text-[var(--danger)] text-sm mt-1">{validationErrors.message}</p>
         )}
       </div>
 
@@ -431,7 +431,7 @@ export default function ContactForm() {
       <Button
         type="submit"
         disabled={formState === 'submitting'}
-        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         size="lg"
       >
         {formState === 'submitting' ? (
@@ -459,7 +459,7 @@ export default function ContactForm() {
       </Button>
 
       {/* Privacy Note */}
-      <p className="text-center text-gray-500 text-sm">
+      <p className="text-center text-[var(--text-muted)] text-sm">
         This form is protected by Cloudflare Turnstile to prevent spam.
       </p>
     </form>

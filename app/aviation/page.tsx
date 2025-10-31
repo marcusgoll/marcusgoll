@@ -77,10 +77,10 @@ export default async function AviationPage() {
       <Container>
         {/* Page Header */}
         <header className="mb-12">
-          <h1 className="mb-4 text-4xl font-bold text-navy-900 md:text-5xl">
+          <h1 className="mb-4 text-4xl font-bold text-[var(--text)] md:text-5xl">
             Aviation
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-[var(--text-muted)]">
             Flight training resources, CFI insights, and aviation career
             guidance to help you advance your aviation career.
           </p>
@@ -89,7 +89,7 @@ export default async function AviationPage() {
         {/* Flight Training Section */}
         {flightTrainingPosts.length > 0 && (
           <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               Flight Training
             </h2>
             <PostGrid posts={flightTrainingPosts} />
@@ -99,7 +99,7 @@ export default async function AviationPage() {
         {/* CFI Resources Section */}
         {cfiResourcesPosts.length > 0 && (
           <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               CFI Resources
             </h2>
             <PostGrid posts={cfiResourcesPosts} />
@@ -109,7 +109,7 @@ export default async function AviationPage() {
         {/* Career Path Section */}
         {careerPathPosts.length > 0 && (
           <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               Career Path
             </h2>
             <PostGrid posts={careerPathPosts} />
@@ -119,7 +119,7 @@ export default async function AviationPage() {
         {/* All Aviation Posts */}
         {aviationPosts.length > 0 && (
           <section>
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               All Aviation Posts
             </h2>
             <PostGrid posts={aviationPosts} />
@@ -128,7 +128,7 @@ export default async function AviationPage() {
 
         {/* No Posts Message */}
         {aviationPosts.length === 0 && (
-          <div className="py-12 text-center text-gray-500">
+          <div className="py-12 text-center text-[var(--text-muted)]">
             <p>No aviation posts found. Check back soon!</p>
           </div>
         )}

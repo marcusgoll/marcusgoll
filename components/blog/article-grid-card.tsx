@@ -17,7 +17,7 @@ export function ArticleGridCard({ post }: ArticleGridCardProps) {
     <article className="group">
       <Link href={`/articles/${post.slug}`} className="block">
         {/* Featured Image */}
-        <div className="relative aspect-[16/9] overflow-hidden rounded-lg mb-4 bg-gray-800">
+        <div className="relative aspect-[16/9] overflow-hidden rounded-lg mb-4 bg-[var(--bg-dark)]">
           {post.frontmatter.featuredImage ? (
             <Image
               src={post.frontmatter.featuredImage}
@@ -26,8 +26,8 @@ export function ArticleGridCard({ post }: ArticleGridCardProps) {
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-900">
-              <span className="text-gray-500 text-lg font-semibold">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[var(--surface)] to-[var(--bg-dark)]">
+              <span className="text-[var(--text-muted)] text-lg font-semibold">
                 {post.frontmatter.title.charAt(0)}
               </span>
             </div>
@@ -36,16 +36,16 @@ export function ArticleGridCard({ post }: ArticleGridCardProps) {
 
         {/* Content */}
         <div>
-          <h2 className="text-xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">
+          <h2 className="text-xl font-bold text-[var(--text)] mb-3 group-hover:text-[var(--primary)] transition-colors">
             {post.frontmatter.title}
           </h2>
 
-          <p className="text-gray-400 mb-4 line-clamp-3">
+          <p className="text-[var(--text-muted)] mb-4 line-clamp-3">
             {post.frontmatter.excerpt}
           </p>
 
           {/* Read More Link */}
-          <div className="flex items-center gap-2 text-blue-500 font-medium group-hover:text-blue-400 transition-colors">
+          <div className="flex items-center gap-2 text-[var(--secondary)] font-medium group-hover:text-[var(--secondary-hover)] transition-colors">
             <span>Read more</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </div>

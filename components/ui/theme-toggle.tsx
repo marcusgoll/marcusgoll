@@ -51,7 +51,7 @@ export function ThemeToggle({ className, size = "default", ...props }: ThemeTogg
       size="icon"
       onClick={toggleTheme}
       className={cn(
-        "transition-colors hover:text-emerald-600",
+        "transition-colors hover:text-[var(--primary)]",
         size === "mobile" ? "h-11 w-11" : "h-9 w-9",
         className
       )}

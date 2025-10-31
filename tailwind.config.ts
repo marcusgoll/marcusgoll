@@ -10,7 +10,27 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Map CSS custom properties (from your brand token file) to Tailwind names
       colors: {
+        // semantic tokens
+        bg: "var(--bg)",
+        surface: "var(--surface)",
+        "surface-muted": "var(--surface-muted)",
+        text: "var(--text)",
+        "text-muted": "var(--text-muted)",
+        border: "var(--border)",
+        "border-muted": "var(--border-muted)",
+        ring: "var(--ring)",
+        primary: "var(--primary)",
+        "primary-foreground": "var(--primary-foreground)",
+        "primary-hover": "var(--primary-hover)",
+        "primary-active": "var(--primary-active)",
+        secondary: "var(--secondary)",
+        "secondary-foreground": "var(--secondary-foreground)",
+        "secondary-hover": "var(--secondary-hover)",
+        "secondary-active": "var(--secondary-active)",
+
+        // your legacy palette (kept for convenience)
         background: "var(--background)",
         foreground: "var(--foreground)",
         navy: {
@@ -27,13 +47,13 @@ const config: Config = {
         },
         teal: {
           50: "#F0FDFA",
-          500: "#14B8A6",
           600: "#0D9488",
+          500: "#14B8A6",
           400: "#2DD4BF",
           300: "#5EEAD4",
         },
         sky: {
-          blue: "#0EA5E9",
+          500: "#0EA5E9", // renamed from `blue`
           400: "#38BDF8",
         },
         gray: {
@@ -50,19 +70,46 @@ const config: Config = {
           950: "#030712",
         },
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+
+      // Ensure ring and border utilities default to your tokens
+      ringColor: {
+        DEFAULT: "var(--ring)",
       },
+      borderColor: {
+        DEFAULT: "var(--border)",
+      },
+
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      },
+
       fontFamily: {
         sans: ["var(--font-work-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
+
+      // Map spacing + radius tokens
       spacing: {
         base: "8px",
       },
+      borderRadius: {
+        sm: "var(--radius-sm)",
+        DEFAULT: "var(--radius)",
+        lg: "var(--radius-lg)",
+      },
+    },
+    // Optional: container helpers
+    container: {
+      center: true,
+      padding: "1rem",
+      screens: { "2xl": "72rem" },
     },
   },
-  plugins: [],
+  plugins: [
+    require("flowbite-typography"),
+    // Optional: if you want prose styles aligned to tokens, add:
+    // require("@tailwindcss/typography"),
+  ],
 };
 
 export default config;

@@ -53,19 +53,19 @@ export function CodeBlock({ children, language, filename, showLineNumbers = fals
   };
 
   return (
-    <div className="my-6 rounded-lg overflow-hidden bg-gray-900">
+    <div className="my-6 rounded-lg overflow-hidden bg-[var(--bg-dark)]">
       {/* Header with filename and copy button */}
       {(filename || language) && (
-        <div className="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
+        <div className="flex items-center justify-between px-4 py-2 bg-[var(--surface-muted)] border-b border-[var(--border)]">
           <div className="flex items-center gap-2">
-            {filename && <span className="text-sm text-gray-300 font-mono">{filename}</span>}
+            {filename && <span className="text-sm text-[var(--text)] font-mono">{filename}</span>}
             {language && !filename && (
-              <span className="text-xs text-gray-400 uppercase font-mono">{language}</span>
+              <span className="text-xs text-[var(--text-muted)] uppercase font-mono">{language}</span>
             )}
           </div>
           <button
             onClick={handleCopy}
-            className="text-xs text-gray-400 hover:text-white transition-colors flex items-center gap-1 min-w-[44px] min-h-[44px] px-2"
+            className="text-xs text-[var(--text-muted)] hover:text-[var(--text)] transition-colors flex items-center gap-1 min-w-[44px] min-h-[44px] px-2"
             aria-label="Copy code"
           >
             {copied ? (
@@ -95,7 +95,7 @@ export function CodeBlock({ children, language, filename, showLineNumbers = fals
         {!filename && !language && (
           <button
             onClick={handleCopy}
-            className="absolute top-2 right-2 text-xs text-gray-400 hover:text-white transition-colors bg-gray-800 px-3 py-2 rounded min-w-[44px] min-h-[44px]"
+            className="absolute top-2 right-2 text-xs text-[var(--text-muted)] hover:text-[var(--text)] transition-colors bg-[var(--surface-muted)] px-3 py-2 rounded min-w-[44px] min-h-[44px]"
             aria-label="Copy code"
           >
             {copied ? '✓ Copied' : '📋 Copy'}
@@ -134,7 +134,7 @@ function addLineNumbers(children: ReactNode): ReactNode {
 
   return lines.map((line, index) => (
     <div key={index} className="flex">
-      <span className="text-gray-600 select-none w-8 text-right pr-4">{index + 1}</span>
+      <span className="text-[var(--text-muted)] select-none w-8 text-right pr-4">{index + 1}</span>
       <span>{line}</span>
     </div>
   ));

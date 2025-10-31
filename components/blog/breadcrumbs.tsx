@@ -63,12 +63,12 @@ export function Breadcrumbs({ segments }: BreadcrumbsProps) {
                   <>
                     <Link
                       href={segment.url}
-                      className="text-blue-600 dark:text-blue-400 hover:underline transition-colors"
+                      className="text-[var(--secondary)] hover:underline transition-colors"
                     >
                       {segment.label}
                     </Link>
                     <span
-                      className="text-gray-400 dark:text-gray-600"
+                      className="text-[var(--text-muted)]"
                       aria-hidden="true"
                     >
                       /
@@ -76,7 +76,7 @@ export function Breadcrumbs({ segments }: BreadcrumbsProps) {
                   </>
                 ) : (
                   <span
-                    className="text-gray-600 dark:text-gray-400 font-medium"
+                    className="text-[var(--text-muted)] font-medium"
                     aria-current="page"
                   >
                     {segment.label}

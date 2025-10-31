@@ -24,11 +24,11 @@ export default function PostCard({ post, track }: PostCardProps) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group block overflow-hidden rounded-lg border border-gray-200 bg-white transition-all duration-200 hover:shadow-lg hover:border-gray-300"
+      className="group block overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg)] transition-all duration-200 hover:shadow-lg hover:border-[var(--highlight)]"
     >
       {/* Featured Image */}
       {post.feature_image && (
-        <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
+        <div className="relative aspect-video w-full overflow-hidden bg-[var(--surface)]">
           <Image
             src={post.feature_image}
             alt={post.title}
@@ -51,17 +51,17 @@ export default function PostCard({ post, track }: PostCardProps) {
         )}
 
         {/* Title */}
-        <h3 className="mb-2 text-xl font-bold text-navy-900 group-hover:text-emerald-600 transition-colors">
+        <h3 className="mb-2 text-xl font-bold text-[var(--text)] group-hover:text-[var(--primary)] transition-colors">
           {post.title}
         </h3>
 
         {/* Excerpt */}
         {post.excerpt && (
-          <p className="mb-3 text-gray-600 line-clamp-2">{post.excerpt}</p>
+          <p className="mb-3 text-[var(--text-muted)] line-clamp-2">{post.excerpt}</p>
         )}
 
         {/* Metadata */}
-        <div className="flex items-center justify-between text-sm text-gray-500">
+        <div className="flex items-center justify-between text-sm text-[var(--text-muted)]">
           <div className="flex items-center space-x-2">
             {/* Author */}
             <span>{post.primary_author.name}</span>

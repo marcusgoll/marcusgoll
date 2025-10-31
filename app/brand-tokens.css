@@ -1,0 +1,136 @@
+:root {
+  /* Backgrounds (light) */
+  --bg: oklch(96.8% 0.007 247.896);
+  --bg-light: oklch(92.9% 0.013 255.508);    /* cards/elevated */
+  --bg-dark: oklch(92.8% 0.006 264.531);     /* muted surfaces */
+  /* Aliases for clarity */
+  --surface: var(--bg-light);
+  --surface-muted: var(--bg-dark);
+
+  /* Text (light) */
+  --text: oklch(18% 0 0);                    /* primary text */
+  --text-muted: oklch(48% 0 0);              /* secondary text */
+
+  /* Borders (light) */
+  --border: oklch(87.2% 0.01 258.338);
+  --border-muted: oklch(92.8% 0.006 264.531);
+  --highlight: oklch(69.6% 0.17 162.48);     /* accent ring (emerald) */
+
+  /* Brand / Actions (emerald + sky) */
+  --primary: oklch(69.6% 0.17 162.48);
+  --primary-foreground: oklch(100% 0 0);
+  --primary-hover: oklch(64% 0.17 162.48);
+  --primary-active: oklch(58% 0.17 162.48);
+
+  --secondary: oklch(58.8% 0.158 241.966);
+  --secondary-foreground: oklch(100% 0 0);
+  --secondary-hover: oklch(50% 0.134 242.749);
+  --secondary-active: oklch(57% 0.169 237.323);
+
+  /* Alerts (light) */
+  --danger: oklch(55% 0.24 27);
+  --danger-foreground: oklch(100% 0 0);
+  --warning: oklch(78% 0.15 80);
+  --warning-foreground: oklch(18% 0 0);
+  --success: oklch(62% 0.16 145);
+  --success-foreground: oklch(100% 0 0);
+  --info: oklch(65% 0.15 200);
+  --info-foreground: oklch(100% 0 0);
+
+  /* Spacing & radius */
+  --spacing-base: 8px;
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+
+  /* shadcn-style role aliases */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface-muted);
+  --accent-foreground: var(--text);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--highlight);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--text);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--surface-muted);
+  --sidebar-accent-foreground: var(--text);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--highlight);
+
+  /* Charts (light) */
+  --chart-1: oklch(64.6% 0.222 41.116);
+  --chart-2: oklch(60% 0.118 184.704);
+  --chart-3: oklch(39.8% 0.07 227.392);
+  --chart-4: oklch(82.8% 0.189 84.429);
+  --chart-5: oklch(76.9% 0.188 70.08);
+}
+
+.dark {
+  /* Backgrounds (dark) */
+  --bg: oklch(20.8% 0.042 265.755);
+  --bg-light: oklch(25.8% 0.042 265.755);                /* elevated */
+  --bg-dark: oklch(18.8% 0.042 265.755);     /* canvas darkest */
+  --surface: var(--bg-light);
+  --surface-muted: var(--bg-dark);
+
+  /* Text (dark) */
+  --text: oklch(98% 0 0);
+  --text-muted: oklch(68% 0 0);
+
+  /* Borders (dark) */
+  --border: oklch(27.9% 0.041 260.031);
+  --border-muted: oklch(24% 0.041 260.031);
+  --highlight: oklch(72% 0.15 162.48);       /* slightly softer ring for dark */
+
+  /* Brand / Actions (dark) */
+  --primary: oklch(72% 0.15 162.48);
+  --primary-foreground: oklch(15% 0 0);
+  --primary-hover: oklch(67% 0.15 162.48);
+  --primary-active: oklch(62% 0.15 162.48);
+
+  --secondary: oklch(71.5% 0.143 215.221);
+  --secondary-foreground: oklch(98% 0 0);
+  --secondary-hover: oklch(60.9% 0.126 221.723);
+  --secondary-active: oklch(38% 0.05 240);
+
+  /* Alerts (dark) */
+  --danger: oklch(66% 0.24 27);
+  --danger-foreground: oklch(15% 0 0);
+  --warning: oklch(84% 0.15 80);
+  --warning-foreground: oklch(14% 0 0);
+  --success: oklch(72% 0.16 145);
+  --success-foreground: oklch(15% 0 0);
+  --info: oklch(75% 0.15 200);
+  --info-foreground: oklch(15% 0 0);
+
+  /* shadcn-style role aliases */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --muted: var(--surface);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface);
+  --accent-foreground: var(--text);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--highlight);
+
+  /* Charts (dark) */
+  --chart-1: oklch(48.8% 0.243 264.376);
+  --chart-2: oklch(69.6% 0.17 162.48);
+  --chart-3: oklch(76.9% 0.188 70.08);
+  --chart-4: oklch(62.7% 0.265 303.9);
+  --chart-5: oklch(64.5% 0.246 16.439);
+}

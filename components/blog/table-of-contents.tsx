@@ -127,13 +127,13 @@ export function TableOfContents({ className = '' }: TableOfContentsProps) {
 
   return (
     <nav
-      className={`table-of-contents ${className}`}
+      className={`table-of-contents format ${className}`}
       aria-label="Table of contents"
     >
       {/* Mobile toggle button (visible < 1024px) */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="lg:hidden w-full flex items-center justify-between px-4 py-3 mb-4 text-sm font-semibold bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="lg:hidden w-full flex items-center justify-between px-4 py-3 mb-4 text-sm font-semibold bg-[var(--surface)] rounded-lg hover:bg-[var(--surface-muted)] transition-colors"
         aria-expanded={!isCollapsed}
         aria-controls="toc-list"
       >
@@ -164,8 +164,8 @@ export function TableOfContents({ className = '' }: TableOfContentsProps) {
               onClick={(e) => handleClick(e, heading.id)}
               className={`block py-1 text-sm transition-colors ${
                 activeId === heading.id
-                  ? 'text-blue-600 dark:text-blue-400 font-medium'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                  ? 'text-[var(--secondary)] font-medium'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text)]'
               }`}
               aria-current={activeId === heading.id ? 'location' : undefined}
             >

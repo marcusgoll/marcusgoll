@@ -13,7 +13,7 @@ interface PostGridProps {
 export default function PostGrid({ posts }: PostGridProps) {
   if (!posts || posts.length === 0) {
     return (
-      <div className="py-12 text-center text-gray-500">
+      <div className="py-12 text-center text-[var(--text-muted)]">
         <p>No posts found.</p>
       </div>
     );

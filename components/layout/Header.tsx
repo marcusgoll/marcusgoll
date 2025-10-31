@@ -14,12 +14,12 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-navy-900 shadow-md">
-      <nav className="mx-auto flex max-w-[1280px] items-center justify-between px-4 py-4 md:px-6">
+    <header className="sticky top-0 z-50 bg-[var(--bg-dark)] shadow-md">
+      <nav className="mx-auto flex max-w-[1280px] items-center format justify-between px-4 py-4 md:px-6">
         {/* Logo */}
         <Link
           href="/"
-          className="text-xl font-bold text-white transition-colors hover:text-emerald-600"
+          className="font-bold text-[var(--text)] format transition-colors hover:text-[var(--primary)]"
         >
           Marcus Gollahon
         </Link>
@@ -28,36 +28,36 @@ export default function Header() {
         <div className="hidden items-center space-x-8 md:flex">
           <Link
             href="/articles"
-            className="text-white transition-colors hover:text-emerald-600"
+            className="text-[var(--text)] transition-colors hover:text-[var(--primary)]"
           >
             Articles
           </Link>
           <Link
             href="/projects"
-            className="text-white transition-colors hover:text-emerald-600"
+            className="text-[var(--text)] transition-colors hover:text-[var(--primary)]"
           >
             Projects
           </Link>
           <Link
             href="/about"
-            className="text-white transition-colors hover:text-emerald-600"
+            className="text-[var(--text)] transition-colors hover:text-[var(--primary)]"
           >
             About
           </Link>
           <Link
             href="/contact"
-            className="text-white transition-colors hover:text-emerald-600"
+            className="text-[var(--text)] transition-colors hover:text-[var(--primary)]"
           >
             Contact
           </Link>
 
           {/* Theme Toggle - Desktop */}
-          <ThemeToggle className="text-white cursor-pointer" />
+          <ThemeToggle className="text-[var(--text)] cursor-pointer" />
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-white focus:outline-none"
+          className="md:hidden text-[var(--text)] focus:outline-none"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle mobile menu"
         >
@@ -88,40 +88,40 @@ export default function Header() {
 
       {/* Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="border-t border-gray-700 bg-navy-900 md:hidden">
+        <div className="border-t border-[var(--border)] bg-[var(--bg-dark)] md:hidden">
           <div className="space-y-1 px-4 py-3">
             <Link
               href="/articles"
-              className="block py-2 text-white transition-colors hover:text-emerald-600"
+              className="block py-2 text-[var(--text)] transition-colors hover:text-[var(--primary)]"
               onClick={() => setMobileMenuOpen(false)}
             >
               Articles
             </Link>
             <Link
               href="/projects"
-              className="block py-2 text-white transition-colors hover:text-emerald-600"
+              className="block py-2 text-[var(--text)] transition-colors hover:text-[var(--primary)]"
               onClick={() => setMobileMenuOpen(false)}
             >
               Projects
             </Link>
             <Link
               href="/about"
-              className="block py-2 text-white transition-colors hover:text-emerald-600"
+              className="block py-2 text-[var(--text)] transition-colors hover:text-[var(--primary)]"
               onClick={() => setMobileMenuOpen(false)}
             >
               About
             </Link>
             <Link
               href="/contact"
-              className="block py-2 text-white transition-colors hover:text-emerald-600"
+              className="block py-2 text-[var(--text)] transition-colors hover:text-[var(--primary)]"
               onClick={() => setMobileMenuOpen(false)}
             >
               Contact
             </Link>
 
             {/* Theme Toggle - Mobile */}
-            <div className="border-t border-gray-700 pt-2 mt-2">
-              <ThemeToggle size="mobile" className="text-white w-full justify-start" />
+            <div className="border-t border-[var(--border)] pt-2 mt-2">
+              <ThemeToggle size="mobile" className="text-[var(--text)] w-full justify-start" />
             </div>
           </div>
         </div>

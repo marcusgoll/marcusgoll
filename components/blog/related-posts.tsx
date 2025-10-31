@@ -26,7 +26,7 @@ export async function RelatedPosts({ currentSlug, limit = 3 }: RelatedPostsProps
   const sectionTitle = hasRelatedPosts ? 'Related Posts' : 'Latest Posts';
 
   return (
-    <section className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800">
+    <section className="mt-16 pt-8 border-t border-[var(--border)]">
       <h2 className="text-3xl font-bold tracking-tight mb-8">{sectionTitle}</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -39,7 +39,7 @@ export async function RelatedPosts({ currentSlug, limit = 3 }: RelatedPostsProps
 
       {/* Optional: Show relevance scores in development */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-4 text-xs text-gray-500 dark:text-gray-600">
+        <div className="mt-4 text-xs text-[var(--text-muted)]">
           {relatedPosts.map((post) => (
             <div key={post.slug}>
               {post.slug}: relevance score = {post.relevanceScore}

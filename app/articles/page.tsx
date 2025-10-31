@@ -3,11 +3,12 @@
  * Navy background with 3-column layout (featured + 2 grid columns with full-height dividers)
  */
 
-import { getAllPosts } from '@/lib/mdx';
+import { getAllPosts, getAllTags } from '@/lib/mdx';
 import type { Metadata } from 'next';
 import { FeaturedArticleCard } from '@/components/blog/featured-article-card';
 import { CompactArticleCard } from '@/components/blog/compact-article-card';
 import { Pagination } from '@/components/blog/pagination';
+import { TagCloud } from '@/components/blog/tag-cloud';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://marcusgoll.com';
 const POSTS_PER_PAGE = 9; // 1 featured + 4 + 4
@@ -48,6 +49,7 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
   const currentPage = Number(params.page) || 1;
 
   const allPosts = await getAllPosts();
+  const allTags = await getAllTags();
   const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
 
   // Paginate posts
@@ -64,26 +66,33 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
   const rightPosts = remainingPosts.slice(midPoint);
 
   return (
-    <div className="min-h-screen bg-navy-900 py-16 sm:py-24">
+    <div className="min-h-screen bg-[var(--bg)] py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Header - Left Aligned */}
-        <header className="mb-12">
-          <h1 className="text-5xl font-black text-white mb-4">
+        <header className="mb-8">
+          <h1 className="text-5xl font-black text-[var(--text)] mb-4">
             My Articles
           </h1>
-          <p className="text-lg text-gray-400 max-w-2xl">
-            We use an agile approach to test assumptions and connect with the needs of your audience early and often.
+          <p className="text-lg text-[var(--text-muted)] max-w-2xl mb-6">
+            Lessons from the flight deck, classroom, and codebase.
           </p>
+
+          {/* Tag Cloud */}
+          {allTags.length > 0 && (
+            <div className="mt-6">
+              <TagCloud tags={allTags} maxTags={10} />
+            </div>
+          )}
         </header>
 
         {posts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-400">No articles found. Check back soon!</p>
+            <p className="text-[var(--text-muted)]">No articles found. Check back soon!</p>
           </div>
         ) : (
           <>
             {/* 3-Column Layout with Full-Height Dividers */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
               {/* Left Column - Featured Post */}
               {featuredPost && (
                 <div>
@@ -93,7 +102,7 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
 
               {/* Middle Column - With Full-Height Left Border */}
               {middlePosts.length > 0 && (
-                <div className="lg:border-l lg:border-gray-700 lg:pl-8 space-y-12">
+                <div className="lg:border-l lg:border-[var(--border)] lg:pl-8 space-y-8">
                   {middlePosts.map((post) => (
                     <CompactArticleCard key={post.slug} post={post} />
                   ))}
@@ -102,7 +111,7 @@ export default async function ArticlesIndexPage({ searchParams }: ArticlesPagePr
 
               {/* Right Column - With Full-Height Left Border */}
               {rightPosts.length > 0 && (
-                <div className="lg:border-l lg:border-gray-700 lg:pl-8 space-y-12">
+                <div className="lg:border-l lg:border-[var(--border)] lg:pl-8 space-y-8">
                   {rightPosts.map((post) => (
                     <CompactArticleCard key={post.slug} post={post} />
                   ))}

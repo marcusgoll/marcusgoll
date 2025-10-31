@@ -47,14 +47,14 @@ export default async function BlogIndexPage() {
       <div className="mx-auto max-w-4xl px-4 py-12">
       <header className="mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Blog</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
+        <p className="text-lg text-[var(--text-muted)]">
           Articles and insights about aviation and software development.
         </p>
 
         {/* Tag cloud */}
         {tags.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+            <h2 className="text-sm font-semibold text-[var(--text)] mb-3">
               Browse by topic
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -62,7 +62,7 @@ export default async function BlogIndexPage() {
                 <Link
                   key={tag.slug}
                   href={`/blog/tag/${tag.slug}`}
-                  className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                  className="px-3 py-1 text-sm bg-[var(--surface)] hover:bg-[var(--surface-muted)] rounded-full transition-colors"
                 >
                   {tag.displayName} ({tag.postCount})
                 </Link>
@@ -74,7 +74,7 @@ export default async function BlogIndexPage() {
 
       {posts.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">No posts found. Check back soon!</p>
+          <p className="text-[var(--text-muted)]">No posts found. Check back soon!</p>
         </div>
       ) : (
         <div className="space-y-8">

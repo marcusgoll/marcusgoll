@@ -4,75 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
-
-  /* Brand Foundation Colors in OKLCH - Stripe Payment */
-  --navy-900: oklch(0.15 0.05 240);
-  --emerald-600: oklch(0.45 0.18 270);
-  --sky-blue: oklch(0.65 0.15 200);
-
-  /* Background Colors - Clean professional */
-  --bg-dark: oklch(0.98 0 0); /* Lightest gray for elevated surfaces */
-  --bg: oklch(1 0 0); /* Pure white background */
-  --bg-light: oklch(0.99 0 0); /* Off-white for cards */
-
-  /* Text Colors */
-  --text: oklch(0.15 0 0); /* High contrast black for primary text */
-  --text-muted: oklch(0.48 0 0); /* Medium gray for secondary text */
-
-  /* Border Colors */
-  --highlight: oklch(0.45 0.18 270); /* Stripe purple accent */
-  --border: oklch(0.92 0 0); /* Light gray border */
-  --border-muted: oklch(0.96 0 0); /* Subtle divider border */
-
-  /* Action Colors - Stripe purple */
-  --primary: oklch(0.45 0.18 270); /* Stripe purple for primary actions */
-  --primary-foreground: oklch(1 0 0); /* White text on purple */
-  --secondary: oklch(0.15 0.05 240); /* Dark navy for secondary actions */
-  --secondary-foreground: oklch(1 0 0); /* White text on navy */
-
-  /* Alert Colors */
-  --danger: oklch(0.55 0.24 27); /* Red for errors */
-  --danger-foreground: oklch(1 0 0); /* White text on red */
-  --warning: oklch(0.78 0.15 80); /* Amber for warnings */
-  --warning-foreground: oklch(0.15 0 0); /* Dark text on amber */
-  --success: oklch(0.62 0.16 145); /* Green for success */
-  --success-foreground: oklch(1 0 0); /* White text on green */
-  --info: oklch(0.65 0.15 200); /* Cyan for info */
-  --info-foreground: oklch(1 0 0); /* White text on cyan */
-
-  /* Spacing */
-  --spacing-base: 8px;
-  --radius: 0.75rem;
-
-  /* Legacy shadcn tokens (mapped to new system) */
-  --background: var(--bg);
-  --foreground: var(--text);
-  --card: var(--bg-light);
-  --card-foreground: var(--text);
-  --popover: var(--bg-light);
-  --popover-foreground: var(--text);
-  --muted: var(--bg-dark);
-  --muted-foreground: var(--text-muted);
-  --accent: var(--bg-dark);
-  --accent-foreground: var(--text);
-  --destructive: var(--danger);
-  --input: var(--border);
-  --ring: var(--highlight);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: var(--bg-light);
-  --sidebar-foreground: var(--text);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--bg-dark);
-  --sidebar-accent-foreground: var(--text);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--highlight);
-}
+/* Import centralized brand tokens (light + dark overrides) */
+@import "./brand-tokens.css";
 
 /* Syntax highlighting theme switching - show light theme by default */
 @media (prefers-color-scheme: light) {
@@ -247,66 +180,6 @@ code:not(pre code) {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-.dark {
-  /* Background Colors - Dark Mode - Stripe professional */
-  --bg-dark: oklch(0.14 0 0); /* Darkest background */
-  --bg: oklch(0.19 0 0); /* Default dark background */
-  --bg-light: oklch(0.24 0 0); /* Elevated surfaces in dark mode */
-
-  /* Text Colors - Dark Mode */
-  --text: oklch(0.98 0 0); /* High contrast white for primary text */
-  --text-muted: oklch(0.68 0 0); /* Medium gray for secondary text */
-
-  /* Border Colors - Dark Mode */
-  --highlight: oklch(0.58 0.10 270); /* Desaturated Stripe purple */
-  --border: oklch(0.34 0 0); /* Subtle gray border */
-  --border-muted: oklch(0.24 0 0); /* Very subtle divider */
-
-  /* Action Colors - Dark Mode - Desaturated for comfort */
-  --primary: oklch(0.58 0.10 270); /* Desaturated Stripe purple (was 0.18) */
-  --primary-foreground: oklch(1 0 0); /* White text */
-  --secondary: oklch(0.45 0.05 240); /* Dark navy */
-  --secondary-foreground: oklch(1 0 0); /* White text */
-
-  /* Alert Colors - Dark Mode */
-  --danger: oklch(0.66 0.24 27); /* Red for errors */
-  --danger-foreground: oklch(1 0 0); /* White text */
-  --warning: oklch(0.84 0.15 80); /* Amber for warnings */
-  --warning-foreground: oklch(0.14 0 0); /* Dark text */
-  --success: oklch(0.72 0.16 145); /* Green for success */
-  --success-foreground: oklch(1 0 0); /* White text */
-  --info: oklch(0.75 0.15 200); /* Cyan for info */
-  --info-foreground: oklch(1 0 0); /* White text */
-
-  /* Legacy shadcn tokens (mapped to new system) */
-  --background: var(--bg);
-  --foreground: var(--text);
-  --card: var(--bg-light);
-  --card-foreground: var(--text);
-  --popover: var(--bg-light);
-  --popover-foreground: var(--text);
-  --muted: var(--bg-light);
-  --muted-foreground: var(--text-muted);
-  --accent: var(--bg-light);
-  --accent-foreground: var(--text);
-  --destructive: var(--danger);
-  --input: var(--border);
-  --ring: var(--highlight);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: var(--bg-light);
-  --sidebar-foreground: var(--text);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--bg-light);
-  --sidebar-accent-foreground: var(--text);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--highlight);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -328,4 +201,98 @@ code:not(pre code) {
 
 .animate-grid {
   animation: grid 20s linear infinite;
+}
+
+/* Article Readability Enhancements */
+/* Based on readability principles: 45-80 chars per line, 18-26px body text, 1.5x line height */
+.format {
+  /* Fluid typography: scales from 16px (mobile) to 20px (desktop) */
+  font-size: clamp(1rem, 1rem + 0.5vw, 1.25rem);
+}
+
+.format p,
+.format li {
+  /* Optimal line height for readability: 1.6x for body text */
+  line-height: 1.6;
+  /* Slightly increased letter spacing for better readability */
+  letter-spacing: 0.01em;
+}
+
+.format h1,
+.format h2,
+.format h3,
+.format h4,
+.format h5,
+.format h6 {
+  /* Tighter line height for headings (1.3x) */
+  line-height: 1.3;
+  /* Better spacing above headings */
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+
+.format h2 {
+  /* Make h2 headings stand out more */
+  font-size: 1.875rem; /* 30px */
+  font-weight: 800;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.format h3 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: 700;
+  color: #1f2937;
+}
+
+@media (prefers-color-scheme: dark) {
+  .format h3 {
+    color: #f3f4f6;
+  }
+}
+
+.format h1:first-child,
+.format h2:first-child,
+.format h3:first-child {
+  /* Remove top margin for first heading */
+  margin-top: 0;
+}
+
+.format p + p {
+  /* Comfortable paragraph spacing */
+  margin-top: 1.5em;
+}
+
+.format ul,
+.format ol {
+  /* Better list spacing */
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.format li + li {
+  /* Spacing between list items */
+  margin-top: 0.5em;
+}
+
+.format blockquote {
+  /* Enhanced blockquote readability */
+  font-size: 1.1em;
+  line-height: 1.7;
+  margin: 2em 0;
+  padding-left: 1.5em;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 640px) {
+  .format {
+    /* Slightly smaller on mobile but still readable */
+    font-size: clamp(0.9375rem, 0.85rem + 0.4vw, 1rem);
+  }
+
+  .format p,
+  .format li {
+    /* Increase line height on smaller screens */
+    line-height: 1.7;
+  }
 }

@@ -16,9 +16,9 @@ export default function TrackBadge({ track, className = '' }: TrackBadgeProps) {
   }
 
   const trackStyles = {
-    aviation: 'bg-sky-blue text-white',
-    'dev-startup': 'bg-emerald-600 text-white',
-    'cross-pollination': 'bg-gradient-to-r from-sky-blue to-emerald-600 text-white',
+    aviation: 'bg-[var(--secondary)] text-[var(--secondary-foreground)]',
+    'dev-startup': 'bg-[var(--primary)] text-[var(--primary-foreground)]',
+    'cross-pollination': 'bg-gradient-to-r from-[var(--secondary)] to-[var(--primary)] text-[var(--primary-foreground)]',
   };
 
   const trackLabels = {

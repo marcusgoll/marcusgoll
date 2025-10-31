@@ -19,11 +19,10 @@ import rehypeShiki from '@/lib/rehype-shiki';
 import remarkGfm from 'remark-gfm';
 import { remarkValidateHeadings } from '@/lib/remark-validate-headings';
 import Image from 'next/image';
-import { RelatedPosts } from '@/components/blog/related-posts';
+import Link from 'next/link';
 import { PrevNextNav } from '@/components/blog/prev-next-nav';
 import { SocialShare } from '@/components/blog/social-share';
 import { TableOfContents } from '@/components/blog/table-of-contents';
-import { Breadcrumbs, type BreadcrumbSegment } from '@/components/blog/breadcrumbs';
 import { generateBlogPostingSchema, generateOrganizationSchema } from '@/lib/schema';
 import { InlineNewsletterCTA } from '@/components/newsletter/InlineNewsletterCTA';
 import { TLDRSection } from '@/components/blog/tldr-section';
@@ -112,24 +111,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const blogPostingSchema = generateBlogPostingSchema(post);
   const organizationSchema = generateOrganizationSchema(false);
 
-  const breadcrumbSegments: BreadcrumbSegment[] = [
-    {
-      label: 'Home',
-      url: 'https://marcusgoll.com',
-      position: 1,
-    },
-    {
-      label: 'Articles',
-      url: 'https://marcusgoll.com/articles',
-      position: 2,
-    },
-    {
-      label: frontmatter.title,
-      url: `https://marcusgoll.com/articles/${slug}`,
-      position: 3,
-    },
-  ];
-
   return (
     <>
       <script
@@ -145,100 +126,116 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         }}
       />
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="lg:hidden mb-8">
-          <TableOfContents />
-        </div>
-
-        <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-12 xl:gap-16">
-          <article className="max-w-3xl">
-        <Breadcrumbs segments={breadcrumbSegments} />
-
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">{frontmatter.title}</h1>
-
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
-          <time dateTime={frontmatter.date}>
-            {new Date(frontmatter.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
-          <span>•</span>
-          <span>{frontmatter.author}</span>
-          {frontmatter.readingTime && (
-            <>
-              <span>•</span>
-              <span>{frontmatter.readingTime} min read</span>
-            </>
-          )}
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          {frontmatter.tags.map((tag) => (
-            <a
-              key={tag}
-              href={`/articles/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-              className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              {tag}
-            </a>
-          ))}
-        </div>
-
-        <SocialShare
-          url={`https://marcusgoll.com/articles/${slug}`}
-          title={frontmatter.title}
-        />
-      </header>
-
-      <TLDRSection excerpt={frontmatter.excerpt} />
-
-      {frontmatter.featuredImage && (
-        <div className="mb-8 relative aspect-video">
-          <Image
-            src={frontmatter.featuredImage}
-            alt={frontmatter.title}
-            width={1200}
-            height={630}
-            priority
-            className="w-full h-auto rounded-lg object-cover"
-          />
-        </div>
-      )}
-
-      <div className="prose prose-lg dark:prose-invert max-w-none">
-        <MDXRemote
-          source={content}
-          components={mdxComponents}
-          options={{
-            mdxOptions: {
-              remarkPlugins: [
-                remarkGfm,
-                remarkValidateHeadings,
-              ],
-              rehypePlugins: [rehypeShiki],
-            },
-          }}
-        />
-      </div>
-
-      <InlineNewsletterCTA postTags={frontmatter.tags} />
-
-          <PrevNextNav currentSlug={slug} />
-
-          <RelatedPosts currentSlug={slug} />
-        </article>
-
-        <aside className="hidden lg:block">
-          <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">On this page</h2>
+      <div className="min-h-screen bg-[var(--bg)] py-16 sm:py-24">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="lg:hidden mb-8">
             <TableOfContents />
           </div>
-        </aside>
+
+          <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-12 xl:gap-16">
+            <article className="w-full lg:max-w-[min(65ch,100%)] xl:max-w-3xl">
+              <header className="mb-8">
+                {/* Eyebrow - Back to Articles */}
+                <div className="mb-3">
+                  <Link
+                    href="/articles"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-[var(--primary)] hover:text-[var(--primary-hover)] transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Articles
+                  </Link>
+                </div>
+
+                <h1 className="text-5xl font-black text-[var(--text)] mb-6 leading-tight">
+                  {frontmatter.title}
+                </h1>
+
+                <div className="flex flex-wrap gap-4 text-sm text-[var(--text-muted)] mb-6">
+                  <time dateTime={frontmatter.date}>
+                    {new Date(frontmatter.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </time>
+                  <span>•</span>
+                  <span>{frontmatter.author}</span>
+                  {frontmatter.readingTime && (
+                    <>
+                      <span>•</span>
+                      <span>{frontmatter.readingTime} min read</span>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {frontmatter.tags.map((tag) => (
+                    <a
+                      key={tag}
+                      href={`/articles/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+                      className="inline-block px-2 py-0.5 text-xs font-medium text-[var(--text-muted)] bg-[var(--surface)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)] rounded transition-colors"
+                    >
+                      {tag}
+                    </a>
+                  ))}
+                </div>
+
+                <SocialShare
+                  url={`https://marcusgoll.com/articles/${slug}`}
+                  title={frontmatter.title}
+                />
+
+                {/* Divider */}
+                <hr className="mt-6" />
+              </header>
+
+              <TLDRSection excerpt={frontmatter.excerpt} />
+
+              {frontmatter.featuredImage && (
+                <div className="mb-8 relative aspect-video">
+                  <Image
+                    src={frontmatter.featuredImage}
+                    alt={frontmatter.title}
+                    width={1200}
+                    height={630}
+                    priority
+                    className="w-full h-auto rounded-lg object-cover"
+                  />
+                </div>
+              )}
+
+              <div className="format format-base lg:format-lg format-blue dark:format-invert">
+                <MDXRemote
+                  source={content}
+                  components={mdxComponents}
+                  options={{
+                    mdxOptions: {
+                      remarkPlugins: [
+                        remarkGfm,
+                        remarkValidateHeadings,
+                      ],
+                      rehypePlugins: [rehypeShiki],
+                    },
+                  }}
+                />
+              </div>
+
+              <InlineNewsletterCTA postTags={frontmatter.tags} />
+
+              <PrevNextNav currentSlug={slug} />
+            </article>
+
+            <aside className="hidden lg:block">
+              <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
+                <h2 className="text-lg font-semibold text-[var(--text)] mb-4 format">On this page</h2>
+                <TableOfContents />
+              </div>
+            </aside>
+          </div>
+        </div>
       </div>
-    </div>
     </>
   );
 }

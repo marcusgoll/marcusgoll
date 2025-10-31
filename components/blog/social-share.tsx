@@ -7,7 +7,7 @@
  * FR-005, US4
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SocialShareProps {
   url: string;
@@ -16,6 +16,12 @@ interface SocialShareProps {
 
 export function SocialShare({ url, title }: SocialShareProps) {
   const [copied, setCopied] = useState(false);
+  const [supportsNativeShare, setSupportsNativeShare] = useState(false);
+
+  // Check for Web Share API support after mount (client-side only)
+  useEffect(() => {
+    setSupportsNativeShare(typeof navigator !== 'undefined' && typeof navigator.share === 'function');
+  }, []);
 
   // Handle clipboard copy with fallback for older browsers (T094)
   const handleCopyLink = async () => {
@@ -77,14 +83,14 @@ export function SocialShare({ url, title }: SocialShareProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <span className="text-sm text-gray-600 dark:text-gray-400">Share:</span>
+      <span className="text-sm text-[var(--text-muted)]">Share:</span>
 
       {/* Twitter share button */}
       <a
         href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-4 py-2 min-h-[2.75rem] text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2 min-h-[2.75rem] text-sm font-medium text-[var(--text)] bg-[var(--surface)] rounded-lg hover:bg-[var(--surface-muted)] transition-colors"
         aria-label="Share on Twitter"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -98,7 +104,7 @@ export function SocialShare({ url, title }: SocialShareProps) {
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-4 py-2 min-h-[2.75rem] text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2 min-h-[2.75rem] text-sm font-medium text-[var(--text)] bg-[var(--surface)] rounded-lg hover:bg-[var(--surface-muted)] transition-colors"
         aria-label="Share on LinkedIn"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -110,7 +116,7 @@ export function SocialShare({ url, title }: SocialShareProps) {
       {/* Copy link button */}
       <button
         onClick={handleCopyLink}
-        className="inline-flex items-center gap-2 px-4 py-2 min-h-[2.75rem] text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+        className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer min-h-[2.75rem] text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         aria-label="Copy link to clipboard"
       >
         {copied ? (
@@ -136,10 +142,10 @@ export function SocialShare({ url, title }: SocialShareProps) {
       </button>
 
       {/* Web Share API button (mobile only) */}
-      {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
+      {supportsNativeShare && (
         <button
           onClick={handleNativeShare}
-          className="inline-flex items-center gap-2 px-4 py-2 min-h-[2.75rem] text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer min-h-[2.75rem] text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           aria-label="Share via native share dialog"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

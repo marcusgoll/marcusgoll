@@ -24,8 +24,8 @@ export function Demo({ initialValue = 'Hello, MDX!', description }: DemoProps) {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="my-6 rounded-lg border border-gray-300 dark:border-gray-700 p-6 bg-white dark:bg-gray-900">
-      {description && <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{description}</p>}
+    <div className="my-6 rounded-lg border border-[var(--border)] p-6 bg-[var(--bg)]">
+      {description && <p className="text-sm text-[var(--text-muted)] mb-4">{description}</p>}
 
       {/* Interactive input */}
       <div className="mb-4">
@@ -37,16 +37,16 @@ export function Demo({ initialValue = 'Hello, MDX!', description }: DemoProps) {
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-[var(--border)] rounded-md bg-[var(--surface)] focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
         />
       </div>
 
       {/* Display result */}
-      <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+      <div className="mb-4 p-4 bg-[var(--surface)] rounded-md">
         <p className="text-lg font-medium">
-          Result: <span className="text-blue-600 dark:text-blue-400">{value}</span>
+          Result: <span className="text-[var(--secondary)]">{value}</span>
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <p className="text-sm text-[var(--text-muted)] mt-1">
           Character count: {value.length}
         </p>
       </div>
@@ -55,7 +55,7 @@ export function Demo({ initialValue = 'Hello, MDX!', description }: DemoProps) {
       <div className="flex items-center gap-4">
         <button
           onClick={() => setCount(count + 1)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-[var(--primary)] text-white rounded-md hover:bg-[var(--primary-hover)] transition-colors"
         >
           Click me: {count}
         </button>
@@ -64,14 +64,14 @@ export function Demo({ initialValue = 'Hello, MDX!', description }: DemoProps) {
             setValue(initialValue);
             setCount(0);
           }}
-          className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] rounded-md hover:bg-[var(--surface-muted)] transition-colors"
         >
           Reset
         </button>
       </div>
 
       {/* Info */}
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 italic">
+      <p className="text-xs text-[var(--text-muted)] mt-4 italic">
         This is an interactive React component embedded in MDX content. State updates work as expected!
       </p>
     </div>

@@ -57,7 +57,7 @@ export const mdxComponents: MDXComponents = {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 dark:text-blue-400 hover:underline"
+          className="text-[var(--secondary)] hover:underline"
           {...props}
         >
           {children}
@@ -67,7 +67,7 @@ export const mdxComponents: MDXComponents = {
 
     // Internal links
     return (
-      <Link href={href || '#'} className="text-blue-600 dark:text-blue-400 hover:underline" {...props}>
+      <Link href={href || '#'} className="text-[var(--secondary)] hover:underline" {...props}>
         {children}
       </Link>
     );
@@ -88,7 +88,7 @@ export const mdxComponents: MDXComponents = {
     // Inline code
     if (!className) {
       return (
-        <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono" {...props}>
+        <code className="px-1.5 py-0.5 bg-[var(--surface)] rounded text-sm font-mono" {...props}>
           {children}
         </code>
       );
@@ -104,7 +104,7 @@ export const mdxComponents: MDXComponents = {
 
   // Pre blocks with code highlighting
   pre: ({ children, ...props }) => (
-    <pre className="my-6 overflow-x-auto rounded-lg bg-gray-900 p-4" {...props}>
+    <pre className="my-6 overflow-x-auto rounded-lg bg-[var(--bg-dark)] p-4" {...props}>
       {children}
     </pre>
   ),
@@ -112,7 +112,7 @@ export const mdxComponents: MDXComponents = {
   // Blockquotes
   blockquote: ({ children, ...props }) => (
     <blockquote
-      className="my-6 border-l-4 border-gray-300 dark:border-gray-700 pl-4 italic text-gray-700 dark:text-gray-300"
+      className="my-6 border-l-4 border-[var(--border)] pl-4 italic text-[var(--text-muted)]"
       {...props}
     >
       {children}
@@ -137,7 +137,7 @@ export const mdxComponents: MDXComponents = {
   ),
 
   // Horizontal rule
-  hr: (props) => <hr className="my-8 border-gray-300 dark:border-gray-700" {...props} />,
+  hr: (props) => <hr className="my-8 border-[var(--border)]" {...props} />,
 
   // Paragraphs
   p: ({ children, ...props }) => (
@@ -149,18 +149,18 @@ export const mdxComponents: MDXComponents = {
   // Tables (GFM support)
   table: ({ children, ...props }) => (
     <div className="my-6 overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-700" {...props}>
+      <table className="min-w-full divide-y divide-[var(--border)]" {...props}>
         {children}
       </table>
     </div>
   ),
   thead: ({ children, ...props }) => (
-    <thead className="bg-gray-50 dark:bg-gray-800" {...props}>
+    <thead className="bg-[var(--surface)]" {...props}>
       {children}
     </thead>
   ),
   tbody: ({ children, ...props }) => (
-    <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900" {...props}>
+    <tbody className="divide-y divide-[var(--border)] bg-[var(--bg)]" {...props}>
       {children}
     </tbody>
   ),

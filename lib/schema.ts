@@ -136,6 +136,10 @@ export interface PersonSchema {
   image?: string;
   sameAs: string[];
   knowsAbout: string[];
+  worksFor?: {
+    '@type': 'Organization';
+    name: string;
+  };
 }
 
 /**
@@ -378,7 +382,7 @@ export function generateWebsiteSchema(): WebsiteSchema {
     '@type': 'WebSite',
     name: 'Marcus Gollahon',
     url: 'https://marcusgoll.com',
-    description: 'Software developer, flight instructor, and educator helping pilots and developers master systematic thinking.',
+    description: 'First Officer (CRJ-700/900) at PSA Airlines, educator, and developer building CFIPros—ACS-aligned study guides and training tools for pilots.',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
@@ -409,12 +413,16 @@ export function generatePersonSchema(): PersonSchema {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: brandData.name,
-    jobTitle: brandData.jobTitle,
-    description: brandData.description,
+    jobTitle: 'First Officer',
+    description: 'First Officer (CRJ-700/900) at PSA Airlines, educator, and developer building CFIPros—ACS-aligned study guides and training tools for pilots.',
     url: brandData.url,
-    image: 'https://marcusgoll.com/images/marcus-profile.jpg',
+    image: 'https://marcusgoll.com/images/Profile%20Pic.jpg',
     sameAs: brandData.sameAs,
-    knowsAbout: ['Aviation', 'Software Development', 'Flight Instruction', 'Education', 'Systematic Thinking']
+    knowsAbout: ['ACS', 'Part 61', 'CFI training', 'Next.js', 'FastAPI', 'Supabase', 'TypeScript', 'Tailwind', 'Aviation', 'Flight Instruction'],
+    worksFor: {
+      '@type': 'Organization',
+      name: 'PSA Airlines'
+    }
   };
 }
 

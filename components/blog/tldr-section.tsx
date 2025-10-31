@@ -20,20 +20,22 @@ interface TLDRSectionProps {
 export function TLDRSection({ excerpt }: TLDRSectionProps) {
   return (
     <section
-      className="tldr my-6 rounded-lg border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-950 p-4"
+      className="tldr my-8 rounded-md format bg-[var(--primary)]/10 p-4 outline outline-[var(--primary)]/15"
       role="note"
       aria-label="TL;DR Summary"
     >
-      <div className="flex gap-3">
-        <span className="text-xl" aria-hidden="true">
-          📝
-        </span>
-        <div className="flex-1">
-          <div className="font-semibold mb-1 text-blue-900 dark:text-blue-100">
+      <div className="flex">
+        <div className="shrink-0">
+          <span className="flex size-5 items-center justify-center text-[var(--primary)]" aria-hidden="true">
+            ⚡
+          </span>
+        </div>
+        <div className="ml-3">
+          <h3 className="text-sm font-medium text-[var(--text)]">
             TL;DR
-          </div>
-          <div className="text-blue-800 dark:text-blue-200">
-            {excerpt}
+          </h3>
+          <div className="mt-2 text-sm text-[var(--text-muted)]">
+            <p>{excerpt}</p>
           </div>
         </div>
       </div>

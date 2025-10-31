@@ -77,10 +77,10 @@ export default async function DevStartupPage() {
       <Container>
         {/* Page Header */}
         <header className="mb-12">
-          <h1 className="mb-4 text-4xl font-bold text-navy-900 md:text-5xl">
+          <h1 className="mb-4 text-4xl font-bold text-[var(--text)] md:text-5xl">
             Dev/Startup
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-[var(--text-muted)]">
             Software development insights, systematic thinking, and startup
             lessons to help you build better products.
           </p>
@@ -89,7 +89,7 @@ export default async function DevStartupPage() {
         {/* Software Development Section */}
         {softwareDevPosts.length > 0 && (
           <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               Software Development
             </h2>
             <PostGrid posts={softwareDevPosts} />
@@ -99,7 +99,7 @@ export default async function DevStartupPage() {
         {/* Systematic Thinking Section */}
         {systematicThinkingPosts.length > 0 && (
           <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               Systematic Thinking
             </h2>
             <PostGrid posts={systematicThinkingPosts} />
@@ -109,7 +109,7 @@ export default async function DevStartupPage() {
         {/* Startup Insights Section */}
         {startupInsightsPosts.length > 0 && (
           <section className="mb-12">
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               Startup Insights
             </h2>
             <PostGrid posts={startupInsightsPosts} />
@@ -119,7 +119,7 @@ export default async function DevStartupPage() {
         {/* All Dev/Startup Posts */}
         {devStartupPosts.length > 0 && (
           <section>
-            <h2 className="mb-6 text-2xl font-bold text-navy-900">
+            <h2 className="mb-6 text-2xl font-bold text-[var(--text)]">
               All Dev/Startup Posts
             </h2>
             <PostGrid posts={devStartupPosts} />
@@ -128,7 +128,7 @@ export default async function DevStartupPage() {
 
         {/* No Posts Message */}
         {devStartupPosts.length === 0 && (
-          <div className="py-12 text-center text-gray-500">
+          <div className="py-12 text-center text-[var(--text-muted)]">
             <p>No dev/startup posts found. Check back soon!</p>
           </div>
         )}

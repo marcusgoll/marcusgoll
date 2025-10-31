@@ -1,110 +1,141 @@
 'use client'
 
-/**
- * Inline Newsletter CTA Component (Post-inline Variant)
- *
- * Purpose: Context-aware newsletter signup after blog posts
- * Features: Dynamic headline based on post tags, benefit bullets, multi-track selection
- * Usage: <InlineNewsletterCTA postTags={['aviation', 'dev']} /> in blog post pages
- */
-
 import { NewsletterSignupForm } from './NewsletterSignupForm'
 
 interface InlineNewsletterCTAProps {
-  /**
-   * Post tags for context-aware messaging
-   */
   postTags?: string[]
 }
 
-/**
- * Generate context-aware headline based on post tags
- */
 function getContextualHeadline(tags: string[] = []): string {
-  const hasAviation = tags.some(tag =>
-    tag.toLowerCase().includes('aviation') ||
-    tag.toLowerCase().includes('flight') ||
-    tag.toLowerCase().includes('pilot')
-  )
+  const t = tags.map(x => x.toLowerCase())
+  const hasAviation = t.some(x => x.includes('aviation') || x.includes('flight') || x.includes('pilot'))
+  const hasDev = t.some(x => x.includes('dev') || x.includes('code') || x.includes('startup') || x.includes('tech'))
+  const hasEducation = t.some(x => x.includes('education') || x.includes('teaching') || x.includes('learning'))
 
-  const hasDev = tags.some(tag =>
-    tag.toLowerCase().includes('dev') ||
-    tag.toLowerCase().includes('code') ||
-    tag.toLowerCase().includes('startup') ||
-    tag.toLowerCase().includes('tech')
-  )
-
-  const hasEducation = tags.some(tag =>
-    tag.toLowerCase().includes('education') ||
-    tag.toLowerCase().includes('teaching') ||
-    tag.toLowerCase().includes('learning')
-  )
-
-  // Multi-track posts
   if ((hasAviation && hasDev) || (hasAviation && hasEducation) || (hasDev && hasEducation)) {
-    return "Enjoyed this post? Get more dual-track insights in your inbox."
+    return 'Notes on flying, teaching, and building. In your inbox.'
   }
-
-  // Single-track posts
-  if (hasAviation) {
-    return "Enjoyed this aviation post? Get more like it in your inbox."
-  }
-  if (hasDev) {
-    return "Enjoyed this dev post? Get more like it in your inbox."
-  }
-  if (hasEducation) {
-    return "Enjoyed this education post? Get more like it in your inbox."
-  }
-
-  // Default for general posts
-  return "Want more insights like this? Subscribe to the newsletter."
+  if (hasAviation) return 'Practical aviation notes and study updates.'
+  if (hasDev) return 'Web dev workflow and build logs that ship.'
+  if (hasEducation) return 'Clear teaching ideas you can use right away.'
+  return 'Short, useful writing on flying, teaching, and building.'
 }
 
-const BENEFITS = [
-  "Systematic thinking applied to aviation and software",
-  "Dual-track content: Aviation + Dev/Startup insights",
-  "Teaching quality you'd expect from a CFI",
-  "Building in public - real lessons from the trenches",
+const BENEFITS_BASE = [
+  'Actionable workflows and bite-sized tutorials',
+  'Real-world lessons from flying, teaching, and building',
+  'Curated tools, code, and reading minus the fluff',
 ]
 
 export function InlineNewsletterCTA({ postTags = [] }: InlineNewsletterCTAProps) {
-  const headline = getContextualHeadline(postTags)
+  const subtitle = getContextualHeadline(postTags)
 
   return (
-    <div className="inline-newsletter-cta my-12 p-8 rounded-lg bg-gradient-to-r from-navy-900 to-emerald-600 text-white">
-      <div className="max-w-2xl mx-auto">
-        <h3 className="text-2xl font-bold mb-4">{headline}</h3>
+    <section
+      role="region"
+      aria-labelledby="nl-cta-title"
+      className="bg-[var(--bg)] my-12"
+    >
+      <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+        <div className="mx-auto max-w-screen-md sm:text-center">
+          {/* Eyebrow */}
+          <p className="mb-2 text-sm font-medium tracking-wide text-[var(--primary)]">
+            Newsletter
+          </p>
 
-        <ul className="mb-6 space-y-2">
-          {BENEFITS.map((benefit, index) => (
-            <li key={index} className="flex items-start gap-2">
-              <svg
-                className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
+          {/* Tagline */}
+          <h2
+            id="nl-cta-title"
+            className="mb-2 text-3xl tracking-tight format:lg font-extrabold text-[var(--text)] sm:text-4xl"
+          >
+            Aviate. Navigate. Communicate.
+          </h2>
+
+          {/* Context-aware subtitle */}
+          <p className="mx-auto mb-6 max-w-2xl text-base format text-[var(--text-muted)]">
+            {subtitle}
+          </p>
+
+          {/* Benefits — small well cards */}
+          <ul
+            role="list"
+            aria-label="Newsletter benefits"
+            className="mx-auto mb-8 grid max-w-md grid-cols-1 gap-3 sm:max-w-2xl sm:grid-cols-3"
+          >
+            {BENEFITS_BASE.map((b) => (
+              <li
+                key={b}
+                className="h-full rounded-lg border border-[var(--border)] format:sm bg-[var(--surface)] p-3 text-sm text-[var(--text)] shadow-sm"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
+                {b}
+              </li>
+            ))}
+          </ul>
+
+          {/* If you have a dedicated form component, use it.
+              Otherwise keep the inline form below. */}
+          {/* <NewsletterSignupForm source="inline-cta" tags={postTags} /> */}
+
+          <form
+            method="post"
+            noValidate
+            className="mx-auto max-w-screen-sm format "
+          >
+            {/* Honeypot */}
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              className="hidden"
+              aria-hidden="true"
+            />
+
+            <div className="items-center mb-3 space-y-4 sm:flex sm:space-y-0">
+              <div className="relative w-full">
+                <label
+                  htmlFor="newsletter-email"
+                  className="sr-only"
+                >
+                  Email address
+                </label>
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <svg className="h-5 w-5 text-[var(--text-muted)]" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                  </svg>
+                </div>
+                <input
+                  id="newsletter-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  aria-describedby="newsletter-privacy"
+                  className="block w-full rounded-lg format border border-[var(--border)] bg-[var(--surface)] p-3 pl-10 text-sm text-[var(--text)] focus:border-[var(--primary)] focus:ring-[var(--primary)] sm:rounded-none sm:rounded-l-lg"
+                  placeholder="you@example.com"
                 />
-              </svg>
-              <span className="text-sm">{benefit}</span>
-            </li>
-          ))}
-        </ul>
+              </div>
 
-        <NewsletterSignupForm
-          variant="inline"
-          source="post-inline"
-          className="newsletter-inline-form"
-        />
+              <div>
+                <button
+                  type="submit"
+                  className="w-full cursor-pointer rounded-lg format border border-[var(--primary)] bg-[var(--primary)] px-5 py-3 text-center text-sm font-medium text-white hover:bg-[var(--primary-hover)] focus:ring-4 focus:ring-[var(--primary)] sm:rounded-none sm:rounded-r-lg"
+                >
+                  Subscribe
+                </button>
+              </div>
+            </div>
 
-        <p className="text-xs text-gray-300 text-center mt-4">
-          Unsubscribe anytime. No spam, ever.
-        </p>
+            <p
+              id="newsletter-privacy"
+              className="mx-auto max-w-screen-sm text-left text-sm text-[var(--text-muted)]"
+            >
+              I will not share your email. Unsubscribe any time.
+            </p>
+          </form>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }

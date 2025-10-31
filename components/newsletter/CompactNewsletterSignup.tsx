@@ -15,7 +15,7 @@ export function CompactNewsletterSignup() {
     <div className="compact-newsletter-signup">
       <div className="mb-3">
         <h3 className="text-sm font-semibold text-white mb-1">Stay Updated</h3>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-[var(--text-muted)]">
           Get aviation, dev, and education insights delivered to your inbox.
         </p>
       </div>

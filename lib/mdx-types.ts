@@ -21,6 +21,9 @@ export const PostFrontmatterSchema = z.object({
   author: z.string().min(1, 'Author is required'),
   tags: z.array(z.string()).min(1, 'At least one tag is required').max(10, 'Maximum 10 tags allowed'),
   featuredImage: z.string().optional(),
+  // Support snake_case variants for backwards compatibility
+  feature_image: z.string().optional(),
+  feature_image_alt: z.string().optional(),
   publishedAt: z.string().datetime('PublishedAt must be valid ISO 8601 datetime').optional(),
   draft: z.boolean().default(false),
   readingTime: z.number().optional(),

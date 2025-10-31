@@ -45,7 +45,7 @@ export default function MaintenancePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-navy-900 px-4 py-16 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--bg-dark)] px-4 py-16 sm:px-6 lg:px-8">
       {/* Main Content Container */}
       <div className="w-full max-w-md text-center lg:max-w-2xl">
         {/* Image Element */}
@@ -66,7 +66,7 @@ export default function MaintenancePage() {
         </h1>
 
         {/* Subtitle */}
-        <p className="mb-8 text-lg text-gray-300 sm:text-xl">
+        <p className="mb-8 text-lg text-[var(--text-muted)] sm:text-xl">
           Scheduled maintenance in progress. I&apos;m upgrading the site and
           polishing the propellers.
         </p>
@@ -80,13 +80,13 @@ export default function MaintenancePage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Get an email when site is back online"
               required
-              className="flex-1 rounded-lg border border-gray-600 bg-navy-800 px-4 py-3 text-gray-100 placeholder-gray-500 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-navy-900"
+              className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-[var(--text)] placeholder-[var(--text-muted)] focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-dark)]"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !email}
-              className="rounded-lg bg-emerald-600 px-6 py-3 font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-navy-900"
+              className="rounded-lg bg-[var(--primary)] px-6 py-3 font-medium text-white transition-colors hover:bg-[var(--primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-dark)]"
             >
               {isLoading ? 'Sending...' : 'Notify me'}
             </button>
@@ -94,19 +94,19 @@ export default function MaintenancePage() {
 
           {/* Success Message */}
           {submitted && (
-            <p className="animate-fade-in text-sm text-emerald-400">
+            <p className="animate-fade-in text-sm text-[var(--primary)]">
               ✓ Got it! We&apos;ll notify you when the site is live.
             </p>
           )}
         </form>
 
         {/* Contact Information */}
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-[var(--text-muted)]">
           <p>
             Need to reach us?{' '}
             <a
               href="mailto:marcusgoll@gmail.com"
-              className="text-emerald-600 underline hover:text-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 focus:ring-offset-navy-900"
+              className="text-[var(--primary)] underline hover:text-[var(--primary-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 focus:ring-offset-[var(--bg-dark)]"
             >
               Send an email
             </a>
@@ -115,7 +115,7 @@ export default function MaintenancePage() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-16 text-sm text-gray-500">
+      <footer className="mt-16 text-sm text-[var(--text-muted)]">
         &copy; {new Date().getFullYear()} Marcus Gollahon. All rights reserved.
       </footer>
     </div>

@@ -215,7 +215,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <h1 className="text-4xl font-bold tracking-tight mb-4">{frontmatter.title}</h1>
 
         {/* Post metadata */}
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <div className="flex flex-wrap gap-4 text-sm text-[var(--text-muted)] mb-4">
           <time dateTime={frontmatter.date}>
             {new Date(frontmatter.date).toLocaleDateString('en-US', {
               year: 'numeric',
@@ -239,7 +239,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <a
               key={tag}
               href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-              className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="px-3 py-1 text-sm bg-[var(--surface)] rounded-full hover:bg-[var(--surface-muted)] transition-colors"
             >
               {tag}
             </a>
